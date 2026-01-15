@@ -1,0 +1,341 @@
+<div class="table-container" dir="rtl">
+  <div class="status-badges">
+    <div class="badge badge-total">
+      <span class="badge-label">סה"כ</span>
+      <span class="badge-count">{{ statusSummary().total }}</span>
+    </div>
+    <div class="badge badge-ready">
+      <span class="badge-label">מוכן</span>
+      <span class="badge-count">{{ statusSummary().ready }}</span>
+    </div>
+    <div class="badge badge-progress">
+      <span class="badge-label">בתהליך</span>
+      <span class="badge-count">{{ statusSummary().inProgress }}</span>
+    </div>
+    <div class="badge badge-completed">
+      <span class="badge-label">הושלם</span>
+      <span class="badge-count">{{ statusSummary().completed }}</span>
+    </div>
+  </div>
+
+  @if (config().features.enableSearch || config().features.enableExport) {
+    <div class="table-controls">
+      @if (config().features.enableSearch) {
+        <input
+          type="text"
+          class="search-input"
+          placeholder="חיפוש לפי שם, מתקן, כתובת, איש קשר..."
+          [value]="searchTerm()"
+          (input)="onSearchChange($event)"
+        />
+      }
+    </div>
+  }
+
+  @if (!isMobile()) {
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            @for (column of visibleColumns(); track column.key) {
+              <th [style.width]="column.width" [style.text-align]="column.align">
+                {{ column.header }}
+                @if (column.sortable) {
+                  <span class="sort-icon">↕</span>
+                }
+              </th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of paginatedData(); track row.id) {
+            <tr>
+              @for (column of visibleColumns(); track column.key) {
+                <td [style.text-align]="column.align">
+                  @if (column.type === 'action') {
+                    @if (config().features.enableEdit) {
+                      <button
+                        class="edit-btn"
+                        (click)="handleEdit(row)"
+                        title="ערוך"
+                      >
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                          <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                        </svg>
+                      </button>
+                    }
+                  } @else if (column.type === 'badge') {
+                    <span
+                      class="status-badge"
+                      [style]="getCellStyle(column, row[column.key], row)"
+                      [style.background-color]="getStatusColor(row[column.key])"
+                    >
+                      {{ getCellValue(column, row) }}
+                    </span>
+                  } @else {
+                    <span [style]="getCellStyle(column, row[column.key], row)">
+                      {{ getCellValue(column, row) }}
+                    </span>
+                  }
+                </td>
+              }
+            </tr>
+          } @empty {
+            <tr>
+              <td [attr.colspan]="visibleColumns().length" class="empty-state">
+                אין נתונים להצגה
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  @if (isMobile()) {
+    <div class="cards-container">
+      @for (row of paginatedData(); track row.id) {
+        <div class="mobile-card" (click)="openDetail(row, 'view')">
+          <div class="card-header">
+            <span class="card-id">{{ row.id }}</span>
+            <span
+              class="status-badge"
+              [style.background-color]="getStatusColor(row.status)"
+            >
+              {{ getFormattedStatus(row) }}
+            </span>
+          </div>
+          <div class="card-body">
+            <div class="card-row">
+              <span class="label">מתקן:</span>
+              <span class="value">{{ row['facilityName'] }}</span>
+            </div>
+            <div class="card-row">
+              <span class="label">סכום:</span>
+              <span class="value amount-highlight" [style]="getAmountStyle(row)">
+                {{ getFormattedAmount(row) }}
+              </span>
+            </div>
+          </div>
+          <div class="card-footer">
+            @if (config().features.enableEdit) {
+              <button class="card-action-btn" (click)="handleEdit(row); $event.stopPropagation()">
+                ערוך
+              </button>
+            }
+          </div>
+        </div>
+      } @empty {
+        <div class="empty-state">אין נתונים להצגה</div>
+      }
+    </div>
+  }
+
+  <div class="pagination">
+    <div class="pagination-info">
+      מציג {{ (pagination().currentPage - 1) * pagination().pageSize + 1 }} -
+      {{ Math.min(pagination().currentPage * pagination().pageSize, filteredData().length) }}
+      מתוך {{ filteredData().length }}
+    </div>
+
+    <div class="pagination-controls">
+      <button
+        class="page-btn"
+        (click)="goToPage(1)"
+        [disabled]="pagination().currentPage === 1"
+      >
+        ראשון
+      </button>
+      <button
+        class="page-btn"
+        (click)="goToPage(pagination().currentPage - 1)"
+        [disabled]="pagination().currentPage === 1"
+      >
+        הקודם
+      </button>
+
+      @for (page of [].constructor(totalPages()); track $index) {
+        @if ($index + 1 === pagination().currentPage || 
+             Math.abs($index + 1 - pagination().currentPage) <= 2) {
+          <button
+            class="page-btn"
+            [class.active]="$index + 1 === pagination().currentPage"
+            (click)="goToPage($index + 1)"
+          >
+            {{ $index + 1 }}
+          </button>
+        }
+      }
+
+      <button
+        class="page-btn"
+        (click)="goToPage(pagination().currentPage + 1)"
+        [disabled]="pagination().currentPage === totalPages()"
+      >
+        הבא
+      </button>
+      <button
+        class="page-btn"
+        (click)="goToPage(totalPages())"
+        [disabled]="pagination().currentPage === totalPages()"
+      >
+        אחרון
+      </button>
+    </div>
+
+    <div class="page-size-selector">
+      <label>שורות בעמוד:</label>
+      <select
+        [value]="pagination().pageSize"
+        (change)="changePageSize(+$any($event.target).value)"
+      >
+        @for (size of pagination().pageSizeOptions; track size) {
+          <option [value]="size">{{ size }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  @if (detailModal().isOpen && detailModal().data) {
+    <div class="modal-overlay" (click)="closeDetail()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>פרטי משימה: {{ detailModal().data!.id }}</h2>
+          <button class="close-btn" (click)="closeDetail()">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <section class="detail-section">
+            <h3>מידע כללי</h3>
+            <div class="detail-grid">
+              <div class="detail-field">
+                <label>מזהה:</label>
+                <span>{{ detailModal().data!.id }}</span>
+              </div>
+              <div class="detail-field">
+                <label>שם המתקן:</label>
+                @if (detailModal().mode === 'edit') {
+                  <input [(ngModel)]="detailModal().data!.facilityName" />
+                } @else {
+                  <span>{{ detailModal().data!.facilityName }}</span>
+                }
+              </div>
+              <div class="detail-field">
+                <label>כתובת:</label>
+                @if (detailModal().mode === 'edit') {
+                  <input [(ngModel)]="detailModal().data!.address" />
+                } @else {
+                  <span>{{ detailModal().data!.address }}</span>
+                }
+              </div>
+              <div class="detail-field">
+                <label>איש קשר:</label>
+                @if (detailModal().mode === 'edit') {
+                  <input [(ngModel)]="detailModal().data!.contactName" />
+                } @else {
+                  <span>{{ detailModal().data!.contactName }}</span>
+                }
+              </div>
+              <div class="detail-field">
+                <label>טלפון:</label>
+                @if (detailModal().mode === 'edit') {
+                  <input [(ngModel)]="detailModal().data!.contactPhone" />
+                } @else {
+                  <span>{{ detailModal().data!.contactPhone }}</span>
+                }
+              </div>
+              <div class="detail-field">
+                <label>סטטוס:</label>
+                <span
+                  class="status-badge"
+                  [style.background-color]="getStatusColor(detailModal().data!.status)"
+                >
+                  {{ getDetailStatus() }}
+                </span>
+              </div>
+            </div>
+          </section>
+
+          <section class="detail-section">
+            <h3>פרטי משלוח</h3>
+            <div class="detail-grid">
+              <div class="detail-field">
+                <label>מספר שקים:</label>
+                <span>{{ detailModal().data!.bagCount }}</span>
+              </div>
+              <div class="detail-field">
+                <label>סכום כולל:</label>
+                <span class="amount-large">₪{{ detailModal().data!.totalAmount.toLocaleString('he-IL') }}</span>
+              </div>
+              <div class="detail-field">
+                <label>מוקד:</label>
+                <span>{{ detailModal().data!.hubName }}</span>
+              </div>
+              <div class="detail-field">
+                <label>סוג משלוח:</label>
+                <span>{{ detailModal().data!.deliveryType === 'delivery' ? 'משלוח' : 'איסוף' }}</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="detail-section">
+            <h3>ברקודים</h3>
+            <table class="detail-table">
+              <thead>
+                <tr>
+                  <th>ברקוד</th>
+                  <th>סוג</th>
+                  <th>סכום</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (barcode of detailModal().data!.barcodes; track barcode.barcode) {
+                  <tr>
+                    <td>{{ barcode.barcode }}</td>
+                    <td>{{ barcode.type }}</td>
+                    <td>₪{{ barcode.amount.toLocaleString('he-IL') }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </section>
+
+          <section class="detail-section">
+            <h3>צוות</h3>
+            <div class="detail-grid">
+              <div class="detail-field">
+                <label>מנהל צוות:</label>
+                <span>{{ detailModal().data!.team.teamLeader }}</span>
+              </div>
+              <div class="detail-field">
+                <label>נהג:</label>
+                <span>{{ detailModal().data!.team.driver }}</span>
+              </div>
+              <div class="detail-field">
+                <label>מאבטח 1:</label>
+                <span>{{ detailModal().data!.team.security1 }}</span>
+              </div>
+              <div class="detail-field">
+                <label>מאבטח 2:</label>
+                <span>{{ detailModal().data!.team.security2 }}</span>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div class="modal-footer">
+          @if (detailModal().mode === 'edit') {
+            <button class="btn btn-primary" (click)="saveDetail()">שמור</button>
+            <button class="btn btn-secondary" (click)="closeDetail()">ביטול</button>
+          } @else {
+            <button class="btn btn-primary" (click)="detailModal().mode = 'edit'">
+              עבור למצב עריכה
+            </button>
+            <button class="btn btn-secondary" (click)="closeDetail()">סגור</button>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>
+

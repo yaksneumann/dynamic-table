@@ -1,0 +1,47 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.app-container {
+  min-height: 100vh;
+  background-color: #f0f2f5;
+  direction: rtl;
+}
+
+.app-header {
+  background: #dc3545;
+  color: white;
+  padding: 24px 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header-content h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.header-content p {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.main-content {
+  padding: 0;
+}
+
+@media (max-width: 768px) {
+  .app-header {
+    padding: 16px 20px;
+  }
+
+  .header-content h1 {
+    font-size: 22px;
+  }
+
+  .header-content p {
+    font-size: 13px;
+  }
+}
