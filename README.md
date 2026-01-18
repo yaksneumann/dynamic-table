@@ -1,323 +1,346 @@
 # 📊 Smart Table Component
 
-A powerful, flexible, and modern data table component for Angular applications with built-in features like search, pagination, mobile responsiveness, and customizable styling.
+**A truly dynamic, reusable table component that works with ANY data type.** Configure once, use everywhere - from user lists to product catalogs to financial reports.
+
+## 🎯 Why "Dynamic"?
+
+Unlike fixed tables tied to specific data models, this component adapts to **your data structure**:
+
+- ✅ **No hard-coded columns** - Define them via config
+- ✅ **Works with any entity** - Users, products, orders, facilities, anything
+- ✅ **Drop-in replacement** - Same component, different configurations
+- ✅ **Server-controlled** - Backend defines columns, styling, and business rules
+
+**One component. Infinite use cases.**
 
 ## ✨ Features
 
-- 🔍 **Full-text search** across all columns
-- 📱 **Mobile responsive** with automatic card view on small screens
-- 📄 **Pagination** with customizable page sizes
-- 🎨 **Flexible styling** with conditional formatting
-- 🎯 **Status badges** with automatic counting
-- ✏️ **Inline editing** support
-- 🔧 **Highly configurable** with minimal setup
-- ⚡ **Signal-based reactivity** for optimal performance
-- 🌐 **RTL support** built-in
+- 🔍 Full-text search across all data
+- 📱 Auto-switches to cards on mobile (< 768px)
+- 📄 Pagination with customizable page sizes
+- 🎨 Conditional cell styling (server-controlled)
+- 🎯 Auto-counting status badges
+- ✏️ Inline editing support
+- ⚡ Angular 21 Signals for reactive updates
+- 🌐 RTL support (Hebrew/Arabic ready)
 
 ## 🚀 Quick Start
-
-### Installation
 
 ```bash
 npm install
 ng serve
+# Open http://localhost:4200
 ```
 
-Navigate to `http://localhost:4200/` to see the table in action.
+## 📖 How to Use (3 Simple Steps)
 
-### Basic Usage
+### Step 1: Create Your Data Service
 
-1. **Create a data service** that implements `DataSourceService`:
+Implement `DataSourceService` for your entity:
 
 ```typescript
-import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { DataSourceService } from '../models/table.config.interface';
-
-@Injectable({
-  providedIn: 'root'
-})
-export class MyDataService implements DataSourceService<MyDataType> {
-  getData(): Observable<MyDataType[]> {
-    return of([/* your data */]);
+@Injectable({ providedIn: 'root' })
+export class ProductService implements DataSourceService<Product> {
+  getData(): Observable<Product[]> {
+    return this.http.get<Product[]>('/api/products');
   }
-
-  getById(id: string): Observable<MyDataType> {
-    // implementation
+  
+  getById(id: string): Observable<Product> {
+    return this.http.get<Product>(`/api/products/${id}`);
   }
-
-  update(item: MyDataType): Observable<MyDataType> {
-    // implementation
-  }
-
-  delete?(id: string): Observable<void> {
-    // optional delete implementation
+  
+  update(item: Product): Observable<Product> {
+    return this.http.put<Product>(`/api/products/${item.id}`, item);
   }
 }
 ```
 
-2. **Create a table configuration**:
+### Step 2: Define Table Configuration
+
+Tell the table what columns to show and how to style them:
 
 ```typescript
-import { TableConfig } from '../models/table.config.interface';
-
-export const myTableConfig: TableConfig = {
+export const productTableConfig: TableConfig = {
   columns: [
     {
-      key: 'id',
-      header: 'ID',
+      key: 'name',
+      header: 'Product Name',
       type: 'text',
-      width: '100px',
-      align: 'left',
-      sortable: true,
       mobileVisible: true,
+      sortable: true
     },
     {
-      key: 'name',
-      header: 'Name',
-      type: 'text',
-      width: '200px',
-      align: 'left',
-      sortable: true,
-      mobileVisible: true,
+      key: 'price',
+      header: 'Price',
+      type: 'currency',
+      format: (value) => `$${value.toFixed(2)}`,
+      styleConfig: {
+        condition: (value) => value > 1000,  // Highlight expensive items
+        backgroundColor: '#fff3e0',
+        textColor: '#e65100'
+      }
     },
     {
       key: 'status',
       header: 'Status',
       type: 'badge',
-      width: '120px',
-      align: 'center',
-      mobileVisible: true,
-      format: (value: string) => {
-        const statusMap = {
-          ready: 'Ready',
-          inProgress: 'In Progress',
-          completed: 'Completed',
-        };
-        return statusMap[value] || value;
-      }
+      mobileVisible: true
     }
   ],
   pagination: {
     defaultPageSize: 10,
-    pageSizeOptions: [5, 10, 20, 50],
-    showPageInfo: true,
+    pageSizeOptions: [5, 10, 20, 50]
   },
   features: {
     enableSearch: true,
     enableEdit: true,
-    enableDelete: false,
-    enableExport: false,
-    enableFilters: false,
-    enableSort: true,
+    enableSort: true
   }
 };
 ```
 
-3. **Use the smart table in your component**:
+### Step 3: Add to Your Template
 
 ```typescript
-import { Component, inject } from '@angular/core';
-import { SmartTableComponent } from './components/smart-table/smart-table.component';
-import { MyDataService } from './services/my-data.service';
-import { myTableConfig } from './configs/my-table.config';
-
 @Component({
-  selector: 'app-my-table',
+  selector: 'app-products',
   standalone: true,
   imports: [SmartTableComponent],
   template: `
     <app-smart-table 
       [config]="config" 
-      [dataSource]="dataService"
+      [dataSource]="productService"
     />
   `
 })
-export class MyTableComponent {
-  dataService = inject(MyDataService);
-  config = myTableConfig;
+export class ProductsComponent {
+  productService = inject(ProductService);
+  config = productTableConfig;
 }
 ```
 
-## 📋 Configuration Options
+**That's it!** The same component now displays your products table with search, pagination, and responsive design.
 
-### Column Configuration
+## � Use It Anywhere
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `key` | `string` | Property name in your data object |
-| `header` | `string` | Display name for the column |
-| `type` | `'text' \| 'number' \| 'badge' \| 'currency' \| 'date' \| 'action'` | Column data type |
-| `width` | `string` | CSS width value (e.g., '120px') |
-| `align` | `'left' \| 'center' \| 'right'` | Text alignment |
-| `sortable` | `boolean` | Enable sorting for this column |
-| `mobileVisible` | `boolean` | Show column on mobile devices |
-| `format` | `(value: any, row?: any) => string` | Custom formatter function |
-| `styleConfig` | `ColumnStyleConfig` | Conditional styling rules |
-
-### Column Style Configuration
-
-Apply conditional styling to cells based on their values:
+**Same component, different data:**
 
 ```typescript
-styleConfig: {
-  condition: (value, row) => value > 100000,
-  backgroundColor: '#ffebee',
-  textColor: '#c62828',
-  fontWeight: 'bold',
-  borderRadius: '4px'
+// Users table
+<app-smart-table [config]="userTableConfig" [dataSource]="userService" />
+
+// Orders table  
+<app-smart-table [config]="orderTableConfig" [dataSource]="orderService" />
+
+// Facilities table (current demo)
+<app-smart-table [config]="facilityTableConfig" [dataSource]="facilityService" />
+```
+
+Each config defines different columns, styling rules, and features - but uses the **exact same component**.
+
+## 📋 Configuration Reference
+
+### Column Properties
+
+```typescript
+{
+  key: 'fieldName',           // Property in your data
+  header: 'Display Name',     // Column header text
+  type: 'text' | 'number' | 'badge' | 'currency' | 'date',
+  mobileVisible: true,        // Show on mobile?
+  sortable: true,             // Enable sorting?
+  format: (value, row) => string,  // Custom formatter
+  styleConfig: {              // Conditional styling
+    condition: (value, row) => boolean,
+    backgroundColor: '#color',
+    textColor: '#color'
+  }
 }
 ```
 
 ### Feature Flags
 
-| Feature | Description |
-|---------|-------------|
-| `enableSearch` | Global search across all data |
-| `enableEdit` | Allow inline editing of rows |
-| `enableDelete` | Show delete buttons |
-| `enableExport` | Export data functionality |
-| `enableFilters` | Advanced filtering options |
-| `enableSort` | Column sorting |
+```typescript
+features: {
+  enableSearch: true,    // Global search bar
+  enableEdit: true,      // Edit button per row
+  enableSort: true,      // Click headers to sort
+  enableDelete: false,   // Delete functionality
+}
+```
 
-### Pagination Settings
+### Pagination Options
 
 ```typescript
 pagination: {
-  defaultPageSize: 10,        // Initial rows per page
-  pageSizeOptions: [5, 10, 20, 50], // Available page size options
-  showPageInfo: true          // Show "Page X of Y" info
+  defaultPageSize: 10,
+  pageSizeOptions: [5, 10, 20, 50]
 }
+```
+
+## 💡 Real-World Examples
+
+### E-commerce Product Catalog
+
+```typescript
+columns: [
+  { key: 'sku', header: 'SKU', type: 'text', mobileVisible: true },
+  { key: 'name', header: 'Product', type: 'text', mobileVisible: true },
+  { 
+    key: 'stock', 
+    header: 'Stock', 
+    type: 'number',
+    styleConfig: {
+      condition: (value) => value < 10,  // Low stock warning
+      backgroundColor: '#ffebee',
+      textColor: '#c62828'
+    }
+  },
+  { 
+    key: 'price', 
+    header: 'Price', 
+    type: 'currency',
+    format: (value) => `$${value.toFixed(2)}`
+  }
+]
+```
+
+### CRM Contact Management
+
+```typescript
+columns: [
+  { key: 'name', header: 'Contact Name', type: 'text', mobileVisible: true },
+  { key: 'company', header: 'Company', type: 'text' },
+  { key: 'email', header: 'Email', type: 'text', mobileVisible: true },
+  { 
+    key: 'lastContact', 
+    header: 'Last Contact', 
+    type: 'date',
+    format: (value) => new Date(value).toLocaleDateString()
+  },
+  { 
+    key: 'dealStatus', 
+    header: 'Status', 
+    type: 'badge', 
+    mobileVisible: true 
+  }
+]
+```
+
+### Financial Transactions
+
+```typescript
+columns: [
+  { key: 'transactionId', header: 'ID', type: 'text', mobileVisible: true },
+  { 
+    key: 'amount', 
+    header: 'Amount', 
+    type: 'currency',
+    styleConfig: {
+      condition: (value) => value > 10000,  // Flag large transactions
+      backgroundColor: '#fff3e0',
+      fontWeight: 'bold'
+    }
+  },
+  { key: 'category', header: 'Category', type: 'badge' },
+  { key: 'date', header: 'Date', type: 'date', mobileVisible: true }
+]
 ```
 
 ## 🎨 Advanced Features
 
-### Custom Cell Formatting
-
-Format cell values before display:
-
+**Conditional Styling** - Highlight cells based on business logic:
 ```typescript
-{
-  key: 'totalAmount',
-  header: 'Total',
-  type: 'currency',
-  format: (value: number) => `$${value.toLocaleString('en-US')}`
+styleConfig: {
+  condition: (value, row) => row.status === 'urgent' && value > 5000,
+  backgroundColor: '#ffebee',
+  textColor: '#c62828'
 }
 ```
 
-### Status Badges with Auto-counting
-
-The smart table automatically counts and displays status summaries:
-
+**Custom Formatters** - Transform values before display:
 ```typescript
-// Your data just needs a 'status' property
+format: (value, row) => {
+  const date = new Date(value);
+  return date.toLocaleDateString('en-US', { 
+    year: 'numeric', 
+    month: 'short', 
+    day: 'numeric' 
+  });
+}
+```
+
+**Status Badges** - Auto-counting for any property named `status`:
+```typescript
 interface MyData {
   id: string;
-  status: 'ready' | 'inProgress' | 'completed';
-  // ... other properties
+  status: 'pending' | 'active' | 'completed';  // Badges auto-generated
 }
 ```
 
-The component automatically displays badge counters for:
-- Total items
-- Ready status
-- In Progress status
-- Completed status
+## 📱 Mobile Experience
 
-### Mobile Responsiveness
+Desktop (> 768px): Full table with all columns  
+Mobile (≤ 768px): Card view showing only `mobileVisible: true` columns
 
-The table automatically switches to card view on screens < 768px. Control which columns appear on mobile with `mobileVisible`:
+Control visibility per column:
+```typescript
+{ key: 'detailedDescription', header: 'Details', mobileVisible: false }
+```
+
+## � Project Structure
+
+```
+src/app/
+├── components/
+│   └── smart-table/              # ← The reusable component
+│       ├── smart-table.component.ts
+│       ├── smart-table.html
+│       └── smart-table.css
+├── configs/tables/               # ← Your table configurations
+│   └── facility-table.config.ts  # Example config
+├── models/
+│   └── table.config.interface.ts # Type definitions
+└── services/data-sources/        # ← Your data services
+    └── facility-data.service.ts  # Example service
+```
+
+## 🎯 Your Data Requirements
 
 ```typescript
-{
-  key: 'phoneNumber',
-  header: 'Phone',
-  type: 'text',
-  mobileVisible: false  // Hide on mobile
+interface YourDataType {
+  id: string;           // ✅ Required - unique identifier
+  status?: string;      // Optional - enables status badges
+  [key: string]: any;   // Any other properties you need
 }
 ```
 
-### Data Service Interface
+## 🔧 Example Implementation
 
-Your data service must implement:
-
-```typescript
-interface DataSourceService<T> {
-  getData(): Observable<T[]>;           // Required: Fetch all data
-  getById(id: string): Observable<T>;   // Required: Fetch single item
-  update(item: T): Observable<T>;       // Required: Update item
-  delete?(id: string): Observable<void>; // Optional: Delete item
-}
-```
-
-## 💡 Examples
-
-Check out the example implementation in:
-- [FacilityTableComponent](src/app/components/facility-table/facility-table.component.ts)
-- [Facility Table Config](src/app/configs/tables/facility-table.config.ts)
-- [Facility Data Service](src/app/services/data-sources/facility-data.service.ts)
+See the working example:
+- **Config**: [facility-table.config.ts](src/app/configs/tables/facility-table.config.ts)
+- **Service**: [facility-data.service.ts](src/app/services/data-sources/facility-data.service.ts)
+- **Component**: Uses SmartTableComponent with above config
 
 ## 🛠️ Development
 
-### Development Server
-
 ```bash
-ng serve
+ng serve       # Development server
+ng build       # Production build
+ng test        # Run tests
 ```
 
-### Building
+## 📝 Summary
 
-```bash
-ng build
-```
+**This is NOT a facilities-specific table.** It's a generic, configurable table component that happens to display facilities in the demo.
 
-### Running Tests
+**Want to display something else?** Just:
+1. Create a service for your data type
+2. Write a config defining your columns
+3. Pass both to `<app-smart-table>`
 
-```bash
-ng test
-```
-
-## 📦 Project Structure
-
-```
-src/
-├── app/
-│   ├── components/
-│   │   ├── smart-table/          # The smart table component
-│   │   └── facility-table/       # Example implementation
-│   ├── configs/
-│   │   └── tables/               # Table configurations
-│   ├── models/
-│   │   ├── table.config.interface.ts  # Type definitions
-│   │   └── table-data.interface.ts
-│   └── services/
-│       └── data-sources/         # Data service implementations
-```
-
-## 🎯 Data Model Requirements
-
-Your data type must have an `id` property and can optionally include a `status` property:
-
-```typescript
-interface MyDataType {
-  id: string;           // Required: Unique identifier
-  status?: string;      // Optional: For status badges
-  [key: string]: any;   // Your custom properties
-}
-```
-
-## 🌐 RTL Support
-
-The smart table has built-in RTL (Right-to-Left) support. The current implementation is configured for Hebrew, but you can easily modify it for your language needs in the template file.
-
-## 📝 License
-
-This project is part of the Dynamic Table application.
-
-## 🤝 Contributing
-
-Feel free to extend and customize the smart table component for your specific needs!
+Same component. Different data. That's the power of dynamic tables.
 
 ---
 
-**Built with Angular 20.1** • **Powered by Signals** • **Mobile First**
+**Angular 21** • **Signal-based** • **Mobile-first** • **TypeScript**
