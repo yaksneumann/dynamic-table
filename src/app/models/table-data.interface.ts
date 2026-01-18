@@ -49,3 +49,26 @@ export interface StatusSummary {
   inProgress: number;
   completed: number;
 }
+
+// Employee data example - demonstrates table flexibility
+export interface EmployeeData {
+  [key: string]: any;
+  id: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  department: string;
+  position: string;
+  salary: number;
+  startDate: string;
+  status: 'active' | 'onLeave' | 'remote' | 'inactive';
+  skills: string[];
+  location: {
+    office: string;
+    city: string;
+  };
+  performance: {
+    rating: number;
+    lastReview: string;
+  };
+}

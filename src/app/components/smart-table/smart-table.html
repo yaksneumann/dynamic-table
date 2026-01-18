@@ -1,22 +1,14 @@
 <div class="table-container" dir="rtl">
-  <div class="status-badges">
-    <div class="badge badge-total">
-      <span class="badge-label">סה"כ</span>
-      <span class="badge-count">{{ statusSummary().total }}</span>
+  @if (config().badges && config().badges!.length > 0) {
+    <div class="status-badges">
+      @for (badge of config().badges; track badge.label) {
+        <div class="badge" [class]="badge.cssClass || 'badge-default'" [style.border-left]="badge.color ? '4px solid ' + badge.color : ''">
+          <span class="badge-label">{{ badge.label }}</span>
+          <span class="badge-count">{{ getBadgeCount(badge) }}</span>
+        </div>
+      }
     </div>
-    <div class="badge badge-ready">
-      <span class="badge-label">מוכן</span>
-      <span class="badge-count">{{ statusSummary().ready }}</span>
-    </div>
-    <div class="badge badge-progress">
-      <span class="badge-label">בתהליך</span>
-      <span class="badge-count">{{ statusSummary().inProgress }}</span>
-    </div>
-    <div class="badge badge-completed">
-      <span class="badge-label">הושלם</span>
-      <span class="badge-count">{{ statusSummary().completed }}</span>
-    </div>
-  </div>
+  }
 
   @if (config().features.enableSearch || config().features.enableExport) {
     <div class="table-controls">
@@ -24,7 +16,7 @@
         <input
           type="text"
           class="search-input"
-          placeholder="חיפוש לפי שם, מתקן, כתובת, איש קשר..."
+          placeholder="חיפוש..."
           [value]="searchTerm()"
           (input)="onSearchChange($event)"
         />
@@ -98,24 +90,36 @@
         <div class="mobile-card" (click)="openDetail(row, 'view')">
           <div class="card-header">
             <span class="card-id">{{ row.id }}</span>
-            <span
-              class="status-badge"
-              [style.background-color]="getStatusColor(row.status)"
-            >
-              {{ getFormattedStatus(row) }}
-            </span>
+            @if (row.status !== undefined) {
+              <span
+                class="status-badge"
+                [style.background-color]="getStatusColor(row.status)"
+              >
+                {{ getFormattedStatus(row) }}
+              </span>
+            }
           </div>
           <div class="card-body">
-            <div class="card-row">
-              <span class="label">מתקן:</span>
-              <span class="value">{{ row['facilityName'] }}</span>
-            </div>
-            <div class="card-row">
-              <span class="label">סכום:</span>
-              <span class="value amount-highlight" [style]="getAmountStyle(row)">
-                {{ getFormattedAmount(row) }}
-              </span>
-            </div>
+            @for (column of visibleColumns(); track column.key) {
+              @if (column.type !== 'action' && column.key !== 'id') {
+                <div class="card-row">
+                  <span class="label">{{ column.header }}:</span>
+                  @if (column.type === 'badge') {
+                    <span
+                      class="value status-badge"
+                      [style]="getCellStyle(column, row[column.key], row)"
+                      [style.background-color]="getStatusColor(row[column.key])"
+                    >
+                      {{ getCellValue(column, row) }}
+                    </span>
+                  } @else {
+                    <span class="value" [style]="getCellStyle(column, row[column.key], row)">
+                      {{ getCellValue(column, row) }}
+                    </span>
+                  }
+                </div>
+              }
+            }
           </div>
           <div class="card-footer">
             @if (config().features.enableEdit) {
@@ -200,127 +204,36 @@
     <div class="modal-overlay" (click)="closeDetail()">
       <div class="modal-content" (click)="$event.stopPropagation()">
         <div class="modal-header">
-          <h2>פרטי משימה: {{ detailModal().data!.id }}</h2>
+          <h2>{{ detailModal().data!.id }}</h2>
           <button class="close-btn" (click)="closeDetail()">✕</button>
         </div>
 
         <div class="modal-body">
-          <section class="detail-section">
-            <h3>מידע כללי</h3>
-            <div class="detail-grid">
-              <div class="detail-field">
-                <label>מזהה:</label>
-                <span>{{ detailModal().data!.id }}</span>
-              </div>
-              <div class="detail-field">
-                <label>שם המתקן:</label>
-                @if (detailModal().mode === 'edit') {
-                  <input [(ngModel)]="detailModal().data!.facilityName" />
-                } @else {
-                  <span>{{ detailModal().data!.facilityName }}</span>
-                }
-              </div>
-              <div class="detail-field">
-                <label>כתובת:</label>
-                @if (detailModal().mode === 'edit') {
-                  <input [(ngModel)]="detailModal().data!.address" />
-                } @else {
-                  <span>{{ detailModal().data!.address }}</span>
-                }
-              </div>
-              <div class="detail-field">
-                <label>איש קשר:</label>
-                @if (detailModal().mode === 'edit') {
-                  <input [(ngModel)]="detailModal().data!.contactName" />
-                } @else {
-                  <span>{{ detailModal().data!.contactName }}</span>
-                }
-              </div>
-              <div class="detail-field">
-                <label>טלפון:</label>
-                @if (detailModal().mode === 'edit') {
-                  <input [(ngModel)]="detailModal().data!.contactPhone" />
-                } @else {
-                  <span>{{ detailModal().data!.contactPhone }}</span>
-                }
-              </div>
-              <div class="detail-field">
-                <label>סטטוס:</label>
-                <span
-                  class="status-badge"
-                  [style.background-color]="getStatusColor(detailModal().data!.status)"
-                >
-                  {{ getDetailStatus() }}
-                </span>
-              </div>
-            </div>
-          </section>
-
-          <section class="detail-section">
-            <h3>פרטי משלוח</h3>
-            <div class="detail-grid">
-              <div class="detail-field">
-                <label>מספר שקים:</label>
-                <span>{{ detailModal().data!.bagCount }}</span>
-              </div>
-              <div class="detail-field">
-                <label>סכום כולל:</label>
-                <span class="amount-large">₪{{ detailModal().data!.totalAmount.toLocaleString('he-IL') }}</span>
-              </div>
-              <div class="detail-field">
-                <label>מוקד:</label>
-                <span>{{ detailModal().data!.hubName }}</span>
-              </div>
-              <div class="detail-field">
-                <label>סוג משלוח:</label>
-                <span>{{ detailModal().data!.deliveryType === 'delivery' ? 'משלוח' : 'איסוף' }}</span>
-              </div>
-            </div>
-          </section>
-
-          <section class="detail-section">
-            <h3>ברקודים</h3>
-            <table class="detail-table">
-              <thead>
-                <tr>
-                  <th>ברקוד</th>
-                  <th>סוג</th>
-                  <th>סכום</th>
-                </tr>
-              </thead>
-              <tbody>
-                @for (barcode of detailModal().data!.barcodes; track barcode.barcode) {
-                  <tr>
-                    <td>{{ barcode.barcode }}</td>
-                    <td>{{ barcode.type }}</td>
-                    <td>₪{{ barcode.amount.toLocaleString('he-IL') }}</td>
-                  </tr>
-                }
-              </tbody>
-            </table>
-          </section>
-
-          <section class="detail-section">
-            <h3>צוות</h3>
-            <div class="detail-grid">
-              <div class="detail-field">
-                <label>מנהל צוות:</label>
-                <span>{{ detailModal().data!.team.teamLeader }}</span>
-              </div>
-              <div class="detail-field">
-                <label>נהג:</label>
-                <span>{{ detailModal().data!.team.driver }}</span>
-              </div>
-              <div class="detail-field">
-                <label>מאבטח 1:</label>
-                <span>{{ detailModal().data!.team.security1 }}</span>
-              </div>
-              <div class="detail-field">
-                <label>מאבטח 2:</label>
-                <span>{{ detailModal().data!.team.security2 }}</span>
-              </div>
-            </div>
-          </section>
+          <div class="detail-grid">
+            @for (column of config().columns; track column.key) {
+              @if (column.type !== 'action') {
+                <div class="detail-field">
+                  <label>{{ column.header }}:</label>
+                  @if (detailModal().mode === 'edit' && column.key !== 'id') {
+                    <input [(ngModel)]="detailModal().data![column.key]" />
+                  } @else {
+                    @if (column.type === 'badge') {
+                      <span
+                        class="status-badge"
+                        [style.background-color]="getStatusColor(detailModal().data![column.key])"
+                      >
+                        {{ getCellValue(column, detailModal().data!) }}
+                      </span>
+                    } @else {
+                      <span>
+                        {{ getCellValue(column, detailModal().data!) }}
+                      </span>
+                    }
+                  }
+                </div>
+              }
+            }
+          </div>
         </div>
 
         <div class="modal-footer">

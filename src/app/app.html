@@ -1,13 +1,13 @@
 <div class="app-container">
   <header class="app-header">
     <div class="header-content">
-      <h1>ניהול שליחויות - מערכת דואר ישראל</h1>
+      <h1>מערכת דואר ישראל</h1>
       <p>טבלה דינמית לניהול משימות הובלה ומשלוחים</p>
     </div>
   </header>
   
   <main class="main-content">
-    <app-facility-table></app-facility-table>
+    <app-smart-table [config]="config" [dataSource]="dataService"></app-smart-table>
   </main>
 </div>
 

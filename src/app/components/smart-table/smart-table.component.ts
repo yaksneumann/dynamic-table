@@ -1,10 +1,4 @@
-import {
-  Component,
-  OnInit,
-  signal,
-  computed,
-  input,
-} from '@angular/core';
+import { Component, OnInit, signal, computed, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -16,6 +10,7 @@ import {
   TableConfig,
   ColumnConfig,
   DataSourceService,
+  BadgeConfig,
 } from '../../models/table.config.interface';
 
 @Component({
@@ -26,9 +21,8 @@ import {
   styleUrl: './smart-table.css',
 })
 export class SmartTableComponent<
-  T extends { id: string; status?: string; [key: string]: any }
-> implements OnInit
-{
+  T extends { id: string; status?: string; [key: string]: any },
+> implements OnInit {
   Math = Math;
 
   config = input.required<TableConfig<T>>();
@@ -54,11 +48,11 @@ export class SmartTableComponent<
   filteredData = computed(() => {
     const data = this.allData();
     const search = this.searchTerm().toLowerCase().trim();
-    
+
     if (!search) return data;
-    
-    return data.filter(row => {
-      return Object.values(row).some(value => {
+
+    return data.filter((row) => {
+      return Object.values(row).some((value) => {
         if (value === null || value === undefined) return false;
         if (typeof value === 'object') {
           return JSON.stringify(value).toLowerCase().includes(search);
@@ -98,17 +92,27 @@ export class SmartTableComponent<
     };
   });
 
-  onSearchChange(event: Event) {
-    const value = (event.target as HTMLInputElement).value;
-    this.searchTerm.set(value);
-    this.pagination.update(p => ({ ...p, currentPage: 1 }));
-  }
-
   ngOnInit() {
     this.loadData();
     this.initializePagination();
     this.checkScreenSize();
     window.addEventListener('resize', () => this.checkScreenSize());
+  }
+
+  getBadgeCount(badge: BadgeConfig): number {
+    const data = this.filteredData();
+    if (badge.filterValue === null || badge.filterValue === undefined) {
+      return data.length;
+    }
+
+    return data.filter((item) => item[badge.field] === badge.filterValue)
+      .length;
+  }
+
+  onSearchChange(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.searchTerm.set(value);
+    this.pagination.update((p) => ({ ...p, currentPage: 1 }));
   }
 
   loadData() {
@@ -171,7 +175,7 @@ export class SmartTableComponent<
         .subscribe({
           next: (updated) => {
             this.allData.update((data) =>
-              data.map((item) => (item.id === updated.id ? updated : item))
+              data.map((item) => (item.id === updated.id ? updated : item)),
             );
             this.closeDetail();
           },
@@ -192,7 +196,7 @@ export class SmartTableComponent<
         this.dataSource().delete!(row.id).subscribe({
           next: () => {
             this.allData.update((data) =>
-              data.filter((item) => item.id !== row.id)
+              data.filter((item) => item.id !== row.id),
             );
           },
           error: (err) => console.error('Delete failed:', err),

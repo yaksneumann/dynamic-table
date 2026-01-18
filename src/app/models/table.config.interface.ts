@@ -5,6 +5,15 @@ export interface TableConfig<T = any> {
   pagination: PaginationSettings;
   features: FeatureFlags;
   styling?: StylingConfig;
+  badges?: BadgeConfig[];
+}
+
+export interface BadgeConfig {
+  label: string;
+  field: string;
+  filterValue?: any;
+  color?: string;
+  cssClass?: string;
 }
 
 export interface ColumnConfig {

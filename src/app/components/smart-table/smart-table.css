@@ -590,12 +590,37 @@
 
   .modal-content {
     margin: 0;
+    width: 100%;
+    max-width: 100%;
     max-height: 100vh;
+    height: 100vh;
     border-radius: 0;
+    overflow-y: auto;
+  }
+
+  .modal-header {
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 10;
+  }
+
+  .modal-body {
+    padding: 16px;
   }
 
   .detail-grid {
     grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .detail-field label {
+    font-size: 12px;
+  }
+
+  .detail-field span,
+  .detail-field input {
+    font-size: 14px;
   }
 }
 
@@ -613,5 +638,14 @@
     padding: 6px 10px;
     font-size: 12px;
     min-width: 32px;
+  }
+
+  .modal-header h2 {
+    font-size: 18px;
+  }
+
+  .btn {
+    padding: 8px 16px;
+    font-size: 13px;
   }
 }

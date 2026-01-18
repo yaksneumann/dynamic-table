@@ -137,4 +137,34 @@ export const facilityTableConfig: TableConfig = {
       urgent: '#F44336',
     },
   },
+
+  badges: [
+    {
+      label: 'סה"כ',
+      field: 'status',
+      filterValue: null,
+      cssClass: 'badge-total',
+    },
+    {
+      label: 'מוכן',
+      field: 'status',
+      filterValue: 'ready',
+      color: '#2196F3',
+      cssClass: 'badge-ready',
+    },
+    {
+      label: 'בתהליך',
+      field: 'status',
+      filterValue: 'inProgress',
+      color: '#FFC107',
+      cssClass: 'badge-progress',
+    },
+    {
+      label: 'הושלם',
+      field: 'status',
+      filterValue: 'completed',
+      color: '#4CAF50',
+      cssClass: 'badge-completed',
+    },
+  ],
 };
