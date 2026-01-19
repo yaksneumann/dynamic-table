@@ -1,254 +1,212 @@
 <div class="table-container" dir="rtl">
   @if (config().badges && config().badges!.length > 0) {
-    <div class="status-badges">
-      @for (badge of config().badges; track badge.label) {
-        <div class="badge" [class]="badge.cssClass || 'badge-default'" [style.border-left]="badge.color ? '4px solid ' + badge.color : ''">
-          <span class="badge-label">{{ badge.label }}</span>
-          <span class="badge-count">{{ getBadgeCount(badge) }}</span>
-        </div>
-      }
+  <div class="status-badges">
+    @for (badge of config().badges; track badge.label) {
+    <div class="badge" [class]="badge.cssClass || 'badge-default'"
+      [style.border-left]="badge.color ? '4px solid ' + badge.color : ''">
+      <span class="badge-label">{{ badge.label }}</span>
+      <span class="badge-count">{{ getBadgeCount(badge) }}</span>
     </div>
+    }
+  </div>
   }
 
   @if (config().features.enableSearch || config().features.enableExport) {
-    <div class="table-controls">
-      @if (config().features.enableSearch) {
-        <input
-          type="text"
-          class="search-input"
-          placeholder="חיפוש..."
-          [value]="searchTerm()"
-          (input)="onSearchChange($event)"
-        />
-      }
-    </div>
+  <div class="table-controls">
+    @if (config().features.enableSearch) {
+    <input type="text" class="search-input" placeholder="חיפוש..." [value]="searchTerm()"
+      (input)="onSearchChange($event)" />
+    }
+  </div>
   }
 
   @if (!isMobile()) {
-    <div class="table-wrapper">
-      <table class="data-table">
-        <thead>
-          <tr>
-            @for (column of visibleColumns(); track column.key) {
-              <th [style.width]="column.width" [style.text-align]="column.align">
-                {{ column.header }}
-                @if (column.sortable) {
-                  <span class="sort-icon">↕</span>
-                }
-              </th>
+  <div class="table-wrapper">
+    <table class="data-table">
+      <thead>
+        <tr>
+          @for (column of visibleColumns(); track column.key) {
+          <th [style.width]="column.width" [style.text-align]="column.align">
+            {{ column.header }}
+            @if (column.sortable) {
+            <span class="sort-icon">↕</span>
             }
-          </tr>
-        </thead>
-        <tbody>
-          @for (row of paginatedData(); track row.id) {
-            <tr>
-              @for (column of visibleColumns(); track column.key) {
-                <td [style.text-align]="column.align">
-                  @if (column.type === 'action') {
-                    @if (config().features.enableEdit) {
-                      <button
-                        class="edit-btn"
-                        (click)="handleEdit(row)"
-                        title="ערוך"
-                      >
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                          <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
-                        </svg>
-                      </button>
-                    }
-                  } @else if (column.type === 'badge') {
-                    <span
-                      class="status-badge"
-                      [style]="getCellStyle(column, row[column.key], row)"
-                      [style.background-color]="getStatusColor(row[column.key])"
-                    >
-                      {{ getCellValue(column, row) }}
-                    </span>
-                  } @else {
-                    <span [style]="getCellStyle(column, row[column.key], row)">
-                      {{ getCellValue(column, row) }}
-                    </span>
-                  }
-                </td>
-              }
-            </tr>
-          } @empty {
-            <tr>
-              <td [attr.colspan]="visibleColumns().length" class="empty-state">
-                אין נתונים להצגה
-              </td>
-            </tr>
+          </th>
           }
-        </tbody>
-      </table>
-    </div>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of paginatedData(); track row.id) {
+        <tr>
+          @for (column of visibleColumns(); track column.key) {
+          <td [style.text-align]="column.align">
+            @if (column.type === 'action') {
+            @if (config().features.enableEdit) {
+            <button class="edit-btn" (click)="handleEdit(row)" title="ערוך">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                <path
+                  d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z" />
+              </svg>
+            </button>
+            }
+            } @else if (column.type === 'badge') {
+            <span class="status-badge" [style]="getCellStyle(column, row[column.key], row)"
+              [style.background-color]="getStatusColor(row[column.key])">
+              {{ getCellValue(column, row) }}
+            </span>
+            } @else {
+            <span [style]="getCellStyle(column, row[column.key], row)">
+              {{ getCellValue(column, row) }}
+            </span>
+            }
+          </td>
+          }
+        </tr>
+        } @empty {
+        <tr>
+          <td [attr.colspan]="visibleColumns().length" class="empty-state">
+            אין נתונים להצגה
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
   }
 
   @if (isMobile()) {
-    <div class="cards-container">
-      @for (row of paginatedData(); track row.id) {
-        <div class="mobile-card" (click)="openDetail(row, 'view')">
-          <div class="card-header">
-            <span class="card-id">{{ row.id }}</span>
-            @if (row.status !== undefined) {
-              <span
-                class="status-badge"
-                [style.background-color]="getStatusColor(row.status)"
-              >
-                {{ getFormattedStatus(row) }}
-              </span>
-            }
-          </div>
-          <div class="card-body">
-            @for (column of visibleColumns(); track column.key) {
-              @if (column.type !== 'action' && column.key !== 'id') {
-                <div class="card-row">
-                  <span class="label">{{ column.header }}:</span>
-                  @if (column.type === 'badge') {
-                    <span
-                      class="value status-badge"
-                      [style]="getCellStyle(column, row[column.key], row)"
-                      [style.background-color]="getStatusColor(row[column.key])"
-                    >
-                      {{ getCellValue(column, row) }}
-                    </span>
-                  } @else {
-                    <span class="value" [style]="getCellStyle(column, row[column.key], row)">
-                      {{ getCellValue(column, row) }}
-                    </span>
-                  }
-                </div>
-              }
-            }
-          </div>
-          <div class="card-footer">
-            @if (config().features.enableEdit) {
-              <button class="card-action-btn" (click)="handleEdit(row); $event.stopPropagation()">
-                ערוך
-              </button>
-            }
-          </div>
+  <div class="cards-container">
+    @for (row of paginatedData(); track row.id) {
+    <div class="mobile-card" (click)="openDetail(row, 'view')">
+      <div class="card-header">
+        <span class="card-id">{{ row.id }}</span>
+        @if (row.status !== undefined) {
+        <span class="status-badge" [style.background-color]="getStatusColor(row.status)">
+          {{ getFormattedStatus(row) }}
+        </span>
+        }
+      </div>
+      <div class="card-body">
+        @for (column of visibleColumns(); track column.key) {
+        @if (column.type !== 'action' && column.key !== 'id') {
+        <div class="card-row">
+          <span class="label">{{ column.header }}:</span>
+          @if (column.type === 'badge') {
+          <span class="value status-badge" [style]="getCellStyle(column, row[column.key], row)"
+            [style.background-color]="getStatusColor(row[column.key])">
+            {{ getCellValue(column, row) }}
+          </span>
+          } @else {
+          <span class="value" [style]="getCellStyle(column, row[column.key], row)">
+            {{ getCellValue(column, row) }}
+          </span>
+          }
         </div>
-      } @empty {
-        <div class="empty-state">אין נתונים להצגה</div>
-      }
+        }
+        }
+      </div>
+      <div class="card-footer">
+        @if (config().features.enableEdit) {
+        <button class="card-action-btn" (click)="handleEdit(row); $event.stopPropagation()">
+          ערוך
+        </button>
+        }
+      </div>
     </div>
+    } @empty {
+    <div class="empty-state">אין נתונים להצגה</div>
+    }
+  </div>
   }
 
   <div class="pagination">
     <div class="pagination-info">
-      מציג {{ (pagination().currentPage - 1) * pagination().pageSize + 1 }} -
-      {{ Math.min(pagination().currentPage * pagination().pageSize, filteredData().length) }}
-      מתוך {{ filteredData().length }}
+      מציג {{ currentPageRange.start }} - {{ currentPageRange.end }} מתוך {{ filteredData().length }}
     </div>
 
     <div class="pagination-controls">
-      <button
-        class="page-btn"
-        (click)="goToPage(1)"
-        [disabled]="pagination().currentPage === 1"
-      >
+      <button class="page-btn" (click)="goToPage(1)" [disabled]="pagination().currentPage === 1">
         ראשון
       </button>
-      <button
-        class="page-btn"
-        (click)="goToPage(pagination().currentPage - 1)"
-        [disabled]="pagination().currentPage === 1"
-      >
+      <button class="page-btn" (click)="goToPage(pagination().currentPage - 1)"
+        [disabled]="pagination().currentPage === 1">
         הקודם
       </button>
 
-      @for (page of [].constructor(totalPages()); track $index) {
-        @if ($index + 1 === pagination().currentPage || 
-             Math.abs($index + 1 - pagination().currentPage) <= 2) {
-          <button
-            class="page-btn"
-            [class.active]="$index + 1 === pagination().currentPage"
-            (click)="goToPage($index + 1)"
-          >
-            {{ $index + 1 }}
-          </button>
-        }
+      @for (page of [].constructor(totalPages); track $index) {
+      @if (shouldShowPageButton($index + 1)) {
+      <button class="page-btn"
+        [class.active]="$index + 1 === pagination().currentPage" (click)="goToPage($index + 1)">
+        {{ $index + 1 }}
+      </button>
+      }
       }
 
-      <button
-        class="page-btn"
-        (click)="goToPage(pagination().currentPage + 1)"
-        [disabled]="pagination().currentPage === totalPages()"
-      >
-        הבא
-      </button>
-      <button
-        class="page-btn"
-        (click)="goToPage(totalPages())"
-        [disabled]="pagination().currentPage === totalPages()"
-      >
-        אחרון
-      </button>
+        <button class="page-btn" (click)="goToPage(pagination().currentPage + 1)"
+          [disabled]="pagination().currentPage === totalPages">
+          הבא
+        </button>
+        <button class="page-btn" (click)="goToPage(totalPages)"
+          [disabled]="pagination().currentPage === totalPages">
+          אחרון
+        </button>
     </div>
 
     <div class="page-size-selector">
       <label>שורות בעמוד:</label>
-      <select
-        [value]="pagination().pageSize"
-        (change)="changePageSize(+$any($event.target).value)"
-      >
+      <select [value]="pagination().pageSize" (change)="changePageSize(+$any($event.target).value)">
         @for (size of pagination().pageSizeOptions; track size) {
-          <option [value]="size">{{ size }}</option>
+        <option [value]="size">{{ size }}</option>
         }
       </select>
     </div>
   </div>
 
   @if (detailModal().isOpen && detailModal().data) {
-    <div class="modal-overlay" (click)="closeDetail()">
-      <div class="modal-content" (click)="$event.stopPropagation()">
-        <div class="modal-header">
-          <h2>{{ detailModal().data!.id }}</h2>
-          <button class="close-btn" (click)="closeDetail()">✕</button>
-        </div>
+  <div class="modal-overlay" (click)="closeDetail()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ detailModal().data!.id }}</h2>
+        <button class="close-btn" (click)="closeDetail()">✕</button>
+      </div>
 
-        <div class="modal-body">
-          <div class="detail-grid">
-            @for (column of config().columns; track column.key) {
-              @if (column.type !== 'action') {
-                <div class="detail-field">
-                  <label>{{ column.header }}:</label>
-                  @if (detailModal().mode === 'edit' && column.key !== 'id') {
-                    <input [(ngModel)]="detailModal().data![column.key]" />
-                  } @else {
-                    @if (column.type === 'badge') {
-                      <span
-                        class="status-badge"
-                        [style.background-color]="getStatusColor(detailModal().data![column.key])"
-                      >
-                        {{ getCellValue(column, detailModal().data!) }}
-                      </span>
-                    } @else {
-                      <span>
-                        {{ getCellValue(column, detailModal().data!) }}
-                      </span>
-                    }
-                  }
-                </div>
-              }
+      <div class="modal-body">
+        <div class="detail-grid">
+          @for (column of config().columns; track column.key) {
+          @if (column.type !== 'action') {
+          <div class="detail-field">
+            <label>{{ column.header }}:</label>
+            @if (detailModal().mode === 'edit' && column.key !== 'id') {
+            <input [(ngModel)]="detailModal().data![column.key]" />
+            } @else {
+            @if (column.type === 'badge') {
+            <span class="status-badge" [style.background-color]="getStatusColor(detailModal().data![column.key])">
+              {{ getCellValue(column, detailModal().data!) }}
+            </span>
+            } @else {
+            <span>
+              {{ getCellValue(column, detailModal().data!) }}
+            </span>
+            }
             }
           </div>
-        </div>
-
-        <div class="modal-footer">
-          @if (detailModal().mode === 'edit') {
-            <button class="btn btn-primary" (click)="saveDetail()">שמור</button>
-            <button class="btn btn-secondary" (click)="closeDetail()">ביטול</button>
-          } @else {
-            <button class="btn btn-primary" (click)="detailModal().mode = 'edit'">
-              עבור למצב עריכה
-            </button>
-            <button class="btn btn-secondary" (click)="closeDetail()">סגור</button>
+          }
           }
         </div>
       </div>
+
+      <div class="modal-footer">
+        @if (detailModal().mode === 'edit') {
+        <button class="btn btn-primary" (click)="saveDetail()">שמור</button>
+        <button class="btn btn-secondary" (click)="closeDetail()">ביטול</button>
+        } @else {
+        <button class="btn btn-primary" (click)="detailModal().mode = 'edit'">
+          עבור למצב עריכה
+        </button>
+        <button class="btn btn-secondary" (click)="closeDetail()">סגור</button>
+        }
+      </div>
     </div>
+  </div>
   }
 </div>
-

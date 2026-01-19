@@ -30,8 +30,6 @@ import { TableService } from '../../services/table.service';
 export class SmartTableComponent<
   T extends { id: string; status?: string; [key: string]: any },
 > implements OnInit {
-  Math = Math;
-
   config = input.required<TableConfig<T>>();
   data = input.required<T[]>();
 
@@ -79,11 +77,26 @@ export class SmartTableComponent<
     return data.slice(start, end);
   });
 
-  totalPages = computed(() => {
-    const totalItems = this.filteredData().length;
-    const { pageSize } = this.pagination();
-    return Math.ceil(totalItems / pageSize);
-  });
+  get totalPages(): number {
+    return Math.ceil(this.filteredData().length / this.pagination().pageSize);
+  }
+
+  get currentPageRange(): { start: number; end: number } {
+    const start =
+      (this.pagination().currentPage - 1) * this.pagination().pageSize + 1;
+    const end = Math.min(
+      this.pagination().currentPage * this.pagination().pageSize,
+      this.filteredData().length,
+    );
+    return { start, end };
+  }
+
+  shouldShowPageButton(pageNumber: number): boolean {
+    const currentPage = this.pagination().currentPage;
+    return (
+      pageNumber === currentPage || Math.abs(pageNumber - currentPage) <= 2
+    );
+  }
 
   visibleColumns = computed(() => {
     const cols = this.config().columns;
@@ -144,7 +157,7 @@ export class SmartTableComponent<
   }
 
   goToPage(page: number) {
-    if (page >= 1 && page <= this.totalPages()) {
+    if (page >= 1 && page <= this.totalPages) {
       this.pagination.update((p) => ({ ...p, currentPage: page }));
     }
   }
