@@ -274,7 +274,7 @@ format: (value, row) => {
 ```typescript
 interface MyData {
   id: string;
-  status: 'pending' | 'active' | 'completed';  // Badges auto-generated
+  status: 'pending' | 'active' | 'completed'; 
 }
 ```
 
@@ -309,10 +309,9 @@ src/app/
 
 ```typescript
 interface YourDataType {
-  id: string;           // ✅ Required - unique identifier
-  status?: string;      // Optional - enables status badges
-  [key: string]: any;   // Any other properties you need
-}
+  id: string;          
+  status?: string;     
+  [key: string]: any;   
 ```
 
 ## 🔧 Example Implementation
