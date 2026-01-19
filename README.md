@@ -297,7 +297,7 @@ src/app/
 │       ├── smart-table.component.ts
 │       ├── smart-table.html
 │       └── smart-table.css
-├── configs/tables/               # ← Your table configurations
+├── configs/               # ← Your table configurations
 │   └── facility-table.config.ts  # Example config
 ├── models/
 │   └── table.config.interface.ts # Type definitions
@@ -317,7 +317,7 @@ interface YourDataType {
 ## 🔧 Example Implementation
 
 See the working example:
-- **Config**: [facility-table.config.ts](src/app/configs/tables/facility-table.config.ts)
+- **Config**: [facility-table.config.ts](src/app/configs/facility-table.config.ts)
 - **Service**: [facility-data.service.ts](src/app/services/data-sources/facility-data.service.ts)
 - **Component**: Uses SmartTableComponent with above config
 

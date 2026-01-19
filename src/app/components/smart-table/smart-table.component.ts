@@ -1,4 +1,11 @@
-import { Component, OnInit, signal, computed, input } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  signal,
+  computed,
+  input,
+  inject,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -9,9 +16,9 @@ import {
 import {
   TableConfig,
   ColumnConfig,
-  DataSourceService,
   BadgeConfig,
 } from '../../models/table.config.interface';
+import { TableService } from '../../services/table.service';
 
 @Component({
   selector: 'app-smart-table',
@@ -26,7 +33,9 @@ export class SmartTableComponent<
   Math = Math;
 
   config = input.required<TableConfig<T>>();
-  dataSource = input.required<DataSourceService<T>>();
+  data = input.required<T[]>();
+
+  private tableService = inject(TableService<T>);
 
   allData = signal<T[]>([]);
   isMobile = signal<boolean>(false);
@@ -116,12 +125,9 @@ export class SmartTableComponent<
   }
 
   loadData() {
-    this.dataSource()
-      .getData()
-      .subscribe((data) => {
-        this.allData.set(data);
-        this.pagination.update((p) => ({ ...p, totalItems: data.length }));
-      });
+    const data = this.data();
+    this.allData.set(data);
+    this.pagination.update((p) => ({ ...p, totalItems: data.length }));
   }
 
   initializePagination() {
@@ -170,17 +176,16 @@ export class SmartTableComponent<
   saveDetail() {
     const modal = this.detailModal();
     if (modal.data) {
-      this.dataSource()
-        .update(modal.data as unknown as T)
-        .subscribe({
-          next: (updated) => {
-            this.allData.update((data) =>
-              data.map((item) => (item.id === updated.id ? updated : item)),
-            );
-            this.closeDetail();
-          },
-          error: (err) => console.error('Update failed:', err),
-        });
+      this.tableService.update(modal.data as unknown as T).subscribe({
+        next: (updated) => {
+          const updatedData = this.allData().map((item) =>
+            item.id === updated.id ? updated : item,
+          );
+          this.allData.set(updatedData);
+          this.closeDetail();
+        },
+        error: (err) => console.error('Update failed:', err),
+      });
     }
   }
 
@@ -191,13 +196,14 @@ export class SmartTableComponent<
   }
 
   handleDelete(row: T) {
-    if (this.config().features.enableDelete && this.dataSource().delete) {
+    if (this.config().features.enableDelete) {
       if (confirm('האם אתה בטוח שברצונך למחוק?')) {
-        this.dataSource().delete!(row.id).subscribe({
+        this.tableService.delete(row.id).subscribe({
           next: () => {
-            this.allData.update((data) =>
-              data.filter((item) => item.id !== row.id),
+            const updatedData = this.allData().filter(
+              (item) => item.id !== row.id,
             );
+            this.allData.set(updatedData);
           },
           error: (err) => console.error('Delete failed:', err),
         });

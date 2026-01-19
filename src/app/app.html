@@ -7,7 +7,15 @@
   </header>
   
   <main class="main-content">
-    <app-smart-table [config]="config" [dataSource]="dataService" />
+    <section class="table-section">
+      <h2>ניהול מתקנים</h2>
+      <app-smart-table [config]="facilityConfig" [data]="facilityData" />
+    </section>
+
+    <section class="table-section">
+      <h2>ניהול עובדים</h2>
+      <app-smart-table [config]="employeeConfig" [data]="employeeData" />
+    </section>
   </main>
 </div>
 

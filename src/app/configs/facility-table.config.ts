@@ -1,4 +1,4 @@
-import { TableConfig } from '../../models/table.config.interface';
+import { TableConfig } from '../models/table.config.interface';
 
 export const facilityTableConfig: TableConfig = {
   columns: [

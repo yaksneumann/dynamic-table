@@ -32,6 +32,19 @@
   padding: 0;
 }
 
+.table-section {
+  margin: 12px 0;
+  padding: 0 24px;
+}
+
+.table-section h2 {
+  color: #333;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  padding: 0 8px;
+}
+
 @media (max-width: 768px) {
   .app-header {
     padding: 16px 20px;

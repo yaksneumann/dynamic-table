@@ -198,7 +198,7 @@ export const MOCK_FACILITY_DATA: FacilityData[] = [
   },
 ];
 
-// Employee data - demonstrates table works with completely different data structures
+// Employee data - demonstrates table works with completely different data
 export const MOCK_EMPLOYEE_DATA: EmployeeData[] = [
   {
     id: 'EMP-001',

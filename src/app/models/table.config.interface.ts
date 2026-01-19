@@ -1,5 +1,3 @@
-import { Observable } from 'rxjs';
-
 export interface TableConfig<T = any> {
   columns: ColumnConfig[];
   pagination: PaginationSettings;
@@ -54,11 +52,4 @@ export interface FeatureFlags {
 export interface StylingConfig {
   statusColors?: Record<string, string>;
   customClasses?: string[];
-}
-
-export interface DataSourceService<T> {
-  getData(): Observable<T[]>;
-  getById(id: string): Observable<T>;
-  update(item: T): Observable<T>;
-  delete?(id: string): Observable<void>;
 }
