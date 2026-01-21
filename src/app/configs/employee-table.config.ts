@@ -118,7 +118,6 @@ export const employeeTableConfig: TableConfig = {
   features: {
     enableEdit: true,
     enableDelete: true,
-    enableExport: true,
     enableSearch: true,
     enableFilters: true,
     enableSort: true,
@@ -138,35 +137,47 @@ export const employeeTableConfig: TableConfig = {
       label: 'Total',
       field: 'status',
       filterValue: null,
-      cssClass: 'badge-total',
+      styles: {
+        backgroundColor: '#f0f0f0',
+        textColor: '#333',
+        border: '1px solid #ccc',
+      },
     },
     {
       label: 'Active',
       field: 'status',
       filterValue: 'active',
-      color: '#4CAF50',
-      cssClass: 'badge-active',
+      styles: {
+        backgroundColor: '#28a745',
+        textColor: 'white',
+      },
     },
     {
       label: 'Remote',
       field: 'status',
       filterValue: 'remote',
-      color: '#2196F3',
-      cssClass: 'badge-remote',
+      styles: {
+        backgroundColor: '#17a2b8',
+        textColor: 'white',
+      },
     },
     {
       label: 'On Leave',
       field: 'status',
       filterValue: 'onLeave',
-      color: '#FFC107',
-      cssClass: 'badge-leave',
+      styles: {
+        backgroundColor: '#ffc107',
+        textColor: 'black',
+      },
     },
     {
       label: 'Inactive',
       field: 'status',
       filterValue: 'inactive',
-      color: '#9E9E9E',
-      cssClass: 'badge-inactive',
+      styles: {
+        backgroundColor: '#6c757d',
+        textColor: 'white',
+      },
     },
   ],
 };

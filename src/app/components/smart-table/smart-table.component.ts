@@ -5,13 +5,14 @@ import {
   computed,
   input,
   inject,
+  WritableSignal,
+  HostListener,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgStyle } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
   PaginationConfig,
   DetailModalData,
-  StatusSummary,
 } from '../../models/table-data.interface';
 import {
   TableConfig,
@@ -19,11 +20,12 @@ import {
   BadgeConfig,
 } from '../../models/table.config.interface';
 import { TableService } from '../../services/table.service';
+import { STATUS_TYPES, StatusSummary } from '../../models/status-types';
 
 @Component({
   selector: 'app-smart-table',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NgStyle],
   templateUrl: './smart-table.html',
   styleUrl: './smart-table.css',
 })
@@ -35,16 +37,11 @@ export class SmartTableComponent<
 
   private tableService = inject(TableService<T>);
 
-  allData = signal<T[]>([]);
+  private allData = signal<T[]>([]);
   isMobile = signal<boolean>(false);
   searchTerm = signal<string>('');
 
-  pagination = signal<PaginationConfig>({
-    currentPage: 1,
-    pageSize: 5,
-    totalItems: 0,
-    pageSizeOptions: [5, 10, 20, 50],
-  });
+  pagination!: WritableSignal<PaginationConfig>;
 
   detailModal = signal<DetailModalData>({
     isOpen: false,
@@ -106,19 +103,26 @@ export class SmartTableComponent<
 
   statusSummary = computed<StatusSummary>(() => {
     const data = this.filteredData();
-    return {
+    const summary: StatusSummary = {
       total: data.length,
-      ready: data.filter((d) => d.status === 'ready').length,
-      inProgress: data.filter((d) => d.status === 'inProgress').length,
-      completed: data.filter((d) => d.status === 'completed').length,
-    };
+    } as StatusSummary;
+
+    STATUS_TYPES.forEach((status) => {
+      summary[status] = data.filter((d) => d.status === status).length;
+    });
+
+    return summary;
   });
+
+  @HostListener('window:resize')
+  onWindowResize() {
+    this.checkScreenSize();
+  }
 
   ngOnInit() {
     this.loadData();
     this.initializePagination();
     this.checkScreenSize();
-    window.addEventListener('resize', () => this.checkScreenSize());
   }
 
   getBadgeCount(badge: BadgeConfig): number {
@@ -134,36 +138,39 @@ export class SmartTableComponent<
   onSearchChange(event: Event) {
     const value = (event.target as HTMLInputElement).value;
     this.searchTerm.set(value);
-    this.pagination.update((p) => ({ ...p, currentPage: 1 }));
+    this.pagination.update((p: PaginationConfig) => ({ ...p, currentPage: 1 }));
   }
 
-  loadData() {
+  private loadData() {
     const data = this.data();
     this.allData.set(data);
-    this.pagination.update((p) => ({ ...p, totalItems: data.length }));
   }
 
-  initializePagination() {
+  private initializePagination() {
     const paginationSettings = this.config().pagination;
-    this.pagination.update((p) => ({
-      ...p,
+    this.pagination = signal<PaginationConfig>({
+      currentPage: 1,
       pageSize: paginationSettings.defaultPageSize,
+      totalItems: this.allData().length,
       pageSizeOptions: paginationSettings.pageSizeOptions,
-    }));
+    });
   }
 
-  checkScreenSize() {
+  private checkScreenSize() {
     this.isMobile.set(window.innerWidth < 768);
   }
 
   goToPage(page: number) {
     if (page >= 1 && page <= this.totalPages) {
-      this.pagination.update((p) => ({ ...p, currentPage: page }));
+      this.pagination.update((p: PaginationConfig) => ({
+        ...p,
+        currentPage: page,
+      }));
     }
   }
 
   changePageSize(size: number) {
-    this.pagination.update((p) => ({
+    this.pagination.update((p: PaginationConfig) => ({
       ...p,
       pageSize: size,
       currentPage: 1,
@@ -210,7 +217,12 @@ export class SmartTableComponent<
 
   handleDelete(row: T) {
     if (this.config().features.enableDelete) {
-      if (confirm('האם אתה בטוח שברצונך למחוק?')) {
+      const firstColumn = this.config().columns[0];
+      const identifier = firstColumn
+        ? this.getCellValue(firstColumn, row)
+        : row.id;
+
+      if (confirm(`האם אתה בטוח שברצונך למחוק את: ${identifier}?`)) {
         this.tableService.delete(row.id).subscribe({
           next: () => {
             const updatedData = this.allData().filter(
@@ -258,49 +270,18 @@ export class SmartTableComponent<
     return value?.toString() || '';
   }
 
-  getStatusColor(status: string | undefined): string {
-    if (!status) return '#9E9E9E';
-
+  getStatusColor(status: string | undefined): string | undefined {
+    if (!status) return undefined;
     const colors = this.config().styling?.statusColors;
-    if (colors && colors[status]) {
-      return colors[status];
-    }
-
-    const colorMap: Record<string, string> = {
-      ready: '#2196F3',
-      inProgress: '#FFC107',
-      completed: '#4CAF50',
-      urgent: '#F44336',
-    };
-    return colorMap[status] || '#9E9E9E';
+    return colors?.[status];
   }
 
-  getStatusColumn(): ColumnConfig | undefined {
+  private getStatusColumn(): ColumnConfig | undefined {
     return this.config().columns.find((c) => c.key === 'status');
-  }
-
-  getTotalAmountColumn(): ColumnConfig | undefined {
-    return this.config().columns.find((c) => c.key === 'totalAmount');
   }
 
   getFormattedStatus(row: T): string {
     const column = this.getStatusColumn();
     return column ? this.getCellValue(column, row) : '';
-  }
-
-  getFormattedAmount(row: T): string {
-    const column = this.getTotalAmountColumn();
-    return column ? this.getCellValue(column, row) : '';
-  }
-
-  getAmountStyle(row: T): any {
-    const column = this.getTotalAmountColumn();
-    return column ? this.getCellStyle(column, row['totalAmount'], row) : {};
-  }
-
-  getDetailStatus(): string {
-    const data = this.detailModal().data;
-    if (!data) return '';
-    return this.getFormattedStatus(data as unknown as T);
   }
 }

@@ -43,13 +43,6 @@ export interface DetailModalData {
   mode: 'view' | 'edit';
 }
 
-export interface StatusSummary {
-  total: number;
-  ready: number;
-  inProgress: number;
-  completed: number;
-}
-
 // Employee data example - demonstrates table flexibility
 export interface EmployeeData {
   [key: string]: any;

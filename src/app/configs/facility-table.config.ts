@@ -123,7 +123,7 @@ export const facilityTableConfig: TableConfig = {
   features: {
     enableEdit: true,
     enableDelete: false,
-    enableExport: true,
+
     enableSearch: true,
     enableFilters: true,
     enableSort: true,
@@ -143,28 +143,38 @@ export const facilityTableConfig: TableConfig = {
       label: 'סה"כ',
       field: 'status',
       filterValue: null,
-      cssClass: 'badge-total',
+      styles: {
+        backgroundColor: '#e0e0e0',
+        textColor: '#000000',
+        border: '1px solid #bdbdbd',
+      },
     },
     {
       label: 'מוכן',
       field: 'status',
       filterValue: 'ready',
-      color: '#2196F3',
-      cssClass: 'badge-ready',
+      styles: {
+        backgroundColor: '#2196F3',
+        textColor: '#ffffff',
+      },
     },
     {
       label: 'בתהליך',
       field: 'status',
       filterValue: 'inProgress',
-      color: '#FFC107',
-      cssClass: 'badge-progress',
+      styles: {
+        backgroundColor: '#FFC107',
+        textColor: '#000000',
+      },
     },
     {
       label: 'הושלם',
       field: 'status',
       filterValue: 'completed',
-      color: '#4CAF50',
-      cssClass: 'badge-completed',
+      styles: {
+        backgroundColor: '#4CAF50',
+        textColor: '#ffffff',
+      },
     },
   ],
 };

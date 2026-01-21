@@ -6,14 +6,6 @@ export interface TableConfig<T = any> {
   badges?: BadgeConfig[];
 }
 
-export interface BadgeConfig {
-  label: string;
-  field: string;
-  filterValue?: any;
-  color?: string;
-  cssClass?: string;
-}
-
 export interface ColumnConfig {
   key: string;
   header: string;
@@ -43,7 +35,6 @@ export interface PaginationSettings {
 export interface FeatureFlags {
   enableEdit?: boolean;
   enableDelete?: boolean;
-  enableExport?: boolean;
   enableSearch?: boolean;
   enableFilters?: boolean;
   enableSort?: boolean;
@@ -52,4 +43,16 @@ export interface FeatureFlags {
 export interface StylingConfig {
   statusColors?: Record<string, string>;
   customClasses?: string[];
+}
+
+export interface BadgeConfig {
+  label: string;
+  field: string;
+  filterValue?: any;
+  styles?: {
+    textColor?: string;
+    backgroundColor?: string;
+    borderColor?: string;
+    border?: string;
+  };
 }

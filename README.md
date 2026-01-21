@@ -1,15 +1,17 @@
 # 📊 Smart Table Component
 
-**A truly dynamic, reusable table component that works with ANY data type.** Configure once, use everywhere - from user lists to product catalogs to financial reports.
+[עברית](README.he.md) | English
+
+**A truly dynamic, reusable Angular table component that works with ANY data type.** Configure once, use everywhere - from employee lists to facility management to financial reports.
 
 ## 🎯 Why "Dynamic"?
 
 Unlike fixed tables tied to specific data models, this component adapts to **your data structure**:
 
 - ✅ **No hard-coded columns** - Define them via config
-- ✅ **Works with any entity** - Users, products, orders, facilities, anything
+- ✅ **Works with any entity** - Employees, facilities, products, orders, anything
 - ✅ **Drop-in replacement** - Same component, different configurations
-- ✅ **Server-controlled** - Backend defines columns, styling, and business rules
+- ✅ **Type-safe** - Full TypeScript support with generics
 
 **One component. Infinite use cases.**
 
@@ -32,30 +34,9 @@ ng serve
 # Open http://localhost:4200
 ```
 
-## 📖 How to Use (3 Simple Steps)
+## 📖 How to Use (2 Simple Steps)
 
-### Step 1: Create Your Data Service
-
-Implement `DataSourceService` for your entity:
-
-```typescript
-@Injectable({ providedIn: 'root' })
-export class ProductService implements DataSourceService<Product> {
-  getData(): Observable<Product[]> {
-    return this.http.get<Product[]>('/api/products');
-  }
-  
-  getById(id: string): Observable<Product> {
-    return this.http.get<Product>(`/api/products/${id}`);
-  }
-  
-  update(item: Product): Observable<Product> {
-    return this.http.put<Product>(`/api/products/${item.id}`, item);
-  }
-}
-```
-
-### Step 2: Define Table Configuration
+### Step 1: Define Table Configuration
 
 Tell the table what columns to show and how to style them:
 
@@ -99,7 +80,7 @@ export const productTableConfig: TableConfig = {
 };
 ```
 
-### Step 3: Add to Your Template
+### Step 2: Use in Your Component
 
 ```typescript
 @Component({
@@ -108,29 +89,32 @@ export const productTableConfig: TableConfig = {
   imports: [SmartTableComponent],
   template: `
     <app-smart-table 
-      [config]="config" 
-      [dataSource]="productService"
+      [config]="productConfig" 
+      [data]="productData"
     />
   `
 })
 export class ProductsComponent {
-  productService = inject(ProductService);
-  config = productTableConfig;
+  productData: Product[] = [
+    { id: '1', name: 'Laptop', price: 1200, status: 'available' },
+    { id: '2', name: 'Mouse', price: 25, status: 'available' }
+  ];
+  productConfig = productTableConfig;
 }
 ```
 
-**That's it!** The same component now displays your products table with search, pagination, and responsive design.
+**That's it!** The component displays your data with search, pagination, and responsive design.
 
 ## � Use It Anywhere
 
-**Same component, different data:**
+// Employees table
+<app-smart-table [config]="employeeConfig" [data]="employeeData" />
 
-```typescript
-// Users table
-<app-smart-table [config]="userTableConfig" [dataSource]="userService" />
+// Facilities table  
+<app-smart-table [config]="facilityConfig" [data]="facilityData" />
 
-// Orders table  
-<app-smart-table [config]="orderTableConfig" [dataSource]="orderService" />
+// Products table
+<app-smart-table [config]="productConfig" [data]="productData" />
 
 // Facilities table (current demo)
 <app-smart-table [config]="facilityTableConfig" [dataSource]="facilityService" />
@@ -293,16 +277,20 @@ Control visibility per column:
 ```
 src/app/
 ├── components/
-│   └── smart-table/              # ← The reusable component
-│       ├── smart-table.component.ts
-│       ├── smart-table.html
-│       └── smart-table.css
-├── configs/               # ← Your table configurations
-│   └── facility-table.config.ts  # Example config
-├── models/
-│   └── table.config.interface.ts # Type definitions
-└── services/data-sources/        # ← Your data services
-    └── facility-data.service.ts  # Example service
+│   └── smart-table/                    # ← The reusable component
+│       ├── smart-table.component.ts    # Main component logic
+│       ├── smart-table.html            # Template
+│       └── smart-table.css             # Styles
+├── configs/                            # ← Table configurations
+│   ├── employee-table.config.ts        # Employee table example
+│   └── facility-table.config.ts        # Facility table example
+├── models/                             # ← Type definitions
+│   ├── table.config.interface.ts       # Config interfaces
+│   ├── table-data.interface.ts         # Data interfaces
+│   ├── status-types.ts                 # Status definitions
+│   └── mock-data.ts                    # Sample data
+└── services/
+    └── table.service.ts                # CRUD operations service
 ```
 
 ## 🎯 Your Data Requirements
@@ -312,10 +300,12 @@ interface YourDataType {
   id: string;          
   status?: string;     
   [key: string]: any;   
-```
-
-## 🔧 Example Implementation
-
+```s:
+- **Configs**: 
+  - [facility-table.config.ts](src/app/configs/facility-table.config.ts) - Hebrew RTL example
+  - [employee-table.config.ts](src/app/configs/employee-table.config.ts) - English example
+- **Data**: [mock-data.ts](src/app/models/mock-data.ts) - Sample data
+- **Usage**: [app.ts](src/app/app.ts) - Main app using both tables
 See the working example:
 - **Config**: [facility-table.config.ts](src/app/configs/facility-table.config.ts)
 - **Service**: [facility-data.service.ts](src/app/services/data-sources/facility-data.service.ts)
@@ -331,15 +321,19 @@ ng test        # Run tests
 
 ## 📝 Summary
 
-**This is NOT a facilities-specific table.** It's a generic, configurable table component that happens to display facilities in the demo.
+**This is NOT a facilities-specific or employees-specific table.** It's a generic, configurable table component that works with any data type.
 
 **Want to display something else?** Just:
-1. Create a service for your data type
-2. Write a config defining your columns
-3. Pass both to `<app-smart-table>`
+1. Define your data interface with `id: string` and optional `status` field
+2. Create a config file defining your columns and features
+3. Pass config and data to `<app-smart-table>`
 
 Same component. Different data. That's the power of dynamic tables.
 
+## 🚀 Integration into Your Project
+
+Want to use this table in your own Angular project? See [README.he.md](README.he.md) for detailed integration instructions.
+
 ---
 
-**Angular 21** • **Signal-based** • **Mobile-first** • **TypeScript**
+**Angular 18+** • **Signal-based** • **Mobile-first** • **TypeScript** • **RTL Support**
