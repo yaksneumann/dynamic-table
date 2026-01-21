@@ -89,8 +89,8 @@ export const productTableConfig: TableConfig = {
   imports: [SmartTableComponent],
   template: `
     <app-smart-table 
-      [config]="productConfig" 
-      [data]="productData"
+      [config]="facilityConfig" 
+      [data]="facilityData"
     />
   `
 })
@@ -99,7 +99,7 @@ export class ProductsComponent {
     { id: '1', name: 'Laptop', price: 1200, status: 'available' },
     { id: '2', name: 'Mouse', price: 25, status: 'available' }
   ];
-  productConfig = productTableConfig;
+  facilityConfig = facilityTableConfig;
 }
 ```
 
@@ -107,17 +107,12 @@ export class ProductsComponent {
 
 ## � Use It Anywhere
 
-// Employees table
-<app-smart-table [config]="employeeConfig" [data]="employeeData" />
-
 // Facilities table  
 <app-smart-table [config]="facilityConfig" [data]="facilityData" />
 
-// Products table
-<app-smart-table [config]="productConfig" [data]="productData" />
+// Employees table
+<app-smart-table [config]="employeeConfig" [data]="employeeData" />
 
-// Facilities table (current demo)
-<app-smart-table [config]="facilityTableConfig" [dataSource]="facilityService" />
 ```
 
 Each config defines different columns, styling rules, and features - but uses the **exact same component**.
@@ -147,7 +142,7 @@ Each config defines different columns, styling rules, and features - but uses th
 ```typescript
 features: {
   enableSearch: true,    // Global search bar
-  enableEdit: true,      // Edit button per row
+  enableEdit: true,      // Edit button
   enableSort: true,      // Click headers to sort
   enableDelete: false,   // Delete functionality
 }

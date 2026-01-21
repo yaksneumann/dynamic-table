@@ -24,13 +24,13 @@ English | [עברית](README.he.md)
 - 🎯 תגיות ספירה אוטומטיות לסטטוסים
 - ✏️ תמיכה בעריכה inline
 - ⚡ Angular Signals למצב ריאקטיבי
-- 🌐 תמיכה מלאה ב-RTL (עברית/ערבית)
+- 🌐 תמיכה מלאה ב-RTL(עברית)
 
 ## 🚀 התחלה מהירה
 
 ```bash
 npm install
-ng serve
+ng s -o
 # פתח http://localhost:4200
 ```
 
@@ -38,7 +38,7 @@ ng serve
 
 ### שלב 1: הגדר קונפיגורציה לטבלה
 
-ספר לטבלה אילו עמודות להציג ואיך לעצב אותן:
+ספר לטבלה אילו עמודות להציג ואיך לעצב אותן לדוגמה:
 
 ```typescript
 export const productTableConfig: TableConfig = {
@@ -56,7 +56,7 @@ export const productTableConfig: TableConfig = {
       type: 'currency',
       format: (value) => `₪${value.toLocaleString('he-IL')}`,
       styleConfig: {
-        condition: (value) => value > 1000,  // הדגש מוצרים יקרים
+        condition: (value) => value > 1000,  // הדגשת מוצרים יקרים
         backgroundColor: '#fff3e0',
         textColor: '#e65100'
       }
@@ -69,13 +69,13 @@ export const productTableConfig: TableConfig = {
     }
   ],
   pagination: {
-    defaultPageSize: 10,
+    defaultPageSize: 10, //כמה טורים להציג 
     pageSizeOptions: [5, 10, 20, 50]
   },
   features: {
-    enableSearch: true,
-    enableEdit: true,
-    enableDelete: true
+    enableSearch: true, // האם להציג חיפוש
+    enableEdit: true,   // האם לאפשר עריכה
+    enableDelete: true  // האם לאפשר מחיקה
   }
 };
 ```
@@ -89,8 +89,8 @@ export const productTableConfig: TableConfig = {
   imports: [SmartTableComponent],
   template: `
     <app-smart-table 
-      [config]="productConfig" 
-      [data]="productData"
+      [config]="facilityConfig" 
+      [data]="facilityData"
     />
   `
 })
@@ -99,7 +99,7 @@ export class ProductsComponent {
     { id: '1', name: 'לפטופ', price: 4500, status: 'available' },
     { id: '2', name: 'עכבר', price: 89, status: 'available' }
   ];
-  productConfig = productTableConfig;
+  facilityConfig = facilityTableConfig;
 }
 ```
 
@@ -116,8 +116,6 @@ export class ProductsComponent {
 // טבלת מתקנים
 <app-smart-table [config]="facilityConfig" [data]="facilityData" />
 
-// טבלת מוצרים
-<app-smart-table [config]="productConfig" [data]="productData" />
 ```
 
 כל קונפיגורציה מגדירה עמודות, כללי עיצוב ותכונות שונות - אבל משתמשת ב**אותו רכיב בדיוק**.
@@ -168,8 +166,7 @@ import { TableConfig } from '../../models/table.config.interface';
 
 // אחרי (בפרויקט שלך - תלוי במיקום)
 import { TableConfig } from '@shared/models/table.config.interface';
-// או
-import { TableConfig } from '../../../models/table.config.interface';
+
 ```
 
 ### שלב 3: (אופציונלי) העתק את שירות ה-CRUD
@@ -194,12 +191,12 @@ export class TableService<T extends { id: string }> {
   constructor(private http: HttpClient) {}
 
   update(item: T): Observable<T> {
-    // החלף עם ה-API האמיתי שלך
+    // החלף עם הדאטה האמיתי שלך
     return this.http.put<T>(`/api/items/${item.id}`, item);
   }
 
   delete(id: string): Observable<void> {
-    // החלף עם ה-API האמיתי שלך
+    // החלף עם הדאטה האמיתי שלך
     return this.http.delete<void>(`/api/items/${id}`);
   }
 }
@@ -207,7 +204,7 @@ export class TableService<T extends { id: string }> {
 
 ### שלב 4: צור קונפיגורציה לנתונים שלך
 
-צור קובץ config חדש לישות שלך:
+צור קובץ קונפיג חדש שיהיה בהתאמה לפרוייקט שלך:
 
 **דוגמה: קונפיגורציה לטבלת משתמשים**
 

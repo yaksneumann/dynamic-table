@@ -67,6 +67,7 @@ export class SmartTableComponent<
   });
 
   paginatedData = computed(() => {
+    console.log('pageSize:', this.pagination().pageSize);
     const data = this.filteredData();
     const { currentPage, pageSize } = this.pagination();
     const start = (currentPage - 1) * pageSize;

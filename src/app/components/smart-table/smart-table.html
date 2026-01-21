@@ -175,7 +175,7 @@
       <label>שורות בעמוד:</label>
       <select [value]="pagination().pageSize" (change)="changePageSize(+$any($event.target).value)">
         @for (size of pagination().pageSizeOptions; track size) {
-        <option [value]="size">{{ size }}</option>
+        <option [value]="size" [selected]="size === pagination().pageSize">{{ size }}</option>
         }
       </select>
     </div>
