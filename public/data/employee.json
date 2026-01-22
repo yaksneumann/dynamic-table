@@ -1,0 +1,30 @@
+[
+  {
+    "id": "EMP-001",
+    "fullName": "Sarah Cohen",
+    "email": "sarah.cohen@example.com",
+    "phone": "050-1112233",
+    "department": "Engineering",
+    "position": "Frontend Developer",
+    "salary": 24000,
+    "startDate": "2020-01-01",
+    "status": "active",
+    "skills": ["Angular", "TypeScript"],
+    "location": { "office": "Tel Aviv", "city": "Tel אביב" },
+    "performance": { "rating": 4.6, "lastReview": "2024-01-10" }
+  },
+  {
+    "id": "EMP-002",
+    "fullName": "David Levi",
+    "email": "david.levi@example.com",
+    "phone": "052-2223344",
+    "department": "Operations",
+    "position": "Logistics Manager",
+    "salary": 28000,
+    "startDate": "2019-06-15",
+    "status": "remote",
+    "skills": ["Logistics", "Planning"],
+    "location": { "office": "Haifa", "city": "חיפה" },
+    "performance": { "rating": 4.2, "lastReview": "2024-02-05" }
+  }
+]

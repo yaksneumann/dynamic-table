@@ -1,68 +1,42 @@
 import { TableConfig } from '../models/table.config.interface';
+import { FacilityData } from '../models/table-data.interface';
 
-export const facilityTableConfig: TableConfig = {
+export const facilityTableConfig: TableConfig<FacilityData> = {
+  dataMode: 'client',
+  editMode: 'expanded',
   columns: [
     {
       key: 'id',
       header: 'מזהה משימה',
       type: 'text',
-      width: '120px',
-      align: 'right',
+      width: '100px',
+      align: 'center',
       sortable: true,
       mobileVisible: true,
     },
     {
       key: 'facilityName',
-      header: 'שם המתקן',
+      header: 'שם מתקן',
       type: 'text',
-      width: '200px',
+      width: '180px',
       align: 'right',
       sortable: true,
       mobileVisible: true,
     },
     {
-      key: 'status',
-      header: 'סטטוס',
-      type: 'badge',
+      key: 'hubName',
+      header: 'מוקד מרכז',
+      type: 'text',
+      width: '140px',
+      align: 'right',
+      sortable: true,
+      mobileVisible: false,
+    },
+    {
+      key: 'deliveryType',
+      header: 'סוג מסירה',
+      type: 'text',
       width: '120px',
-      align: 'center',
-      sortable: true,
-      mobileVisible: true,
-      format: (value: string) => {
-        const statusMap: Record<string, string> = {
-          ready: 'מוכן',
-          inProgress: 'בתהליך',
-          completed: 'הושלם',
-          urgent: 'דחוף',
-        };
-        return statusMap[value] || value;
-      },
-      styleConfig: {
-        condition: (value) => value === 'urgent',
-        backgroundColor: '#fee',
-        textColor: '#c00',
-      },
-    },
-    {
-      key: 'totalAmount',
-      header: 'סכום כולל',
-      type: 'currency',
-      width: '130px',
-      align: 'center',
-      sortable: true,
-      mobileVisible: true,
-      format: (value: number) => `₪ ${value.toLocaleString('he-IL')}`,
-      styleConfig: {
-        condition: (value) => value > 100000,
-        backgroundColor: '#ffebee',
-        textColor: '#c62828',
-      },
-    },
-    {
-      key: 'bagCount',
-      header: 'שקים',
-      type: 'number',
-      width: '80px',
       align: 'center',
       sortable: true,
       mobileVisible: false,
@@ -95,13 +69,37 @@ export const facilityTableConfig: TableConfig = {
       mobileVisible: false,
     },
     {
-      key: 'hubName',
-      header: 'מוקד מרכז',
-      type: 'text',
-      width: '140px',
-      align: 'right',
+      key: 'bagCount',
+      header: 'שקים',
+      type: 'number',
+      width: '80px',
+      align: 'center',
       sortable: true,
       mobileVisible: false,
+    },
+    {
+      key: 'totalAmount',
+      header: 'סכום כולל',
+      type: 'currency',
+      width: '120px',
+      align: 'right',
+      sortable: true,
+      mobileVisible: true,
+      format: (value: number) => `₪ ${value.toLocaleString('he-IL')}`,
+      styleConfig: {
+        condition: (value) => typeof value === 'number' && value > 100000,
+        backgroundColor: '#ffebee',
+        textColor: '#c62828',
+      },
+    },
+    {
+      key: 'status',
+      header: 'סטטוס',
+      type: 'badge',
+      width: '120px',
+      align: 'center',
+      sortable: true,
+      mobileVisible: true,
     },
     {
       key: 'actions',
@@ -115,65 +113,62 @@ export const facilityTableConfig: TableConfig = {
   ],
 
   pagination: {
-    defaultPageSize: 5,
-    pageSizeOptions: [5, 10, 20, 50],
+    defaultPageSize: 6,
+    pageSizeOptions: [6, 10, 20, 50],
     showPageInfo: true,
+  },
+
+  virtualization: {
+    enabled: false,
+    itemSize: 52,
+    mobileItemSize: 160,
+    maxViewportHeight: 520,
   },
 
   features: {
     enableEdit: true,
     enableDelete: false,
-
     enableSearch: true,
+    showTotalCount: false,
     enableFilters: true,
     enableSort: true,
+    enableRowReorder: true,
+    enableMobileInfiniteScroll: true,
   },
 
   styling: {
     statusColors: {
-      ready: '#2196F3',
-      inProgress: '#FFC107',
-      completed: '#4CAF50',
-      urgent: '#F44336',
+      'מוכן': '#4CAF50',
+      'בתהליך': '#2196F3',
+      'הושלם': '#9C27B0',
+      'דחוף': '#F44336',
     },
   },
 
-  badges: [
+  diagnostics: {
+    enabled: true,
+  },
+
+  statusTypes: ['מוכן', 'בתהליך', 'הושלם', 'דחוף'],
+
+  filterPresets: [
     {
-      label: 'סה"כ',
-      field: 'status',
-      filterValue: null,
-      styles: {
-        backgroundColor: '#e0e0e0',
-        textColor: '#000000',
-        border: '1px solid #bdbdbd',
+      id: 'urgent-high',
+      label: 'דחוף + סכום מעל 100K',
+      filters: {
+        logic: 'and',
+        conditions: [
+          { field: 'status', operator: 'eq', value: 'דחוף' },
+          { field: 'totalAmount', operator: 'gte', value: 100000 },
+        ],
       },
     },
     {
-      label: 'מוכן',
-      field: 'status',
-      filterValue: 'ready',
-      styles: {
-        backgroundColor: '#2196F3',
-        textColor: '#ffffff',
-      },
-    },
-    {
-      label: 'בתהליך',
-      field: 'status',
-      filterValue: 'inProgress',
-      styles: {
-        backgroundColor: '#FFC107',
-        textColor: '#000000',
-      },
-    },
-    {
-      label: 'הושלם',
-      field: 'status',
-      filterValue: 'completed',
-      styles: {
-        backgroundColor: '#4CAF50',
-        textColor: '#ffffff',
+      id: 'ready',
+      label: 'מוכן בלבד',
+      filters: {
+        logic: 'and',
+        conditions: [{ field: 'status', operator: 'eq', value: 'מוכן' }],
       },
     },
   ],

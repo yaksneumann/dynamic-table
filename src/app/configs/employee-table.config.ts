@@ -1,13 +1,16 @@
 import { TableConfig } from '../models/table.config.interface';
+import { EmployeeData } from '../models/table-data.interface';
 
-export const employeeTableConfig: TableConfig = {
+export const employeeTableConfig: TableConfig<EmployeeData> = {
+  dataMode: 'server',
+  editMode: 'inline',
   columns: [
     {
       key: 'id',
       header: 'Employee ID',
       type: 'text',
       width: '120px',
-      align: 'left',
+      align: 'center',
       sortable: true,
       mobileVisible: true,
     },
@@ -16,60 +19,9 @@ export const employeeTableConfig: TableConfig = {
       header: 'Full Name',
       type: 'text',
       width: '180px',
-      align: 'left',
-      sortable: true,
-      mobileVisible: true,
-    },
-    {
-      key: 'status',
-      header: 'Status',
-      type: 'badge',
-      width: '120px',
-      align: 'center',
-      sortable: true,
-      mobileVisible: true,
-      format: (value: string) => {
-        const statusMap: Record<string, string> = {
-          active: 'Active',
-          remote: 'Remote',
-          onLeave: 'On Leave',
-          inactive: 'Inactive',
-        };
-        return statusMap[value] || value;
-      },
-    },
-    {
-      key: 'department',
-      header: 'Department',
-      type: 'text',
-      width: '140px',
-      align: 'left',
-      sortable: true,
-      mobileVisible: true,
-    },
-    {
-      key: 'position',
-      header: 'Position',
-      type: 'text',
-      width: '180px',
-      align: 'left',
-      sortable: true,
-      mobileVisible: false,
-    },
-    {
-      key: 'salary',
-      header: 'Salary',
-      type: 'currency',
-      width: '120px',
       align: 'right',
       sortable: true,
-      mobileVisible: false,
-      format: (value: number) => `₪ ${value.toLocaleString('he-IL')}`,
-      styleConfig: {
-        condition: (value) => value > 25000,
-        backgroundColor: '#e8f5e9',
-        textColor: '#2e7d32',
-      },
+      mobileVisible: true,
     },
     {
       key: 'email',
@@ -84,10 +36,52 @@ export const employeeTableConfig: TableConfig = {
       key: 'phone',
       header: 'Phone',
       type: 'text',
-      width: '130px',
+      width: '140px',
       align: 'center',
       sortable: false,
       mobileVisible: false,
+    },
+    {
+      key: 'department',
+      header: 'Department',
+      type: 'text',
+      width: '140px',
+      align: 'left',
+      sortable: true,
+      mobileVisible: false,
+    },
+    {
+      key: 'position',
+      header: 'Position',
+      type: 'text',
+      width: '160px',
+      align: 'left',
+      sortable: true,
+      mobileVisible: false,
+    },
+    {
+      key: 'salary',
+      header: 'Salary',
+      type: 'currency',
+      width: '120px',
+      align: 'right',
+      sortable: true,
+      mobileVisible: false,
+      format: (value: number) => `₪ ${value.toLocaleString('he-IL')}`,
+      styleConfig: {
+        condition: (value) => typeof value === 'number' && value > 25000,
+        backgroundColor: '#e8f5e9',
+        textColor: '#2e7d32',
+      },
+    },
+    {
+      key: 'status',
+      header: 'Status',
+      type: 'badge',
+      width: '120px',
+      align: 'center',
+      sortable: true,
+      mobileVisible: true,
     },
     {
       key: 'startDate',
@@ -110,17 +104,26 @@ export const employeeTableConfig: TableConfig = {
   ],
 
   pagination: {
-    defaultPageSize: 10,
-    pageSizeOptions: [5, 10, 20, 50],
+    defaultPageSize: 6,
+    pageSizeOptions: [6, 10, 20, 50],
     showPageInfo: true,
+  },
+
+  virtualization: {
+    enabled: false,
+    itemSize: 52,
+    mobileItemSize: 160,
+    maxViewportHeight: 520,
   },
 
   features: {
     enableEdit: true,
     enableDelete: true,
     enableSearch: true,
+    showTotalCount: false,
     enableFilters: true,
     enableSort: true,
+    enableSelection: true,
   },
 
   styling: {
@@ -132,51 +135,26 @@ export const employeeTableConfig: TableConfig = {
     },
   },
 
-  badges: [
+  statusTypes: ['active', 'remote', 'onLeave', 'inactive'],
+
+  filterPresets: [
     {
-      label: 'Total',
-      field: 'status',
-      filterValue: null,
-      styles: {
-        backgroundColor: '#f0f0f0',
-        textColor: '#333',
-        border: '1px solid #ccc',
+      id: 'remote-high-salary',
+      label: 'Remote + ₪20K+',
+      filters: {
+        logic: 'and',
+        conditions: [
+          { field: 'status', operator: 'eq', value: 'remote' },
+          { field: 'salary', operator: 'gte', value: 20000 },
+        ],
       },
     },
     {
-      label: 'Active',
-      field: 'status',
-      filterValue: 'active',
-      styles: {
-        backgroundColor: '#28a745',
-        textColor: 'white',
-      },
-    },
-    {
-      label: 'Remote',
-      field: 'status',
-      filterValue: 'remote',
-      styles: {
-        backgroundColor: '#17a2b8',
-        textColor: 'white',
-      },
-    },
-    {
-      label: 'On Leave',
-      field: 'status',
-      filterValue: 'onLeave',
-      styles: {
-        backgroundColor: '#ffc107',
-        textColor: 'black',
-      },
-    },
-    {
-      label: 'Inactive',
-      field: 'status',
-      filterValue: 'inactive',
-      styles: {
-        backgroundColor: '#6c757d',
-        textColor: 'white',
+      id: 'active-only',
+      label: 'Active בלבד',
+      filters: {
+        logic: 'and',
+        conditions: [{ field: 'status', operator: 'eq', value: 'active' }],
       },
     },
   ],

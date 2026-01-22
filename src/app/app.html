@@ -9,12 +9,17 @@
   <main class="main-content">
     <section class="table-section">
       <h2>ניהול מתקנים</h2>
-      <app-smart-table [config]="facilityConfig" [data]="facilityData" />
+      <app-smart-table [config]="facilityConfig" [clientData]="(facilityData$ | async) ?? []" />
+    </section>
+
+    <section class="table-section">
+      <h2>דוגמת עריכה בחלון קופץ</h2>
+      <app-smart-table [config]="facilityModalConfig" [clientData]="(facilityData$ | async) ?? []" />
     </section>
 
     <section class="table-section">
       <h2>ניהול עובדים</h2>
-      <app-smart-table [config]="employeeConfig" [data]="employeeData" />
+      <app-smart-table [config]="employeeConfig" [clientData]="(employeeData$ | async) ?? []" [serverDataSource]="employeeDataSource" />
     </section>
   </main>
 </div>

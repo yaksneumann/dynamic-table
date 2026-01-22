@@ -1,146 +1,764 @@
-<div class="table-container" dir="rtl">
-  @if (config().badges && config().badges!.length > 0) {
-    @if (!isMobile()) {
-      <div class="status-badges">
-        @for (badge of config().badges; track badge.label) {
-          <div class="badge" [ngStyle]="badge.styles">
-            <span class="badge-label">{{ badge.label }}</span>
-            <span class="badge-count">{{ getBadgeCount(badge) }}</span>
-          </div>
-        }
-      </div>
-    } @else {
-      <div class="status-badges-mobile">
-        @for (badge of config().badges; track badge.label) {
-          <div class="badge-mobile" [ngStyle]="badge.styles">
-            <span class="badge-label">{{ badge.label }}</span>
-            <span class="badge-count">{{ getBadgeCount(badge) }}</span>
-          </div>
-        }
-      </div>
-    }
-  }
-
+<div class="table-container" dir="rtl" aria-label="טבלה דינמית">
+  <p class="sr-only" id="table-keyboard-hint">
+    ניווט מקלדת: חצים למעלה/למטה, Home/End, PageUp/PageDown, Enter לפתיחה, רווח לבחירה.
+  </p>
   @if (config().features.enableSearch) {
   <div class="table-controls">
-    <input type="text" class="search-input" placeholder="חיפוש..." [value]="searchTerm()"
-      (input)="onSearchChange($event)" />
+    <div class="search-row">
+      <input type="text" class="search-input" placeholder="חיפוש..." [value]="searchTerm()"
+        (input)="onSearchChange($event)" />
+    </div>
+    <div class="search-actions">
+      @if (filterPresets().length > 0) {
+        <select class="preset-select" [value]="activePresetId() ?? ''" (change)="onPresetChange($any($event.target).value)">
+          <option value="">כל הפריטים</option>
+          @for (preset of filterPresets(); track preset.id) {
+            <option [value]="preset.id">{{ preset.label }}</option>
+          }
+        </select>
+      }
+      <button type="button" class="column-btn" (click)="toggleSearchPanel()" aria-label="בחירת עמודות לחיפוש">
+        <span class="material-icons" aria-hidden="true">manage_search</span>
+        עמודות חיפוש
+      </button>
+      @if (config().features.enableFilters) {
+        <button type="button" class="filter-btn" (click)="toggleFilterPanel()" aria-label="פילטרים מתקדמים">
+          <span class="material-icons" aria-hidden="true">filter_alt</span>
+          פילטרים מתקדמים
+        </button>
+      }
+    </div>
+    <div class="toolbar-row">
+      <div class="column-controls">
+        <button type="button" class="column-btn" (click)="toggleColumnPanel()" aria-label="בחירת עמודות">
+          <span class="material-icons" aria-hidden="true">view_column</span>
+          עמודות
+        </button>
+
+        @if (isColumnPanelOpen()) {
+          <div class="column-panel" role="dialog" aria-label="בחירת עמודות">
+            <div class="column-panel-header">
+              <span>בחירת עמודות</span>
+              <button type="button" class="column-close" (click)="toggleColumnPanel()">✕</button>
+            </div>
+            <div class="column-panel-body" cdkDropList (cdkDropListDropped)="onColumnDrop($event)">
+              @for (column of orderedColumns(); track column.key) {
+                @if (column.type !== 'action' && column.key !== 'actions') {
+                  <div class="column-item" cdkDrag>
+                    <span class="material-icons drag-handle" cdkDragHandle aria-hidden="true">drag_indicator</span>
+                    <label class="column-label">
+                      <input
+                        type="checkbox"
+                        [checked]="!isColumnHidden(column)"
+                        [disabled]="!canToggleColumn(column)"
+                        (change)="toggleColumnVisibility(column)"
+                      />
+                      {{ column.header }}
+                    </label>
+                  </div>
+                }
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      @if (exportConfig()) {
+        <div class="export-actions">
+          @if (exportConfig().enableCsv) {
+            <button type="button" class="export-btn" (click)="exportCsv()" aria-label="ייצוא CSV">
+              <span class="material-icons export-icon" aria-hidden="true">description</span>
+              CSV
+            </button>
+          }
+          @if (exportConfig().enableExcel) {
+            <button type="button" class="export-btn" (click)="exportExcel()" aria-label="ייצוא Excel">
+              <span class="material-icons export-icon" aria-hidden="true">table_chart</span>
+              Excel
+            </button>
+          }
+          @if (exportConfig().enablePrint) {
+            <button type="button" class="export-btn" (click)="printTable()" aria-label="הדפסה">
+              <span class="material-icons export-icon" aria-hidden="true">print</span>
+              הדפסה
+            </button>
+          }
+        </div>
+      }
+    </div>
   </div>
   }
 
+  @if (config().features.enableSearch && isSearchPanelOpen()) {
+    <div class="search-panel" role="dialog" aria-label="בחירת עמודות לחיפוש">
+      <div class="search-panel-header">
+        <span>עמודות לחיפוש</span>
+        <button type="button" class="column-close" (click)="toggleSearchPanel()">✕</button>
+      </div>
+      <div class="search-panel-body">
+        <div class="search-mode">
+          <label for="search-mode">מצב חיפוש:</label>
+          <select id="search-mode" [value]="searchMode()" (change)="setSearchMode($any($event.target).value)">
+            <option value="any">התאמה באחת העמודות</option>
+            <option value="all">התאמה בכל העמודות</option>
+          </select>
+        </div>
+        <div class="search-columns">
+          @for (column of searchableColumns(); track column.key) {
+            <label class="search-column-item">
+              <input
+                type="checkbox"
+                [checked]="isSearchColumnSelected(column)"
+                (change)="toggleSearchColumn(column)"
+              />
+              {{ column.header }}
+            </label>
+          }
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (config().features.enableFilters && isFilterPanelOpen()) {
+    <div class="filter-panel" role="dialog" aria-label="פילטרים מתקדמים">
+      <div class="filter-panel-header">
+        <span>פילטרים מתקדמים</span>
+        <button type="button" class="column-close" (click)="toggleFilterPanel()">✕</button>
+      </div>
+      <div class="filter-panel-body">
+        <div class="filter-logic">
+          <label for="filter-logic">לוגיקה:</label>
+          <select id="filter-logic" [value]="getAdvancedFilterLogic()" (change)="setAdvancedFilterLogic($any($event.target).value)">
+            <option value="and">וגם (AND)</option>
+            <option value="or">או (OR)</option>
+          </select>
+        </div>
+
+        <div class="filter-rows">
+          @for (condition of getAdvancedFilterConditions(); track $index) {
+            <div class="filter-row">
+              <select
+                [value]="condition.field"
+                (change)="updateAdvancedConditionField($index, $any($event.target).value)"
+              >
+                @for (column of filterableColumns(); track column.key) {
+                  <option [value]="column.key">{{ column.header }}</option>
+                }
+              </select>
+
+              <select
+                [value]="condition.operator"
+                (change)="updateAdvancedConditionOperator($index, $any($event.target).value)"
+              >
+                @for (op of filterOperatorOptions; track op.value) {
+                  <option [value]="op.value">{{ op.label }}</option>
+                }
+              </select>
+
+              @if (needsValue(condition.operator)) {
+                <div class="filter-values">
+                  <input
+                    type="text"
+                    [value]="condition.value ?? ''"
+                    (input)="updateAdvancedConditionValue($index, $any($event.target).value)"
+                    placeholder="ערך"
+                  />
+                  @if (needsValueTo(condition.operator)) {
+                    <input
+                      type="text"
+                      [value]="condition.valueTo ?? ''"
+                      (input)="updateAdvancedConditionValueTo($index, $any($event.target).value)"
+                      placeholder="ועד"
+                    />
+                  }
+                </div>
+              }
+
+              <button type="button" class="filter-remove-btn" (click)="removeAdvancedCondition($index)" aria-label="הסר תנאי">✕</button>
+            </div>
+          }
+        </div>
+
+        <div class="filter-actions">
+          <button type="button" class="filter-btn" (click)="addAdvancedCondition()">הוסף תנאי</button>
+          <button type="button" class="filter-btn" (click)="clearAdvancedFilters()">נקה פילטרים</button>
+        </div>
+      </div>
+    </div>
+  }
+
+
+  @if (config().features.showTotalCount) {
+    <div class="table-summary" aria-live="polite">
+      סה"כ רשומות: {{ totalItems() }}
+    </div>
+  }
+
+  @if (diagnosticsEnabled() && isMobile()) {
+    <div class="diagnostics-bar diagnostics-bar--sticky" aria-live="polite">
+      <span class="diagnostics-badge">Diagnostics</span>
+      <span class="diagnostics-item">
+        {{ diagnosticsVisibleLabel() }}: {{ diagnosticsVisibleText() }}
+      </span>
+      <span class="diagnostics-divider">|</span>
+      <span class="diagnostics-item">
+        Page: {{ diagnosticsPage() }}
+      </span>
+      <span class="diagnostics-divider">|</span>
+      <span class="diagnostics-item">
+        Timing: {{ lastQueryDuration() !== null ? (lastQueryDuration() | number : '1.0-0') + 'ms' : 'N/A' }}
+      </span>
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="table-loading" aria-live="polite">טוען נתונים...</div>
+  }
+
+  @if (errorMessage()) {
+    <div class="table-error" aria-live="assertive">{{ errorMessage() }}</div>
+  }
+
   @if (!isMobile()) {
-  <div class="table-wrapper">
-    <table class="data-table">
+  <div class="table-wrapper" [attr.aria-busy]="loading()">
+      <table class="data-table" role="grid" [attr.aria-rowcount]="ariaRowCount()" [attr.aria-colcount]="ariaColCount()">
       <thead>
         <tr>
+          @if (canReorderRows()) {
+            <th class="reorder-col" aria-hidden="true"></th>
+          }
+          @if (isSelectionEnabled()) {
+            <th class="selection-col">
+              @if (selectionMode() === 'multiple') {
+                <input
+                  type="checkbox"
+                  [checked]="areAllSelected()"
+                  aria-label="בחר הכל"
+                  (change)="toggleAllSelection()"
+                />
+              }
+            </th>
+          }
           @for (column of visibleColumns(); track column.key) {
-          <th [style.width]="column.width" [style.text-align]="column.align">
-            {{ column.header }}
-            @if (column.sortable) {
-            <span class="sort-icon">↕</span>
+          <th [style.width]="column.width" [style.text-align]="column.align"
+            [attr.aria-sort]="getAriaSort(column)"
+            (click)="column.sortable && toggleSort(column)"
+            [class.sortable]="column.sortable">
+            @if (headerTemplate()) {
+              <ng-container
+                *ngTemplateOutlet="headerTemplate(); context: { $implicit: column, column: column }"
+              ></ng-container>
+            } @else {
+              {{ column.header }}
+              @if (column.sortable) {
+              <span class="sort-icon">
+                @if (getSortDirection(column) === 'asc') { ▲ }
+                @else if (getSortDirection(column) === 'desc') { ▼ }
+                @else { ↕ }
+              </span>
+              }
             }
           </th>
           }
         </tr>
       </thead>
-      <tbody>
-        @for (row of paginatedData(); track row.id) {
-        <tr>
-          @for (column of visibleColumns(); track column.key) {
-          <td [style.text-align]="column.align">
-            @if (column.type === 'action') {
-            <div style="display: flex; gap: 8px; justify-content: center;">
-              @if (config().features.enableEdit) {
-              <button class="edit-btn" (click)="handleEdit(row)" title="ערוך">
-                ✎
-              </button>
-              }
-              @if (config().features.enableDelete) {
-              <button class="delete-btn" (click)="handleDelete(row)" title="מחק">
-                🗑️
-              </button>
-              }
-            </div>
-            } @else if (column.type === 'badge') {
-            <span class="status-badge" [style]="getCellStyle(column, row[column.key], row)"
-              [style.background-color]="getStatusColor(row[column.key])">
-              {{ getCellValue(column, row) }}
-            </span>
-            } @else {
-            <span [style]="getCellStyle(column, row[column.key], row)">
-              {{ getCellValue(column, row) }}
-            </span>
-            }
-          </td>
-          }
-        </tr>
-        } @empty {
-        <tr>
-          <td [attr.colspan]="visibleColumns().length" class="empty-state">
-            אין נתונים להצגה
-          </td>
-        </tr>
-        }
-      </tbody>
     </table>
-  </div>
-  }
 
-  @if (isMobile()) {
-  <div class="cards-container">
-    @for (row of paginatedData(); track row.id) {
-    <div class="mobile-card" (click)="openDetail(row, 'view')">
-      <div class="card-header">
-        <span class="card-id">{{ row.id }}</span>
-        @if (row.status !== undefined) {
-        <span class="status-badge" [style.background-color]="getStatusColor(row.status)">
-          {{ getFormattedStatus(row) }}
-        </span>
-        }
-      </div>
-      <div class="card-body">
-        @for (column of visibleColumns(); track column.key) {
-        @if (column.type !== 'action' && column.key !== 'id') {
-        <div class="card-row">
-          <span class="label">{{ column.header }}:</span>
-          @if (column.type === 'badge') {
-          <span class="value status-badge" [style]="getCellStyle(column, row[column.key], row)"
-            [style.background-color]="getStatusColor(row[column.key])">
-            {{ getCellValue(column, row) }}
-          </span>
-          } @else {
-          <span class="value" [style]="getCellStyle(column, row[column.key], row)">
-            {{ getCellValue(column, row) }}
-          </span>
+    @if (isVirtualScrollEnabled()) {
+      @if (displayedData().length === 0) {
+        <div class="empty-state">אין נתונים להצגה</div>
+      } @else {
+        <cdk-virtual-scroll-viewport
+          class="table-viewport"
+          [itemSize]="virtualizationSettings().itemSize"
+          [style.height.px]="virtualizationSettings().maxViewportHeight"
+          [style.max-height.px]="virtualizationSettings().maxViewportHeight"
+        >
+          <table class="data-table" role="grid" [attr.aria-rowcount]="ariaRowCount()" [attr.aria-colcount]="ariaColCount()">
+            <tbody>
+              <tr *cdkVirtualFor="let row of displayedData(); trackBy: trackById; let rowIndex = index"
+                (click)="onRowClick(row)"
+                (focus)="onRowFocus(rowIndex)"
+                (keydown)="onRowKeydown($event, row, rowIndex)"
+                [class.row-selected]="isRowSelected(row)"
+                [attr.data-row-index]="rowIndex"
+                [attr.tabindex]="isRowFocused(rowIndex) ? 0 : -1"
+                [attr.aria-selected]="isSelectionEnabled() ? isRowSelected(row) : null">
+                @if (isSelectionEnabled()) {
+                  <td class="selection-col" (click)="$event.stopPropagation()">
+                    <input
+                      type="checkbox"
+                      [checked]="isRowSelected(row)"
+                      aria-label="בחירת שורה"
+                      (change)="toggleRowSelection(row)"
+                    />
+                  </td>
+                }
+                @for (column of visibleColumns(); track column.key) {
+                <td [style.text-align]="column.align"
+                  (click)="column.type !== 'action' && onCellClick(column, row)">
+                  @if (column.type === 'action') {
+                    @if (actionTemplate()) {
+                      <ng-container
+                        *ngTemplateOutlet="actionTemplate(); context: { $implicit: row, row: row, index: rowIndex }"
+                      ></ng-container>
+                    } @else {
+                      <div style="display: flex; gap: 8px; justify-content: center;">
+                        @if (!isModalEditMode() && isRowEditing(row)) {
+                          <button class="edit-btn" (click)="saveRowEdit(); $event.stopPropagation()" title="שמור">
+                            ✔
+                          </button>
+                          <button class="delete-btn" (click)="cancelRowEdit(); $event.stopPropagation()" title="ביטול">
+                            ✕
+                          </button>
+                        } @else {
+                          @if (config().features.enableEdit) {
+                          <button class="edit-btn" (click)="handleEdit(row); $event.stopPropagation()" title="ערוך">
+                            ✎
+                          </button>
+                          }
+                          @if (config().features.enableDelete) {
+                          <button class="delete-btn" (click)="handleDelete(row); $event.stopPropagation()" title="מחק">
+                            🗑️
+                          </button>
+                          }
+                        }
+                      </div>
+                    }
+                    } @else if (isInlineEditMode() && isRowEditing(row) && column.key !== 'id') {
+                      <input
+                        class="inline-edit-input"
+                        [ngModel]="getEditingValue(column, row)"
+                        (ngModelChange)="updateEditingValue(column, $event)"
+                      />
+                    } @else if (cellTemplate()) {
+                    <ng-container
+                      *ngTemplateOutlet="cellTemplate(); context: { $implicit: row, row: row, column: column, value: getColumnValue(column, row), index: rowIndex }"
+                    ></ng-container>
+                  } @else if (column.type === 'badge') {
+                    <span class="status-badge" [style]="getCellStyle(column, getColumnValue(column, row), row)"
+                      [style.background-color]="getStatusColor(getColumnValue(column, row))">
+                      {{ getCellValue(column, row) }}
+                    </span>
+                  } @else {
+                    <span [style]="getCellStyle(column, getColumnValue(column, row), row)">
+                      {{ getCellValue(column, row) }}
+                    </span>
+                  }
+                </td>
+                }
+              </tr>
+            </tbody>
+          </table>
+        </cdk-virtual-scroll-viewport>
+      }
+    } @else {
+      <table class="data-table" role="grid" [attr.aria-rowcount]="ariaRowCount()" [attr.aria-colcount]="ariaColCount()">
+        <tbody cdkDropList [cdkDropListData]="displayedData()" [cdkDropListDisabled]="!canReorderRows()" (cdkDropListDropped)="onRowDrop($event)">
+          @for (row of displayedData(); track row.id) {
+          <tr (click)="onRowClick(row)"
+            (focus)="onRowFocus($index)"
+            (keydown)="onRowKeydown($event, row, $index)"
+            [class.row-selected]="isRowSelected(row)"
+            [attr.data-row-index]="$index"
+            [attr.tabindex]="isRowFocused($index) ? 0 : -1"
+            [attr.aria-selected]="isSelectionEnabled() ? isRowSelected(row) : null"
+            [cdkDragDisabled]="!canReorderRows()"
+            cdkDrag>
+            @if (canReorderRows()) {
+              <td class="reorder-col" (click)="$event.stopPropagation()">
+                <span class="material-icons drag-handle" cdkDragHandle aria-hidden="true">drag_indicator</span>
+              </td>
+            }
+            @if (isSelectionEnabled()) {
+              <td class="selection-col" (click)="$event.stopPropagation()">
+                <input
+                  type="checkbox"
+                  [checked]="isRowSelected(row)"
+                  aria-label="בחירת שורה"
+                  (change)="toggleRowSelection(row)"
+                />
+              </td>
+            }
+            @for (column of visibleColumns(); track column.key) {
+            <td [style.text-align]="column.align"
+              (click)="column.type !== 'action' && onCellClick(column, row)">
+              @if (column.type === 'action') {
+                @if (actionTemplate()) {
+                  <ng-container
+                    *ngTemplateOutlet="actionTemplate(); context: { $implicit: row, row: row, index: $index }"
+                  ></ng-container>
+                } @else {
+                  <div style="display: flex; gap: 8px; justify-content: center;">
+                    @if (!isModalEditMode() && isRowEditing(row)) {
+                      <button class="edit-btn" (click)="saveRowEdit(); $event.stopPropagation()" title="שמור">
+                        ✔
+                      </button>
+                      <button class="delete-btn" (click)="cancelRowEdit(); $event.stopPropagation()" title="ביטול">
+                        ✕
+                      </button>
+                    } @else {
+                      @if (config().features.enableEdit) {
+                      <button class="edit-btn" (click)="handleEdit(row); $event.stopPropagation()" title="ערוך">
+                        ✎
+                      </button>
+                      }
+                      @if (config().features.enableDelete) {
+                      <button class="delete-btn" (click)="handleDelete(row); $event.stopPropagation()" title="מחק">
+                        🗑️
+                      </button>
+                      }
+                    }
+                  </div>
+                }
+              } @else if (isInlineEditMode() && isRowEditing(row) && column.key !== 'id') {
+                <input
+                  class="inline-edit-input"
+                  [ngModel]="getEditingValue(column, row)"
+                  (ngModelChange)="updateEditingValue(column, $event)"
+                />
+              } @else if (cellTemplate()) {
+                <ng-container
+                  *ngTemplateOutlet="cellTemplate(); context: { $implicit: row, row: row, column: column, value: getColumnValue(column, row), index: $index }"
+                ></ng-container>
+              } @else if (column.type === 'badge') {
+                <span class="status-badge" [style]="getCellStyle(column, getColumnValue(column, row), row)"
+                  [style.background-color]="getStatusColor(getColumnValue(column, row))">
+                  {{ getCellValue(column, row) }}
+                </span>
+              } @else {
+                <span [style]="getCellStyle(column, getColumnValue(column, row), row)">
+                  {{ getCellValue(column, row) }}
+                </span>
+              }
+            </td>
+            }
+          </tr>
+          @if (isExpandedEditMode() && isRowEditing(row) && !isVirtualScrollEnabled()) {
+            <tr class="expanded-row">
+              <td [attr.colspan]="visibleColumns().length + (isSelectionEnabled() ? 1 : 0) + (canReorderRows() ? 1 : 0)">
+                <div class="expanded-editor">
+                  <div class="detail-grid">
+                    @for (column of config().columns; track column.key) {
+                      @if (column.type !== 'action') {
+                        <div class="detail-field">
+                          <label>{{ column.header }}:</label>
+                          @if (column.key !== 'id') {
+                            <input
+                              [ngModel]="getEditingValue(column, row)"
+                              (ngModelChange)="updateEditingValue(column, $event)"
+                            />
+                          } @else {
+                            <span>{{ getCellValue(column, row) }}</span>
+                          }
+                        </div>
+                      }
+                    }
+                  </div>
+                  <div class="expanded-editor-actions">
+                    <button class="btn btn-primary" (click)="saveRowEdit(); $event.stopPropagation()">שמור</button>
+                    <button class="btn btn-secondary" (click)="cancelRowEdit(); $event.stopPropagation()">ביטול</button>
+                  </div>
+                </div>
+              </td>
+            </tr>
           }
-        </div>
-        }
-        }
-      </div>
-      <div class="card-footer">
-        @if (config().features.enableEdit) {
-        <button class="card-action-btn" (click)="handleEdit(row); $event.stopPropagation()" title="ערוך"
-          style="background-color: transparent; border: 1px solid #ccc; border-radius: 4px;">
-          ✏️
-        </button>
-        }
-        @if (config().features.enableDelete) {
-        <button class="card-action-btn" (click)="handleDelete(row); $event.stopPropagation()" title="מחק"
-          style="background-color: transparent; border: 1px solid #f44336; border-radius: 4px; color: #f44336;">
-          🗑️
-        </button>
-        }
-      </div>
-    </div>
-    } @empty {
-    <div class="empty-state">אין נתונים להצגה</div>
+          } @empty {
+            <tr>
+              <td [attr.colspan]="visibleColumns().length + (isSelectionEnabled() ? 1 : 0)" class="empty-state">
+                @if (emptyTemplate()) {
+                  <ng-container *ngTemplateOutlet="emptyTemplate()"></ng-container>
+                } @else {
+                  אין נתונים להצגה
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
     }
   </div>
   }
 
+  @if (isMobile()) {
+  @defer (on idle) {
+  @if (isMobileVirtualScroll()) {
+    @if (displayedData().length === 0) {
+      <div class="empty-state">אין נתונים להצגה</div>
+    } @else {
+      <cdk-virtual-scroll-viewport
+        class="cards-viewport"
+        [itemSize]="virtualizationSettings().mobileItemSize"
+        [style.height.px]="virtualizationSettings().maxViewportHeight"
+        [style.max-height.px]="virtualizationSettings().maxViewportHeight"
+        (scrolledIndexChange)="onMobileScrolled($event)"
+      >
+        <div class="cards-container" role="listbox" aria-label="כרטיסי נתונים">
+          <div *cdkVirtualFor="let row of displayedData(); trackBy: trackById; let rowIndex = index" class="mobile-card"
+            (click)="onRowClick(row)"
+            (focus)="onRowFocus(rowIndex)"
+            (keydown)="onRowKeydown($event, row, rowIndex)"
+            [attr.data-row-index]="rowIndex"
+            [attr.tabindex]="isRowFocused(rowIndex) ? 0 : -1"
+            [attr.aria-selected]="isSelectionEnabled() ? isRowSelected(row) : null"
+            role="option">
+            @if (mobileCardTemplate()) {
+              <ng-container
+                *ngTemplateOutlet="mobileCardTemplate(); context: { $implicit: row, row: row, index: rowIndex }"
+              ></ng-container>
+            } @else {
+              <div class="card-header">
+                <div class="card-id">
+                  {{ row.id }}
+                </div>
+                <div class="card-actions">
+                  @if (isSelectionEnabled()) {
+                    <input
+                      type="checkbox"
+                      [checked]="isRowSelected(row)"
+                      aria-label="בחירת כרטיס"
+                      (click)="$event.stopPropagation()"
+                      (change)="toggleRowSelection(row)"
+                    />
+                  }
+                  @if (row.status !== undefined) {
+                  <span class="status-badge" [style.background-color]="getStatusColor(row.status)">
+                    {{ getFormattedStatus(row) }}
+                  </span>
+                  }
+                </div>
+              </div>
+              <div class="card-body">
+                @for (column of visibleColumns(); track column.key) {
+                @if (column.type !== 'action' && column.key !== 'id') {
+                <div class="card-row" (click)="onCellClick(column, row)">
+                  <span class="label">{{ column.header }}:</span>
+                  @if (isInlineEditMode() && isRowEditing(row)) {
+                    <input
+                      class="inline-edit-input"
+                      [ngModel]="getEditingValue(column, row)"
+                      (ngModelChange)="updateEditingValue(column, $event)"
+                    />
+                  } @else if (cellTemplate()) {
+                    <ng-container
+                      *ngTemplateOutlet="cellTemplate(); context: { $implicit: row, row: row, column: column, value: getColumnValue(column, row), index: rowIndex }"
+                    ></ng-container>
+                  } @else if (column.type === 'badge') {
+                    <span class="value status-badge" [style]="getCellStyle(column, getColumnValue(column, row), row)"
+                      [style.background-color]="getStatusColor(getColumnValue(column, row))">
+                      {{ getCellValue(column, row) }}
+                    </span>
+                  } @else {
+                    <span class="value" [style]="getCellStyle(column, getColumnValue(column, row), row)">
+                      {{ getCellValue(column, row) }}
+                    </span>
+                  }
+                </div>
+                }
+                }
+              </div>
+              @if (isExpandedEditMode() && isRowEditing(row)) {
+                <div class="expanded-editor card-expanded-editor">
+                  <div class="detail-grid">
+                    @for (column of config().columns; track column.key) {
+                      @if (column.type !== 'action') {
+                        <div class="detail-field">
+                          <label>{{ column.header }}:</label>
+                          @if (column.key !== 'id') {
+                            <input
+                              [ngModel]="getEditingValue(column, row)"
+                              (ngModelChange)="updateEditingValue(column, $event)"
+                            />
+                          } @else {
+                            <span>{{ getCellValue(column, row) }}</span>
+                          }
+                        </div>
+                      }
+                    }
+                  </div>
+                  <div class="expanded-editor-actions">
+                    <button class="btn btn-primary" (click)="saveRowEdit(); $event.stopPropagation()">שמור</button>
+                    <button class="btn btn-secondary" (click)="cancelRowEdit(); $event.stopPropagation()">ביטול</button>
+                  </div>
+                </div>
+              }
+              <div class="card-footer">
+                @if (actionTemplate()) {
+                  <ng-container
+                    *ngTemplateOutlet="actionTemplate(); context: { $implicit: row, row: row, index: rowIndex }"
+                  ></ng-container>
+                } @else {
+                  @if (!isModalEditMode() && isRowEditing(row)) {
+                    <button class="card-action-btn" (click)="saveRowEdit(); $event.stopPropagation()" title="שמור"
+                      style="background-color: transparent; border: 1px solid #4caf50; border-radius: 4px; color: #2e7d32;">
+                      ✔
+                    </button>
+                    <button class="card-action-btn" (click)="cancelRowEdit(); $event.stopPropagation()" title="ביטול"
+                      style="background-color: transparent; border: 1px solid #999; border-radius: 4px; color: #555;">
+                      ✕
+                    </button>
+                  } @else {
+                    @if (config().features.enableEdit) {
+                    <button class="card-action-btn" (click)="handleEdit(row); $event.stopPropagation()" title="ערוך"
+                      style="background-color: transparent; border: 1px solid #ccc; border-radius: 4px;">
+                      ✏️
+                    </button>
+                    }
+                    @if (config().features.enableDelete) {
+                    <button class="card-action-btn" (click)="handleDelete(row); $event.stopPropagation()" title="מחק"
+                      style="background-color: transparent; border: 1px solid #f44336; border-radius: 4px; color: #f44336;">
+                      🗑️
+                    </button>
+                    }
+                  }
+                }
+              </div>
+            }
+          </div>
+        </div>
+      </cdk-virtual-scroll-viewport>
+    }
+  } @else {
+    <div class="cards-container" role="listbox" aria-label="כרטיסי נתונים">
+      @for (row of displayedData(); track row.id) {
+      <div class="mobile-card" (click)="onRowClick(row)"
+        (focus)="onRowFocus($index)"
+        (keydown)="onRowKeydown($event, row, $index)"
+        [attr.data-row-index]="$index"
+        [attr.tabindex]="isRowFocused($index) ? 0 : -1"
+        [attr.aria-selected]="isSelectionEnabled() ? isRowSelected(row) : null"
+        role="option">
+        @if (mobileCardTemplate()) {
+          <ng-container
+            *ngTemplateOutlet="mobileCardTemplate(); context: { $implicit: row, row: row, index: $index }"
+          ></ng-container>
+        } @else {
+          <div class="card-header">
+            <div class="card-id">
+              {{ row.id }}
+            </div>
+            <div class="card-actions">
+              @if (isSelectionEnabled()) {
+                <input
+                  type="checkbox"
+                  [checked]="isRowSelected(row)"
+                  aria-label="בחירת כרטיס"
+                  (click)="$event.stopPropagation()"
+                  (change)="toggleRowSelection(row)"
+                />
+              }
+              @if (row.status !== undefined) {
+              <span class="status-badge" [style.background-color]="getStatusColor(row.status)">
+                {{ getFormattedStatus(row) }}
+              </span>
+              }
+            </div>
+          </div>
+          <div class="card-body">
+            @for (column of visibleColumns(); track column.key) {
+            @if (column.type !== 'action' && column.key !== 'id') {
+            <div class="card-row" (click)="onCellClick(column, row)">
+              <span class="label">{{ column.header }}:</span>
+              @if (isInlineEditMode() && isRowEditing(row)) {
+                <input
+                  class="inline-edit-input"
+                  [ngModel]="getEditingValue(column, row)"
+                  (ngModelChange)="updateEditingValue(column, $event)"
+                />
+              } @else if (cellTemplate()) {
+                <ng-container
+                  *ngTemplateOutlet="cellTemplate(); context: { $implicit: row, row: row, column: column, value: getColumnValue(column, row), index: $index }"
+                ></ng-container>
+              } @else if (column.type === 'badge') {
+                <span class="value status-badge" [style]="getCellStyle(column, getColumnValue(column, row), row)"
+                  [style.background-color]="getStatusColor(getColumnValue(column, row))">
+                  {{ getCellValue(column, row) }}
+                </span>
+              } @else {
+                <span class="value" [style]="getCellStyle(column, getColumnValue(column, row), row)">
+                  {{ getCellValue(column, row) }}
+                </span>
+              }
+            </div>
+            }
+            }
+          </div>
+          @if (isExpandedEditMode() && isRowEditing(row)) {
+            <div class="expanded-editor card-expanded-editor">
+              <div class="detail-grid">
+                @for (column of config().columns; track column.key) {
+                  @if (column.type !== 'action') {
+                    <div class="detail-field">
+                      <label>{{ column.header }}:</label>
+                      @if (column.key !== 'id') {
+                        <input
+                          [ngModel]="getEditingValue(column, row)"
+                          (ngModelChange)="updateEditingValue(column, $event)"
+                        />
+                      } @else {
+                        <span>{{ getCellValue(column, row) }}</span>
+                      }
+                    </div>
+                  }
+                }
+              </div>
+              <div class="expanded-editor-actions">
+                <button class="btn btn-primary" (click)="saveRowEdit(); $event.stopPropagation()">שמור</button>
+                <button class="btn btn-secondary" (click)="cancelRowEdit(); $event.stopPropagation()">ביטול</button>
+              </div>
+            </div>
+          }
+          <div class="card-footer">
+            @if (actionTemplate()) {
+              <ng-container
+                *ngTemplateOutlet="actionTemplate(); context: { $implicit: row, row: row, index: $index }"
+              ></ng-container>
+            } @else {
+              @if (!isModalEditMode() && isRowEditing(row)) {
+                <button class="card-action-btn" (click)="saveRowEdit(); $event.stopPropagation()" title="שמור"
+                  style="background-color: transparent; border: 1px solid #4caf50; border-radius: 4px; color: #2e7d32;">
+                  ✔
+                </button>
+                <button class="card-action-btn" (click)="cancelRowEdit(); $event.stopPropagation()" title="ביטול"
+                  style="background-color: transparent; border: 1px solid #999; border-radius: 4px; color: #555;">
+                  ✕
+                </button>
+              } @else {
+                @if (config().features.enableEdit) {
+                <button class="card-action-btn" (click)="handleEdit(row); $event.stopPropagation()" title="ערוך"
+                  style="background-color: transparent; border: 1px solid #ccc; border-radius: 4px;">
+                  ✏️
+                </button>
+                }
+                @if (config().features.enableDelete) {
+                <button class="card-action-btn" (click)="handleDelete(row); $event.stopPropagation()" title="מחק"
+                  style="background-color: transparent; border: 1px solid #f44336; border-radius: 4px; color: #f44336;">
+                  🗑️
+                </button>
+                }
+              }
+            }
+          </div>
+        }
+      </div>
+      } @empty {
+        @if (emptyTemplate()) {
+          <ng-container *ngTemplateOutlet="emptyTemplate()"></ng-container>
+        } @else {
+          <div class="empty-state">אין נתונים להצגה</div>
+        }
+      }
+    </div>
+  }
+  } @placeholder {
+    <div class="table-loading" aria-live="polite">טוען תצוגת מובייל...</div>
+  }
+  }
+
+  @if (showPagination()) {
   <div class="pagination">
     <div class="pagination-info">
-      מציג {{ currentPageRange.start }} - {{ currentPageRange.end }} מתוך {{ filteredData().length }}
+      מציג {{ currentPageRange().start }} - {{ currentPageRange().end }} מתוך {{ totalItems() }}
     </div>
 
     <div class="pagination-controls">
@@ -152,21 +770,21 @@
         הקודם
       </button>
 
-      @for (page of [].constructor(totalPages); track $index) {
-      @if (shouldShowPageButton($index + 1)) {
+      @for (page of pageNumbers(); track page) {
+      @if (shouldShowPageButton(page)) {
       <button class="page-btn"
-        [class.active]="$index + 1 === pagination().currentPage" (click)="goToPage($index + 1)">
-        {{ $index + 1 }}
+        [class.active]="page === pagination().currentPage" (click)="goToPage(page)">
+        {{ page }}
       </button>
       }
       }
 
         <button class="page-btn" (click)="goToPage(pagination().currentPage + 1)"
-          [disabled]="pagination().currentPage === totalPages">
+          [disabled]="pagination().currentPage === totalPages()">
           הבא
         </button>
-        <button class="page-btn" (click)="goToPage(totalPages)"
-          [disabled]="pagination().currentPage === totalPages">
+        <button class="page-btn" (click)="goToPage(totalPages())"
+          [disabled]="pagination().currentPage === totalPages()">
           אחרון
         </button>
     </div>
@@ -180,12 +798,34 @@
       </select>
     </div>
   </div>
+  }
+
+  @if (diagnosticsEnabled() && !isMobile()) {
+    <div class="diagnostics-bar" aria-live="polite">
+      <span class="diagnostics-badge">Diagnostics</span>
+      <span class="diagnostics-item">
+        Query: {{ lastQueryParams() ? (lastQueryParams() | json) : 'N/A' }}
+      </span>
+      <span class="diagnostics-divider">|</span>
+      <span class="diagnostics-item">
+        {{ diagnosticsVisibleLabel() }}: {{ diagnosticsVisibleText() }}
+      </span>
+      <span class="diagnostics-divider">|</span>
+      <span class="diagnostics-item">
+        Page: {{ diagnosticsPage() }}
+      </span>
+      <span class="diagnostics-divider">|</span>
+      <span class="diagnostics-item">
+        Timing: {{ lastQueryDuration() !== null ? (lastQueryDuration() | number : '1.0-0') + 'ms' : 'N/A' }}
+      </span>
+    </div>
+  }
 
   @if (detailModal().isOpen && detailModal().data) {
   <div class="modal-overlay" (click)="closeDetail()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-content" (click)="$event.stopPropagation()" (keydown)="onModalKeydown($event)" role="dialog" aria-modal="true" aria-labelledby="table-modal-title" tabindex="-1">
       <div class="modal-header">
-        <h2>{{ detailModal().data!.id }}</h2>
+        <h2 id="table-modal-title">{{ detailModal().data!.id }}</h2>
         <button class="close-btn" (click)="closeDetail()">✕</button>
       </div>
 
@@ -196,10 +836,10 @@
           <div class="detail-field">
             <label>{{ column.header }}:</label>
             @if (detailModal().mode === 'edit' && column.key !== 'id') {
-            <input [(ngModel)]="detailModal().data![column.key]" />
+            <input [(ngModel)]="$any(detailModal().data)[column.key]" />
             } @else {
             @if (column.type === 'badge') {
-            <span class="status-badge" [style.background-color]="getStatusColor(detailModal().data![column.key])">
+            <span class="status-badge" [style.background-color]="getStatusColor($any(detailModal().data)[column.key])">
               {{ getCellValue(column, detailModal().data!) }}
             </span>
             } @else {
@@ -219,7 +859,7 @@
         <button class="btn btn-primary" (click)="saveDetail()">שמור</button>
         <button class="btn btn-secondary" (click)="closeDetail()">ביטול</button>
         } @else {
-        <button class="btn btn-primary" (click)="detailModal().mode = 'edit'">
+        <button class="btn btn-primary" (click)="setDetailMode('edit')">
           עבור למצב עריכה
         </button>
         <button class="btn btn-secondary" (click)="closeDetail()">סגור</button>

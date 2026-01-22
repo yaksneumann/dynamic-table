@@ -1,0 +1,1682 @@
+[
+  {
+    "id": "TSK-001",
+    "facilityName": "סניף דואר תל אביב 1",
+    "address": "דיזנגוף 10, תל אביב",
+    "contactName": "אורי לוי",
+    "contactPhone": "050-1000001",
+    "bagCount": 2,
+    "totalAmount": 21500,
+    "status": "מוכן",
+    "hub": "center",
+    "hubName": "מוקד מרכז",
+    "deliveryType": "delivery",
+    "targetFacility": "תל אביב",
+    "createdAt": "2024-02-01",
+    "barcodes": [
+      { "barcode": "RR001000001IL", "type": "delivery", "amount": 21500 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 1",
+      "driver": "נהג 1",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-002",
+    "facilityName": "סניף דואר ירושלים 2",
+    "address": "יפו 20, ירושלים",
+    "contactName": "נועה כהן",
+    "contactPhone": "050-1000002",
+    "bagCount": 3,
+    "totalAmount": 23000,
+    "status": "בתהליך",
+    "hub": "north",
+    "hubName": "מוקד צפון",
+    "deliveryType": "pickup",
+    "targetFacility": "ירושלים",
+    "createdAt": "2024-02-02",
+    "barcodes": [
+      { "barcode": "RR002000002IL", "type": "pickup", "amount": 23000 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 2",
+      "driver": "נהג 2",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-003",
+    "facilityName": "סניף דואר חיפה 3",
+    "address": "הרצל 30, חיפה",
+    "contactName": "דני ישראל",
+    "contactPhone": "050-1000003",
+    "bagCount": 4,
+    "totalAmount": 24500,
+    "status": "הושלם",
+    "hub": "south",
+    "hubName": "מוקד דרום",
+    "deliveryType": "delivery",
+    "targetFacility": "חיפה",
+    "createdAt": "2024-02-03",
+    "barcodes": [
+      { "barcode": "RR003000003IL", "type": "delivery", "amount": 24500 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 3",
+      "driver": "נהג 3",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-004",
+    "facilityName": "סניף דואר באר שבע 4",
+    "address": "הנגב 40, באר שבע",
+    "contactName": "שרון לוי",
+    "contactPhone": "050-1000004",
+    "bagCount": 5,
+    "totalAmount": 26000,
+    "status": "דחוף",
+    "hub": "center",
+    "hubName": "מוקד מרכז",
+    "deliveryType": "pickup",
+    "targetFacility": "באר שבע",
+    "createdAt": "2024-02-04",
+    "barcodes": [
+      { "barcode": "RR004000004IL", "type": "pickup", "amount": 26000 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 4",
+      "driver": "נהג 4",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-005",
+    "facilityName": "סניף דואר תל אביב 5",
+    "address": "דיזנגוף 50, תל אביב",
+    "contactName": "אורי לוי",
+    "contactPhone": "050-1000005",
+    "bagCount": 1,
+    "totalAmount": 27500,
+    "status": "מוכן",
+    "hub": "north",
+    "hubName": "מוקד צפון",
+    "deliveryType": "delivery",
+    "targetFacility": "תל אביב",
+    "createdAt": "2024-02-05",
+    "barcodes": [
+      { "barcode": "RR005000005IL", "type": "delivery", "amount": 27500 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 5",
+      "driver": "נהג 5",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-006",
+    "facilityName": "סניף דואר ירושלים 6",
+    "address": "יפו 60, ירושלים",
+    "contactName": "נועה כהן",
+    "contactPhone": "050-1000006",
+    "bagCount": 2,
+    "totalAmount": 29000,
+    "status": "בתהליך",
+    "hub": "south",
+    "hubName": "מוקד דרום",
+    "deliveryType": "pickup",
+    "targetFacility": "ירושלים",
+    "createdAt": "2024-02-06",
+    "barcodes": [
+      { "barcode": "RR006000006IL", "type": "pickup", "amount": 29000 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 6",
+      "driver": "נהג 6",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-007",
+    "facilityName": "סניף דואר חיפה 7",
+    "address": "הרצל 70, חיפה",
+    "contactName": "דני ישראל",
+    "contactPhone": "050-1000007",
+    "bagCount": 3,
+    "totalAmount": 30500,
+    "status": "הושלם",
+    "hub": "center",
+    "hubName": "מוקד מרכז",
+    "deliveryType": "delivery",
+    "targetFacility": "חיפה",
+    "createdAt": "2024-02-07",
+    "barcodes": [
+      { "barcode": "RR007000007IL", "type": "delivery", "amount": 30500 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 7",
+      "driver": "נהג 7",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-008",
+    "facilityName": "סניף דואר באר שבע 8",
+    "address": "הנגב 80, באר שבע",
+    "contactName": "שרון לוי",
+    "contactPhone": "050-1000008",
+    "bagCount": 4,
+    "totalAmount": 32000,
+    "status": "דחוף",
+    "hub": "north",
+    "hubName": "מוקד צפון",
+    "deliveryType": "pickup",
+    "targetFacility": "באר שבע",
+    "createdAt": "2024-02-08",
+    "barcodes": [
+      { "barcode": "RR008000008IL", "type": "pickup", "amount": 32000 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 8",
+      "driver": "נהג 8",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-009",
+    "facilityName": "סניף דואר תל אביב 9",
+    "address": "דיזנגוף 90, תל אביב",
+    "contactName": "אורי לוי",
+    "contactPhone": "050-1000009",
+    "bagCount": 5,
+    "totalAmount": 33500,
+    "status": "מוכן",
+    "hub": "south",
+    "hubName": "מוקד דרום",
+    "deliveryType": "delivery",
+    "targetFacility": "תל אביב",
+    "createdAt": "2024-02-09",
+    "barcodes": [
+      { "barcode": "RR009000009IL", "type": "delivery", "amount": 33500 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 9",
+      "driver": "נהג 9",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-010",
+    "facilityName": "סניף דואר ירושלים 10",
+    "address": "יפו 100, ירושלים",
+    "contactName": "נועה כהן",
+    "contactPhone": "050-1000010",
+    "bagCount": 1,
+    "totalAmount": 35000,
+    "status": "בתהליך",
+    "hub": "center",
+    "hubName": "מוקד מרכז",
+    "deliveryType": "pickup",
+    "targetFacility": "ירושלים",
+    "createdAt": "2024-02-10",
+    "barcodes": [
+      { "barcode": "RR010000010IL", "type": "pickup", "amount": 35000 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 10",
+      "driver": "נהג 10",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-011",
+    "facilityName": "סניף דואר חיפה 11",
+    "address": "הרצל 110, חיפה",
+    "contactName": "דני ישראל",
+    "contactPhone": "050-1000011",
+    "bagCount": 2,
+    "totalAmount": 36500,
+    "status": "הושלם",
+    "hub": "north",
+    "hubName": "מוקד צפון",
+    "deliveryType": "delivery",
+    "targetFacility": "חיפה",
+    "createdAt": "2024-02-11",
+    "barcodes": [
+      { "barcode": "RR011000011IL", "type": "delivery", "amount": 36500 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 11",
+      "driver": "נהג 11",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-012",
+    "facilityName": "סניף דואר באר שבע 12",
+    "address": "הנגב 120, באר שבע",
+    "contactName": "שרון לוי",
+    "contactPhone": "050-1000012",
+    "bagCount": 3,
+    "totalAmount": 38000,
+    "status": "דחוף",
+    "hub": "south",
+    "hubName": "מוקד דרום",
+    "deliveryType": "pickup",
+    "targetFacility": "באר שבע",
+    "createdAt": "2024-02-12",
+    "barcodes": [
+      { "barcode": "RR012000012IL", "type": "pickup", "amount": 38000 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 12",
+      "driver": "נהג 12",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-013",
+    "facilityName": "סניף דואר תל אביב 13",
+    "address": "דיזנגוף 130, תל אביב",
+    "contactName": "אורי לוי",
+    "contactPhone": "050-1000013",
+    "bagCount": 4,
+    "totalAmount": 39500,
+    "status": "מוכן",
+    "hub": "center",
+    "hubName": "מוקד מרכז",
+    "deliveryType": "delivery",
+    "targetFacility": "תל אביב",
+    "createdAt": "2024-02-13",
+    "barcodes": [
+      { "barcode": "RR013000013IL", "type": "delivery", "amount": 39500 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 13",
+      "driver": "נהג 13",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-014",
+    "facilityName": "סניף דואר ירושלים 14",
+    "address": "יפו 140, ירושלים",
+    "contactName": "נועה כהן",
+    "contactPhone": "050-1000014",
+    "bagCount": 5,
+    "totalAmount": 41000,
+    "status": "בתהליך",
+    "hub": "north",
+    "hubName": "מוקד צפון",
+    "deliveryType": "pickup",
+    "targetFacility": "ירושלים",
+    "createdAt": "2024-02-14",
+    "barcodes": [
+      { "barcode": "RR014000014IL", "type": "pickup", "amount": 41000 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 14",
+      "driver": "נהג 14",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-015",
+    "facilityName": "סניף דואר חיפה 15",
+    "address": "הרצל 150, חיפה",
+    "contactName": "דני ישראל",
+    "contactPhone": "050-1000015",
+    "bagCount": 1,
+    "totalAmount": 42500,
+    "status": "הושלם",
+    "hub": "south",
+    "hubName": "מוקד דרום",
+    "deliveryType": "delivery",
+    "targetFacility": "חיפה",
+    "createdAt": "2024-02-15",
+    "barcodes": [
+      { "barcode": "RR015000015IL", "type": "delivery", "amount": 42500 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 15",
+      "driver": "נהג 15",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-016",
+    "facilityName": "סניף דואר באר שבע 16",
+    "address": "הנגב 160, באר שבע",
+    "contactName": "שרון לוי",
+    "contactPhone": "050-1000016",
+    "bagCount": 2,
+    "totalAmount": 44000,
+    "status": "דחוף",
+    "hub": "center",
+    "hubName": "מוקד מרכז",
+    "deliveryType": "pickup",
+    "targetFacility": "באר שבע",
+    "createdAt": "2024-02-16",
+    "barcodes": [
+      { "barcode": "RR016000016IL", "type": "pickup", "amount": 44000 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 16",
+      "driver": "נהג 16",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-017",
+    "facilityName": "סניף דואר תל אביב 17",
+    "address": "דיזנגוף 170, תל אביב",
+    "contactName": "אורי לוי",
+    "contactPhone": "050-1000017",
+    "bagCount": 3,
+    "totalAmount": 45500,
+    "status": "מוכן",
+    "hub": "north",
+    "hubName": "מוקד צפון",
+    "deliveryType": "delivery",
+    "targetFacility": "תל אביב",
+    "createdAt": "2024-02-17",
+    "barcodes": [
+      { "barcode": "RR017000017IL", "type": "delivery", "amount": 45500 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 17",
+      "driver": "נהג 17",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-018",
+    "facilityName": "סניף דואר ירושלים 18",
+    "address": "יפו 180, ירושלים",
+    "contactName": "נועה כהן",
+    "contactPhone": "050-1000018",
+    "bagCount": 4,
+    "totalAmount": 47000,
+    "status": "בתהליך",
+    "hub": "south",
+    "hubName": "מוקד דרום",
+    "deliveryType": "pickup",
+    "targetFacility": "ירושלים",
+    "createdAt": "2024-02-18",
+    "barcodes": [
+      { "barcode": "RR018000018IL", "type": "pickup", "amount": 47000 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 18",
+      "driver": "נהג 18",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-019",
+    "facilityName": "סניף דואר חיפה 19",
+    "address": "הרצל 190, חיפה",
+    "contactName": "דני ישראל",
+    "contactPhone": "050-1000019",
+    "bagCount": 5,
+    "totalAmount": 48500,
+    "status": "הושלם",
+    "hub": "center",
+    "hubName": "מוקד מרכז",
+    "deliveryType": "delivery",
+    "targetFacility": "חיפה",
+    "createdAt": "2024-02-19",
+    "barcodes": [
+      { "barcode": "RR019000019IL", "type": "delivery", "amount": 48500 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 19",
+      "driver": "נהג 19",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-020",
+    "facilityName": "סניף דואר באר שבע 20",
+    "address": "הנגב 200, באר שבע",
+    "contactName": "שרון לוי",
+    "contactPhone": "050-1000020",
+    "bagCount": 1,
+    "totalAmount": 50000,
+    "status": "דחוף",
+    "hub": "north",
+    "hubName": "מוקד צפון",
+    "deliveryType": "pickup",
+    "targetFacility": "באר שבע",
+    "createdAt": "2024-02-20",
+    "barcodes": [
+      { "barcode": "RR020000020IL", "type": "pickup", "amount": 50000 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 20",
+      "driver": "נהג 20",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-021",
+    "facilityName": "סניף דואר תל אביב 21",
+    "address": "דיזנגוף 210, תל אביב",
+    "contactName": "אורי לוי",
+    "contactPhone": "050-1000021",
+    "bagCount": 2,
+    "totalAmount": 51500,
+    "status": "מוכן",
+    "hub": "south",
+    "hubName": "מוקד דרום",
+    "deliveryType": "delivery",
+    "targetFacility": "תל אביב",
+    "createdAt": "2024-02-21",
+    "barcodes": [
+      { "barcode": "RR021000021IL", "type": "delivery", "amount": 51500 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 21",
+      "driver": "נהג 21",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-022",
+    "facilityName": "סניף דואר ירושלים 22",
+    "address": "יפו 220, ירושלים",
+    "contactName": "נועה כהן",
+    "contactPhone": "050-1000022",
+    "bagCount": 3,
+    "totalAmount": 53000,
+    "status": "בתהליך",
+    "hub": "center",
+    "hubName": "מוקד מרכז",
+    "deliveryType": "pickup",
+    "targetFacility": "ירושלים",
+    "createdAt": "2024-02-22",
+    "barcodes": [
+      { "barcode": "RR022000022IL", "type": "pickup", "amount": 53000 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 22",
+      "driver": "נהג 22",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-023",
+    "facilityName": "סניף דואר חיפה 23",
+    "address": "הרצל 230, חיפה",
+    "contactName": "דני ישראל",
+    "contactPhone": "050-1000023",
+    "bagCount": 4,
+    "totalAmount": 54500,
+    "status": "הושלם",
+    "hub": "north",
+    "hubName": "מוקד צפון",
+    "deliveryType": "delivery",
+    "targetFacility": "חיפה",
+    "createdAt": "2024-02-23",
+    "barcodes": [
+      { "barcode": "RR023000023IL", "type": "delivery", "amount": 54500 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 23",
+      "driver": "נהג 23",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-024",
+    "facilityName": "סניף דואר באר שבע 24",
+    "address": "הנגב 240, באר שבע",
+    "contactName": "שרון לוי",
+    "contactPhone": "050-1000024",
+    "bagCount": 5,
+    "totalAmount": 56000,
+    "status": "דחוף",
+    "hub": "south",
+    "hubName": "מוקד דרום",
+    "deliveryType": "pickup",
+    "targetFacility": "באר שבע",
+    "createdAt": "2024-02-24",
+    "barcodes": [
+      { "barcode": "RR024000024IL", "type": "pickup", "amount": 56000 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 24",
+      "driver": "נהג 24",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-025",
+    "facilityName": "סניף דואר תל אביב 25",
+    "address": "דיזנגוף 250, תל אביב",
+    "contactName": "אורי לוי",
+    "contactPhone": "050-1000025",
+    "bagCount": 1,
+    "totalAmount": 57500,
+    "status": "מוכן",
+    "hub": "center",
+    "hubName": "מוקד מרכז",
+    "deliveryType": "delivery",
+    "targetFacility": "תל אביב",
+    "createdAt": "2024-02-25",
+    "barcodes": [
+      { "barcode": "RR025000025IL", "type": "delivery", "amount": 57500 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 25",
+      "driver": "נהג 25",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-026",
+    "facilityName": "סניף דואר ירושלים 26",
+    "address": "יפו 260, ירושלים",
+    "contactName": "נועה כהן",
+    "contactPhone": "050-1000026",
+    "bagCount": 2,
+    "totalAmount": 59000,
+    "status": "בתהליך",
+    "hub": "north",
+    "hubName": "מוקד צפון",
+    "deliveryType": "pickup",
+    "targetFacility": "ירושלים",
+    "createdAt": "2024-02-26",
+    "barcodes": [
+      { "barcode": "RR026000026IL", "type": "pickup", "amount": 59000 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 26",
+      "driver": "נהג 26",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-027",
+    "facilityName": "סניף דואר חיפה 27",
+    "address": "הרצל 270, חיפה",
+    "contactName": "דני ישראל",
+    "contactPhone": "050-1000027",
+    "bagCount": 3,
+    "totalAmount": 60500,
+    "status": "הושלם",
+    "hub": "south",
+    "hubName": "מוקד דרום",
+    "deliveryType": "delivery",
+    "targetFacility": "חיפה",
+    "createdAt": "2024-02-27",
+    "barcodes": [
+      { "barcode": "RR027000027IL", "type": "delivery", "amount": 60500 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 27",
+      "driver": "נהג 27",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-028",
+    "facilityName": "סניף דואר באר שבע 28",
+    "address": "הנגב 280, באר שבע",
+    "contactName": "שרון לוי",
+    "contactPhone": "050-1000028",
+    "bagCount": 4,
+    "totalAmount": 62000,
+    "status": "דחוף",
+    "hub": "center",
+    "hubName": "מוקד מרכז",
+    "deliveryType": "pickup",
+    "targetFacility": "באר שבע",
+    "createdAt": "2024-02-28",
+    "barcodes": [
+      { "barcode": "RR028000028IL", "type": "pickup", "amount": 62000 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 28",
+      "driver": "נהג 28",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-029",
+    "facilityName": "סניף דואר תל אביב 29",
+    "address": "דיזנגוף 290, תל אביב",
+    "contactName": "אורי לוי",
+    "contactPhone": "050-1000029",
+    "bagCount": 5,
+    "totalAmount": 63500,
+    "status": "מוכן",
+    "hub": "north",
+    "hubName": "מוקד צפון",
+    "deliveryType": "delivery",
+    "targetFacility": "תל אביב",
+    "createdAt": "2024-02-01",
+    "barcodes": [
+      { "barcode": "RR029000029IL", "type": "delivery", "amount": 63500 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 29",
+      "driver": "נהג 29",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-030",
+    "facilityName": "סניף דואר ירושלים 30",
+    "address": "יפו 300, ירושלים",
+    "contactName": "נועה כהן",
+    "contactPhone": "050-1000030",
+    "bagCount": 1,
+    "totalAmount": 65000,
+    "status": "בתהליך",
+    "hub": "south",
+    "hubName": "מוקד דרום",
+    "deliveryType": "pickup",
+    "targetFacility": "ירושלים",
+    "createdAt": "2024-02-02",
+    "barcodes": [
+      { "barcode": "RR030000030IL", "type": "pickup", "amount": 65000 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 30",
+      "driver": "נהג 30",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-031",
+    "facilityName": "סניף דואר חיפה 31",
+    "address": "הרצל 310, חיפה",
+    "contactName": "דני ישראל",
+    "contactPhone": "050-1000031",
+    "bagCount": 2,
+    "totalAmount": 66500,
+    "status": "הושלם",
+    "hub": "center",
+    "hubName": "מוקד מרכז",
+    "deliveryType": "delivery",
+    "targetFacility": "חיפה",
+    "createdAt": "2024-02-03",
+    "barcodes": [
+      { "barcode": "RR031000031IL", "type": "delivery", "amount": 66500 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 31",
+      "driver": "נהג 31",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-032",
+    "facilityName": "סניף דואר באר שבע 32",
+    "address": "הנגב 320, באר שבע",
+    "contactName": "שרון לוי",
+    "contactPhone": "050-1000032",
+    "bagCount": 3,
+    "totalAmount": 68000,
+    "status": "דחוף",
+    "hub": "north",
+    "hubName": "מוקד צפון",
+    "deliveryType": "pickup",
+    "targetFacility": "באר שבע",
+    "createdAt": "2024-02-04",
+    "barcodes": [
+      { "barcode": "RR032000032IL", "type": "pickup", "amount": 68000 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 32",
+      "driver": "נהג 32",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-033",
+    "facilityName": "סניף דואר תל אביב 33",
+    "address": "דיזנגוף 330, תל אביב",
+    "contactName": "אורי לוי",
+    "contactPhone": "050-1000033",
+    "bagCount": 4,
+    "totalAmount": 69500,
+    "status": "מוכן",
+    "hub": "south",
+    "hubName": "מוקד דרום",
+    "deliveryType": "delivery",
+    "targetFacility": "תל אביב",
+    "createdAt": "2024-02-05",
+    "barcodes": [
+      { "barcode": "RR033000033IL", "type": "delivery", "amount": 69500 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 33",
+      "driver": "נהג 33",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-034",
+    "facilityName": "סניף דואר ירושלים 34",
+    "address": "יפו 340, ירושלים",
+    "contactName": "נועה כהן",
+    "contactPhone": "050-1000034",
+    "bagCount": 5,
+    "totalAmount": 71000,
+    "status": "בתהליך",
+    "hub": "center",
+    "hubName": "מוקד מרכז",
+    "deliveryType": "pickup",
+    "targetFacility": "ירושלים",
+    "createdAt": "2024-02-06",
+    "barcodes": [
+      { "barcode": "RR034000034IL", "type": "pickup", "amount": 71000 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 34",
+      "driver": "נהג 34",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-035",
+    "facilityName": "סניף דואר חיפה 35",
+    "address": "הרצל 350, חיפה",
+    "contactName": "דני ישראל",
+    "contactPhone": "050-1000035",
+    "bagCount": 1,
+    "totalAmount": 72500,
+    "status": "הושלם",
+    "hub": "north",
+    "hubName": "מוקד צפון",
+    "deliveryType": "delivery",
+    "targetFacility": "חיפה",
+    "createdAt": "2024-02-07",
+    "barcodes": [
+      { "barcode": "RR035000035IL", "type": "delivery", "amount": 72500 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 35",
+      "driver": "נהג 35",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-036",
+    "facilityName": "סניף דואר באר שבע 36",
+    "address": "הנגב 360, באר שבע",
+    "contactName": "שרון לוי",
+    "contactPhone": "050-1000036",
+    "bagCount": 2,
+    "totalAmount": 74000,
+    "status": "דחוף",
+    "hub": "south",
+    "hubName": "מוקד דרום",
+    "deliveryType": "pickup",
+    "targetFacility": "באר שבע",
+    "createdAt": "2024-02-08",
+    "barcodes": [
+      { "barcode": "RR036000036IL", "type": "pickup", "amount": 74000 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 36",
+      "driver": "נהג 36",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-037",
+    "facilityName": "סניף דואר תל אביב 37",
+    "address": "דיזנגוף 370, תל אביב",
+    "contactName": "אורי לוי",
+    "contactPhone": "050-1000037",
+    "bagCount": 3,
+    "totalAmount": 75500,
+    "status": "מוכן",
+    "hub": "center",
+    "hubName": "מוקד מרכז",
+    "deliveryType": "delivery",
+    "targetFacility": "תל אביב",
+    "createdAt": "2024-02-09",
+    "barcodes": [
+      { "barcode": "RR037000037IL", "type": "delivery", "amount": 75500 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 37",
+      "driver": "נהג 37",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-038",
+    "facilityName": "סניף דואר ירושלים 38",
+    "address": "יפו 380, ירושלים",
+    "contactName": "נועה כהן",
+    "contactPhone": "050-1000038",
+    "bagCount": 4,
+    "totalAmount": 77000,
+    "status": "בתהליך",
+    "hub": "north",
+    "hubName": "מוקד צפון",
+    "deliveryType": "pickup",
+    "targetFacility": "ירושלים",
+    "createdAt": "2024-02-10",
+    "barcodes": [
+      { "barcode": "RR038000038IL", "type": "pickup", "amount": 77000 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 38",
+      "driver": "נהג 38",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-039",
+    "facilityName": "סניף דואר חיפה 39",
+    "address": "הרצל 390, חיפה",
+    "contactName": "דני ישראל",
+    "contactPhone": "050-1000039",
+    "bagCount": 5,
+    "totalAmount": 78500,
+    "status": "הושלם",
+    "hub": "south",
+    "hubName": "מוקד דרום",
+    "deliveryType": "delivery",
+    "targetFacility": "חיפה",
+    "createdAt": "2024-02-11",
+    "barcodes": [
+      { "barcode": "RR039000039IL", "type": "delivery", "amount": 78500 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 39",
+      "driver": "נהג 39",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-040",
+    "facilityName": "סניף דואר באר שבע 40",
+    "address": "הנגב 400, באר שבע",
+    "contactName": "שרון לוי",
+    "contactPhone": "050-1000040",
+    "bagCount": 1,
+    "totalAmount": 80000,
+    "status": "דחוף",
+    "hub": "center",
+    "hubName": "מוקד מרכז",
+    "deliveryType": "pickup",
+    "targetFacility": "באר שבע",
+    "createdAt": "2024-02-12",
+    "barcodes": [
+      { "barcode": "RR040000040IL", "type": "pickup", "amount": 80000 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 40",
+      "driver": "נהג 40",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-041",
+    "facilityName": "סניף דואר תל אביב 41",
+    "address": "דיזנגוף 410, תל אביב",
+    "contactName": "אורי לוי",
+    "contactPhone": "050-1000041",
+    "bagCount": 2,
+    "totalAmount": 81500,
+    "status": "מוכן",
+    "hub": "north",
+    "hubName": "מוקד צפון",
+    "deliveryType": "delivery",
+    "targetFacility": "תל אביב",
+    "createdAt": "2024-02-13",
+    "barcodes": [
+      { "barcode": "RR041000041IL", "type": "delivery", "amount": 81500 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 41",
+      "driver": "נהג 41",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-042",
+    "facilityName": "סניף דואר ירושלים 42",
+    "address": "יפו 420, ירושלים",
+    "contactName": "נועה כהן",
+    "contactPhone": "050-1000042",
+    "bagCount": 3,
+    "totalAmount": 83000,
+    "status": "בתהליך",
+    "hub": "south",
+    "hubName": "מוקד דרום",
+    "deliveryType": "pickup",
+    "targetFacility": "ירושלים",
+    "createdAt": "2024-02-14",
+    "barcodes": [
+      { "barcode": "RR042000042IL", "type": "pickup", "amount": 83000 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 42",
+      "driver": "נהג 42",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-043",
+    "facilityName": "סניף דואר חיפה 43",
+    "address": "הרצל 430, חיפה",
+    "contactName": "דני ישראל",
+    "contactPhone": "050-1000043",
+    "bagCount": 4,
+    "totalAmount": 84500,
+    "status": "הושלם",
+    "hub": "center",
+    "hubName": "מוקד מרכז",
+    "deliveryType": "delivery",
+    "targetFacility": "חיפה",
+    "createdAt": "2024-02-15",
+    "barcodes": [
+      { "barcode": "RR043000043IL", "type": "delivery", "amount": 84500 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 43",
+      "driver": "נהג 43",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-044",
+    "facilityName": "סניף דואר באר שבע 44",
+    "address": "הנגב 440, באר שבע",
+    "contactName": "שרון לוי",
+    "contactPhone": "050-1000044",
+    "bagCount": 5,
+    "totalAmount": 86000,
+    "status": "דחוף",
+    "hub": "north",
+    "hubName": "מוקד צפון",
+    "deliveryType": "pickup",
+    "targetFacility": "באר שבע",
+    "createdAt": "2024-02-16",
+    "barcodes": [
+      { "barcode": "RR044000044IL", "type": "pickup", "amount": 86000 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 44",
+      "driver": "נהג 44",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-045",
+    "facilityName": "סניף דואר תל אביב 45",
+    "address": "דיזנגוף 450, תל אביב",
+    "contactName": "אורי לוי",
+    "contactPhone": "050-1000045",
+    "bagCount": 1,
+    "totalAmount": 87500,
+    "status": "מוכן",
+    "hub": "south",
+    "hubName": "מוקד דרום",
+    "deliveryType": "delivery",
+    "targetFacility": "תל אביב",
+    "createdAt": "2024-02-17",
+    "barcodes": [
+      { "barcode": "RR045000045IL", "type": "delivery", "amount": 87500 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 45",
+      "driver": "נהג 45",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-046",
+    "facilityName": "סניף דואר ירושלים 46",
+    "address": "יפו 460, ירושלים",
+    "contactName": "נועה כהן",
+    "contactPhone": "050-1000046",
+    "bagCount": 2,
+    "totalAmount": 89000,
+    "status": "בתהליך",
+    "hub": "center",
+    "hubName": "מוקד מרכז",
+    "deliveryType": "pickup",
+    "targetFacility": "ירושלים",
+    "createdAt": "2024-02-18",
+    "barcodes": [
+      { "barcode": "RR046000046IL", "type": "pickup", "amount": 89000 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 46",
+      "driver": "נהג 46",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-047",
+    "facilityName": "סניף דואר חיפה 47",
+    "address": "הרצל 470, חיפה",
+    "contactName": "דני ישראל",
+    "contactPhone": "050-1000047",
+    "bagCount": 3,
+    "totalAmount": 90500,
+    "status": "הושלם",
+    "hub": "north",
+    "hubName": "מוקד צפון",
+    "deliveryType": "delivery",
+    "targetFacility": "חיפה",
+    "createdAt": "2024-02-19",
+    "barcodes": [
+      { "barcode": "RR047000047IL", "type": "delivery", "amount": 90500 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 47",
+      "driver": "נהג 47",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-048",
+    "facilityName": "סניף דואר באר שבע 48",
+    "address": "הנגב 480, באר שבע",
+    "contactName": "שרון לוי",
+    "contactPhone": "050-1000048",
+    "bagCount": 4,
+    "totalAmount": 92000,
+    "status": "דחוף",
+    "hub": "south",
+    "hubName": "מוקד דרום",
+    "deliveryType": "pickup",
+    "targetFacility": "באר שבע",
+    "createdAt": "2024-02-20",
+    "barcodes": [
+      { "barcode": "RR048000048IL", "type": "pickup", "amount": 92000 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 48",
+      "driver": "נהג 48",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-049",
+    "facilityName": "סניף דואר תל אביב 49",
+    "address": "דיזנגוף 490, תל אביב",
+    "contactName": "אורי לוי",
+    "contactPhone": "050-1000049",
+    "bagCount": 5,
+    "totalAmount": 93500,
+    "status": "מוכן",
+    "hub": "center",
+    "hubName": "מוקד מרכז",
+    "deliveryType": "delivery",
+    "targetFacility": "תל אביב",
+    "createdAt": "2024-02-21",
+    "barcodes": [
+      { "barcode": "RR049000049IL", "type": "delivery", "amount": 93500 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 49",
+      "driver": "נהג 49",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-050",
+    "facilityName": "סניף דואר ירושלים 50",
+    "address": "יפו 500, ירושלים",
+    "contactName": "נועה כהן",
+    "contactPhone": "050-1000050",
+    "bagCount": 1,
+    "totalAmount": 95000,
+    "status": "בתהליך",
+    "hub": "north",
+    "hubName": "מוקד צפון",
+    "deliveryType": "pickup",
+    "targetFacility": "ירושלים",
+    "createdAt": "2024-02-22",
+    "barcodes": [
+      { "barcode": "RR050000050IL", "type": "pickup", "amount": 95000 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 50",
+      "driver": "נהג 50",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-051",
+    "facilityName": "סניף דואר חיפה 51",
+    "address": "הרצל 510, חיפה",
+    "contactName": "דני ישראל",
+    "contactPhone": "050-1000051",
+    "bagCount": 2,
+    "totalAmount": 96500,
+    "status": "הושלם",
+    "hub": "south",
+    "hubName": "מוקד דרום",
+    "deliveryType": "delivery",
+    "targetFacility": "חיפה",
+    "createdAt": "2024-02-23",
+    "barcodes": [
+      { "barcode": "RR051000051IL", "type": "delivery", "amount": 96500 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 51",
+      "driver": "נהג 51",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-052",
+    "facilityName": "סניף דואר באר שבע 52",
+    "address": "הנגב 520, באר שבע",
+    "contactName": "שרון לוי",
+    "contactPhone": "050-1000052",
+    "bagCount": 3,
+    "totalAmount": 98000,
+    "status": "דחוף",
+    "hub": "center",
+    "hubName": "מוקד מרכז",
+    "deliveryType": "pickup",
+    "targetFacility": "באר שבע",
+    "createdAt": "2024-02-24",
+    "barcodes": [
+      { "barcode": "RR052000052IL", "type": "pickup", "amount": 98000 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 52",
+      "driver": "נהג 52",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-053",
+    "facilityName": "סניף דואר תל אביב 53",
+    "address": "דיזנגוף 530, תל אביב",
+    "contactName": "אורי לוי",
+    "contactPhone": "050-1000053",
+    "bagCount": 4,
+    "totalAmount": 99500,
+    "status": "מוכן",
+    "hub": "north",
+    "hubName": "מוקד צפון",
+    "deliveryType": "delivery",
+    "targetFacility": "תל אביב",
+    "createdAt": "2024-02-25",
+    "barcodes": [
+      { "barcode": "RR053000053IL", "type": "delivery", "amount": 99500 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 53",
+      "driver": "נהג 53",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-054",
+    "facilityName": "סניף דואר ירושלים 54",
+    "address": "יפו 540, ירושלים",
+    "contactName": "נועה כהן",
+    "contactPhone": "050-1000054",
+    "bagCount": 5,
+    "totalAmount": 101000,
+    "status": "בתהליך",
+    "hub": "south",
+    "hubName": "מוקד דרום",
+    "deliveryType": "pickup",
+    "targetFacility": "ירושלים",
+    "createdAt": "2024-02-26",
+    "barcodes": [
+      { "barcode": "RR054000054IL", "type": "pickup", "amount": 101000 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 54",
+      "driver": "נהג 54",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-055",
+    "facilityName": "סניף דואר חיפה 55",
+    "address": "הרצל 550, חיפה",
+    "contactName": "דני ישראל",
+    "contactPhone": "050-1000055",
+    "bagCount": 1,
+    "totalAmount": 102500,
+    "status": "הושלם",
+    "hub": "center",
+    "hubName": "מוקד מרכז",
+    "deliveryType": "delivery",
+    "targetFacility": "חיפה",
+    "createdAt": "2024-02-27",
+    "barcodes": [
+      { "barcode": "RR055000055IL", "type": "delivery", "amount": 102500 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 55",
+      "driver": "נהג 55",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-056",
+    "facilityName": "סניף דואר באר שבע 56",
+    "address": "הנגב 560, באר שבע",
+    "contactName": "שרון לוי",
+    "contactPhone": "050-1000056",
+    "bagCount": 2,
+    "totalAmount": 104000,
+    "status": "דחוף",
+    "hub": "north",
+    "hubName": "מוקד צפון",
+    "deliveryType": "pickup",
+    "targetFacility": "באר שבע",
+    "createdAt": "2024-02-28",
+    "barcodes": [
+      { "barcode": "RR056000056IL", "type": "pickup", "amount": 104000 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 56",
+      "driver": "נהג 56",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-057",
+    "facilityName": "סניף דואר תל אביב 57",
+    "address": "דיזנגוף 570, תל אביב",
+    "contactName": "אורי לוי",
+    "contactPhone": "050-1000057",
+    "bagCount": 3,
+    "totalAmount": 105500,
+    "status": "מוכן",
+    "hub": "south",
+    "hubName": "מוקד דרום",
+    "deliveryType": "delivery",
+    "targetFacility": "תל אביב",
+    "createdAt": "2024-02-01",
+    "barcodes": [
+      { "barcode": "RR057000057IL", "type": "delivery", "amount": 105500 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 57",
+      "driver": "נהג 57",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-058",
+    "facilityName": "סניף דואר ירושלים 58",
+    "address": "יפו 580, ירושלים",
+    "contactName": "נועה כהן",
+    "contactPhone": "050-1000058",
+    "bagCount": 4,
+    "totalAmount": 107000,
+    "status": "בתהליך",
+    "hub": "center",
+    "hubName": "מוקד מרכז",
+    "deliveryType": "pickup",
+    "targetFacility": "ירושלים",
+    "createdAt": "2024-02-02",
+    "barcodes": [
+      { "barcode": "RR058000058IL", "type": "pickup", "amount": 107000 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 58",
+      "driver": "נהג 58",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-059",
+    "facilityName": "סניף דואר חיפה 59",
+    "address": "הרצל 590, חיפה",
+    "contactName": "דני ישראל",
+    "contactPhone": "050-1000059",
+    "bagCount": 5,
+    "totalAmount": 108500,
+    "status": "הושלם",
+    "hub": "north",
+    "hubName": "מוקד צפון",
+    "deliveryType": "delivery",
+    "targetFacility": "חיפה",
+    "createdAt": "2024-02-03",
+    "barcodes": [
+      { "barcode": "RR059000059IL", "type": "delivery", "amount": 108500 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 59",
+      "driver": "נהג 59",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-060",
+    "facilityName": "סניף דואר באר שבע 60",
+    "address": "הנגב 600, באר שבע",
+    "contactName": "שרון לוי",
+    "contactPhone": "050-1000060",
+    "bagCount": 1,
+    "totalAmount": 110000,
+    "status": "דחוף",
+    "hub": "south",
+    "hubName": "מוקד דרום",
+    "deliveryType": "pickup",
+    "targetFacility": "באר שבע",
+    "createdAt": "2024-02-04",
+    "barcodes": [
+      { "barcode": "RR060000060IL", "type": "pickup", "amount": 110000 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 60",
+      "driver": "נהג 60",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-061",
+    "facilityName": "סניף דואר תל אביב 61",
+    "address": "דיזנגוף 610, תל אביב",
+    "contactName": "אורי לוי",
+    "contactPhone": "050-1000061",
+    "bagCount": 2,
+    "totalAmount": 111500,
+    "status": "מוכן",
+    "hub": "center",
+    "hubName": "מוקד מרכז",
+    "deliveryType": "delivery",
+    "targetFacility": "תל אביב",
+    "createdAt": "2024-02-05",
+    "barcodes": [
+      { "barcode": "RR061000061IL", "type": "delivery", "amount": 111500 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 61",
+      "driver": "נהג 61",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-062",
+    "facilityName": "סניף דואר ירושלים 62",
+    "address": "יפו 620, ירושלים",
+    "contactName": "נועה כהן",
+    "contactPhone": "050-1000062",
+    "bagCount": 3,
+    "totalAmount": 113000,
+    "status": "בתהליך",
+    "hub": "north",
+    "hubName": "מוקד צפון",
+    "deliveryType": "pickup",
+    "targetFacility": "ירושלים",
+    "createdAt": "2024-02-06",
+    "barcodes": [
+      { "barcode": "RR062000062IL", "type": "pickup", "amount": 113000 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 62",
+      "driver": "נהג 62",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-063",
+    "facilityName": "סניף דואר חיפה 63",
+    "address": "הרצל 630, חיפה",
+    "contactName": "דני ישראל",
+    "contactPhone": "050-1000063",
+    "bagCount": 4,
+    "totalAmount": 114500,
+    "status": "הושלם",
+    "hub": "south",
+    "hubName": "מוקד דרום",
+    "deliveryType": "delivery",
+    "targetFacility": "חיפה",
+    "createdAt": "2024-02-07",
+    "barcodes": [
+      { "barcode": "RR063000063IL", "type": "delivery", "amount": 114500 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 63",
+      "driver": "נהג 63",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-064",
+    "facilityName": "סניף דואר באר שבע 64",
+    "address": "הנגב 640, באר שבע",
+    "contactName": "שרון לוי",
+    "contactPhone": "050-1000064",
+    "bagCount": 5,
+    "totalAmount": 116000,
+    "status": "דחוף",
+    "hub": "center",
+    "hubName": "מוקד מרכז",
+    "deliveryType": "pickup",
+    "targetFacility": "באר שבע",
+    "createdAt": "2024-02-08",
+    "barcodes": [
+      { "barcode": "RR064000064IL", "type": "pickup", "amount": 116000 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 64",
+      "driver": "נהג 64",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-065",
+    "facilityName": "סניף דואר תל אביב 65",
+    "address": "דיזנגוף 650, תל אביב",
+    "contactName": "אורי לוי",
+    "contactPhone": "050-1000065",
+    "bagCount": 1,
+    "totalAmount": 117500,
+    "status": "מוכן",
+    "hub": "north",
+    "hubName": "מוקד צפון",
+    "deliveryType": "delivery",
+    "targetFacility": "תל אביב",
+    "createdAt": "2024-02-09",
+    "barcodes": [
+      { "barcode": "RR065000065IL", "type": "delivery", "amount": 117500 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 65",
+      "driver": "נהג 65",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-066",
+    "facilityName": "סניף דואר ירושלים 66",
+    "address": "יפו 660, ירושלים",
+    "contactName": "נועה כהן",
+    "contactPhone": "050-1000066",
+    "bagCount": 2,
+    "totalAmount": 119000,
+    "status": "בתהליך",
+    "hub": "south",
+    "hubName": "מוקד דרום",
+    "deliveryType": "pickup",
+    "targetFacility": "ירושלים",
+    "createdAt": "2024-02-10",
+    "barcodes": [
+      { "barcode": "RR066000066IL", "type": "pickup", "amount": 119000 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 66",
+      "driver": "נהג 66",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-067",
+    "facilityName": "סניף דואר חיפה 67",
+    "address": "הרצל 670, חיפה",
+    "contactName": "דני ישראל",
+    "contactPhone": "050-1000067",
+    "bagCount": 3,
+    "totalAmount": 120500,
+    "status": "הושלם",
+    "hub": "center",
+    "hubName": "מוקד מרכז",
+    "deliveryType": "delivery",
+    "targetFacility": "חיפה",
+    "createdAt": "2024-02-11",
+    "barcodes": [
+      { "barcode": "RR067000067IL", "type": "delivery", "amount": 120500 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 67",
+      "driver": "נהג 67",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-068",
+    "facilityName": "סניף דואר באר שבע 68",
+    "address": "הנגב 680, באר שבע",
+    "contactName": "שרון לוי",
+    "contactPhone": "050-1000068",
+    "bagCount": 4,
+    "totalAmount": 122000,
+    "status": "דחוף",
+    "hub": "north",
+    "hubName": "מוקד צפון",
+    "deliveryType": "pickup",
+    "targetFacility": "באר שבע",
+    "createdAt": "2024-02-12",
+    "barcodes": [
+      { "barcode": "RR068000068IL", "type": "pickup", "amount": 122000 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 68",
+      "driver": "נהג 68",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-069",
+    "facilityName": "סניף דואר תל אביב 69",
+    "address": "דיזנגוף 690, תל אביב",
+    "contactName": "אורי לוי",
+    "contactPhone": "050-1000069",
+    "bagCount": 5,
+    "totalAmount": 123500,
+    "status": "מוכן",
+    "hub": "south",
+    "hubName": "מוקד דרום",
+    "deliveryType": "delivery",
+    "targetFacility": "תל אביב",
+    "createdAt": "2024-02-13",
+    "barcodes": [
+      { "barcode": "RR069000069IL", "type": "delivery", "amount": 123500 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 69",
+      "driver": "נהג 69",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  },
+  {
+    "id": "TSK-070",
+    "facilityName": "סניף דואר ירושלים 70",
+    "address": "יפו 700, ירושלים",
+    "contactName": "נועה כהן",
+    "contactPhone": "050-1000070",
+    "bagCount": 1,
+    "totalAmount": 125000,
+    "status": "בתהליך",
+    "hub": "center",
+    "hubName": "מוקד מרכז",
+    "deliveryType": "pickup",
+    "targetFacility": "ירושלים",
+    "createdAt": "2024-02-14",
+    "barcodes": [
+      { "barcode": "RR070000070IL", "type": "pickup", "amount": 125000 }
+    ],
+    "team": {
+      "teamLeader": "מוביל 70",
+      "driver": "נהג 70",
+      "security1": "אבטחה א",
+      "security2": "אבטחה ב"
+    }
+  }
+]

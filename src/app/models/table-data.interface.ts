@@ -1,5 +1,4 @@
 export interface FacilityData {
-  [key: string]: any;
   id: string;
   facilityName: string;
   address: string;
@@ -7,7 +6,7 @@ export interface FacilityData {
   contactPhone: string;
   bagCount: number;
   totalAmount: number;
-  status: 'ready' | 'inProgress' | 'completed' | 'urgent';
+  status: 'מוכן' | 'בתהליך' | 'הושלם' | 'דחוף';
   hub: 'center' | 'north' | 'south';
   hubName: string;
   deliveryType: 'delivery' | 'pickup';
@@ -37,15 +36,14 @@ export interface PaginationConfig {
   pageSizeOptions: number[];
 }
 
-export interface DetailModalData {
+export interface DetailModalData<T = Record<string, unknown>> {
   isOpen: boolean;
-  data: FacilityData | null;
+  data: T | null;
   mode: 'view' | 'edit';
 }
 
 // Employee data example - demonstrates table flexibility
 export interface EmployeeData {
-  [key: string]: any;
   id: string;
   fullName: string;
   email: string;
