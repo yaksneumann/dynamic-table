@@ -19,7 +19,6 @@ export interface TableConfig<T = Record<string, unknown>> {
   stateKey?: string;
   diagnostics?: DiagnosticsConfig;
   styling?: StylingConfig;
-  filterPresets?: FilterPreset<T>[];
   searchConfig?: SearchConfig<T>;
   statusTypes?: string[];
 }
@@ -150,12 +149,6 @@ export interface FilterGroup<T = Record<string, unknown>> {
 export type TableFilters<T = Record<string, unknown>> =
   | Record<string, unknown>
   | FilterGroup<T>;
-
-export interface FilterPreset<T = Record<string, unknown>> {
-  id: string;
-  label: string;
-  filters: TableFilters<T>;
-}
 
 export interface StylingConfig {
   statusColors?: Record<string, string>;

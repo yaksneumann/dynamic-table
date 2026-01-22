@@ -9,14 +9,6 @@
         (input)="onSearchChange($event)" />
     </div>
     <div class="search-actions">
-      @if (filterPresets().length > 0) {
-        <select class="preset-select" [value]="activePresetId() ?? ''" (change)="onPresetChange($any($event.target).value)">
-          <option value="">כל הפריטים</option>
-          @for (preset of filterPresets(); track preset.id) {
-            <option [value]="preset.id">{{ preset.label }}</option>
-          }
-        </select>
-      }
       <button type="button" class="column-btn" (click)="toggleSearchPanel()" aria-label="בחירת עמודות לחיפוש">
         <span class="material-icons" aria-hidden="true">manage_search</span>
         עמודות חיפוש

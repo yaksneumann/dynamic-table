@@ -29,7 +29,6 @@ import {
   TableFilters,
   FilterGroup,
   FilterCondition,
-  FilterPreset,
   SearchConfig,
   EditMode,
 } from '../../models/table.config.interface';
@@ -65,98 +64,109 @@ import {
 export class SmartTableComponent<
   T extends { id: string; status?: string },
 > implements OnInit {
+  // Inputs
   config = input.required<TableConfig<T>>();
   clientData = input<T[] | null>(null);
   serverDataSource = input<TableDataSource<T> | null>(null);
-  legacyData = input<T[] | null>(null, { alias: 'data' });
-  legacyDataSource = input<TableDataSource<T> | null>(null, { alias: 'dataSource' });
-  filtersInput = input<Record<string, unknown> | null>(null);
-  advancedFiltersInput = input<FilterGroup<T> | null>(null);
-  activePresetIdInput = input<string | null>(null);
 
-  headerTemplate = input<TemplateRef<{ $implicit: ColumnConfig<T>; column: ColumnConfig<T> }> | null>(null);
-  cellTemplate = input<
-    TemplateRef<{
-      $implicit: T;
-      row: T;
-      column: ColumnConfig<T>;
-      value: unknown;
-      index: number;
-    }> | null
-  >(null);
-  actionTemplate = input<TemplateRef<{ $implicit: T; row: T; index: number }> | null>(null);
+  headerTemplate = input<TemplateRef<{
+    $implicit: ColumnConfig<T>;
+    column: ColumnConfig<T>;
+  }> | null>(null);
+  cellTemplate = input<TemplateRef<{
+    $implicit: T;
+    row: T;
+    column: ColumnConfig<T>;
+    value: unknown;
+    index: number;
+  }> | null>(null);
+  actionTemplate = input<TemplateRef<{
+    $implicit: T;
+    row: T;
+    index: number;
+  }> | null>(null);
   emptyTemplate = input<TemplateRef<{}> | null>(null);
-  mobileCardTemplate = input<TemplateRef<{ $implicit: T; row: T; index: number }> | null>(null);
+  mobileCardTemplate = input<TemplateRef<{
+    $implicit: T;
+    row: T;
+    index: number;
+  }> | null>(null);
 
   rowClick = output<T>();
   cellClick = output<{ row: T; column: ColumnConfig<T>; value: unknown }>();
   actionClick = output<{ row: T; action: 'edit' | 'delete' }>();
   selectionChange = output<string[]>();
-  rowReorder = output<{ previousIndex: number; currentIndex: number; items: T[] }>();
+  rowReorder = output<{
+    previousIndex: number;
+    currentIndex: number;
+    items: T[];
+  }>();
 
+  // Services
   private tableService = inject(TableService<T>);
   private document = inject(DOCUMENT);
   private injector = inject(Injector);
 
+  // Private state
   private allData = signal<T[]>([]);
-  private resolvedClientData = computed<T[]>(() =>
-    this.clientData() ?? this.legacyData() ?? [],
-  );
-  private resolvedServerDataSource = computed<TableDataSource<T> | null>(
-    () => this.serverDataSource() ?? this.legacyDataSource(),
-  );
-  searchTerm = signal<string>('');
-  loading = signal<boolean>(false);
-  errorMessage = signal<string | null>(null);
   private lastQueryKey = signal<string>('');
-  isColumnPanelOpen = signal<boolean>(false);
-  isSearchPanelOpen = signal<boolean>(false);
-  isFilterPanelOpen = signal<boolean>(false);
-  private hasRestoredState = false;
-  sortState = signal<SortState<T> | null>(null);
-  filtersState = signal<TableFilters<T>>({});
   private lastFiltersKey = signal<string>('');
-  mobileVisibleCount = signal<number>(0);
-  activePresetId = signal<string | null>(null);
-  searchColumns = signal<ColumnConfig<T>['key'][]>([]);
-  searchMode = signal<'any' | 'all'>('any');
+  private hasRestoredState = false;
   private restoredFilters = signal<TableFilters<T> | null>(null);
   private advancedFilters = signal<FilterGroup<T> | null>(null);
 
-  editMode = computed<EditMode>(() => this.config().editMode ?? 'modal');
-  editingRowId = signal<string | null>(null);
-  editingRowData = signal<T | null>(null);
+  // Public state - UI controls
+  searchTerm = signal<string>('');
+  loading = signal<boolean>(false);
+  errorMessage = signal<string | null>(null);
+  isColumnPanelOpen = signal<boolean>(false);
+  isSearchPanelOpen = signal<boolean>(false);
+  isFilterPanelOpen = signal<boolean>(false);
 
+  // Public state - data filtering & sorting
+  sortState = signal<SortState<T> | null>(null);
+  filtersState = signal<TableFilters<T>>({});
+  searchColumns = signal<ColumnConfig<T>['key'][]>([]);
+  searchMode = signal<'any' | 'all'>('any');
+
+  // Public state - pagination & scrolling
   pagination = signal<PaginationConfig>({
     currentPage: 1,
     pageSize: 5,
     totalItems: 0,
     pageSizeOptions: [5, 10, 20, 50],
   });
+  mobileVisibleCount = signal<number>(0);
+  mobileScrollIndex = signal<number>(0);
 
+  // Public state - editing & selection
+  editingRowId = signal<string | null>(null);
+  editingRowData = signal<T | null>(null);
+  selectedIds = signal<Set<string>>(new Set());
+  focusedIndex = signal<number>(0);
+
+  // Public state - modal & UI
   detailModal = signal<DetailModalData<T>>({
     isOpen: false,
     data: null,
     mode: 'view',
   });
 
-  focusedIndex = signal<number>(0);
+  // Public state - column management
+  columnOrder = signal<ColumnConfig<T>['key'][]>([]);
+  hiddenColumns = signal<Set<ColumnConfig<T>['key']>>(new Set());
 
-  readonly isMobile = toSignal(
-    this.document.defaultView
-      ? fromEvent(this.document.defaultView, 'resize').pipe(
-          startWith(null),
-          map(() => this.document.defaultView!.innerWidth < 768),
-          distinctUntilChanged(),
-        )
-      : of(false),
-    {
-      initialValue: this.document.defaultView
-        ? this.document.defaultView.innerWidth < 768
-        : false,
-    },
+  // Public state - diagnostics
+  lastQueryParams = signal<TableQueryParams<T> | null>(null);
+  lastQueryDuration = signal<number | null>(null);
+
+  // Computed - internal
+  private resolvedClientData = computed<T[]>(() => this.clientData() ?? []);
+  private resolvedServerDataSource = computed<TableDataSource<T> | null>(
+    () => this.serverDataSource(),
   );
 
+  // Computed - data processing
   filteredData = computed(() => {
     if (this.isServerMode()) {
       return this.allData();
@@ -194,48 +204,6 @@ export class SmartTableComponent<
     return this.applySort(this.filteredData());
   });
 
-  isServerMode = computed(() => this.config().dataMode === 'server');
-
-  isVirtualScrollEnabled = computed(
-    () => this.config().virtualization?.enabled === true,
-  );
-
-  mobileInfiniteEnabled = computed(
-    () => this.isMobile() && this.config().features.enableMobileInfiniteScroll === true,
-  );
-
-  isMobileVirtualScroll = computed(
-    () => this.isVirtualScrollEnabled() || this.mobileInfiniteEnabled(),
-  );
-
-  selectionConfig = computed<SelectionConfig<T>>(() => {
-    const config = this.config().selection;
-    return {
-      mode: config?.mode ?? 'multiple',
-      trackBy: config?.trackBy,
-    };
-  });
-
-  isSelectionEnabled = computed(
-    () => this.config().features.enableSelection === true || !!this.config().selection,
-  );
-
-  selectionMode = computed(() => this.selectionConfig().mode ?? 'multiple');
-
-  selectedIds = signal<Set<string>>(new Set());
-
-  mobileScrollIndex = signal<number>(0);
-
-  virtualizationSettings = computed<VirtualizationSettings>(() => {
-    const settings = this.config().virtualization;
-    return {
-      enabled: settings?.enabled ?? false,
-      itemSize: settings?.itemSize ?? 52,
-      mobileItemSize: settings?.mobileItemSize ?? 160,
-      maxViewportHeight: settings?.maxViewportHeight ?? 520,
-    };
-  });
-
   paginatedData = computed(() => {
     const data = this.sortedData();
     const { currentPage, pageSize } = this.pagination();
@@ -261,6 +229,112 @@ export class SmartTableComponent<
     return this.paginatedData();
   });
 
+  // Computed - configuration
+  editMode = computed<EditMode>(() => this.config().editMode ?? 'modal');
+
+  isServerMode = computed(() => this.config().dataMode === 'server');
+
+  isVirtualScrollEnabled = computed(
+    () => this.config().virtualization?.enabled === true,
+  );
+
+  mobileInfiniteEnabled = computed(
+    () =>
+      this.isMobile() &&
+      this.config().features.enableMobileInfiniteScroll === true,
+  );
+
+  isMobileVirtualScroll = computed(
+    () => this.isVirtualScrollEnabled() || this.mobileInfiniteEnabled(),
+  );
+
+  selectionConfig = computed<SelectionConfig<T>>(() => {
+    const config = this.config().selection;
+    return {
+      mode: config?.mode ?? 'multiple',
+      trackBy: config?.trackBy,
+    };
+  });
+
+  isSelectionEnabled = computed(
+    () =>
+      this.config().features.enableSelection === true ||
+      !!this.config().selection,
+  );
+
+  selectionMode = computed(() => this.selectionConfig().mode ?? 'multiple');
+
+  virtualizationSettings = computed<VirtualizationSettings>(() => {
+    const settings = this.config().virtualization;
+    return {
+      enabled: settings?.enabled ?? false,
+      itemSize: settings?.itemSize ?? 52,
+      mobileItemSize: settings?.mobileItemSize ?? 160,
+      maxViewportHeight: settings?.maxViewportHeight ?? 520,
+    };
+  });
+
+  canReorderRows = computed(
+    () =>
+      this.config().features.enableRowReorder === true &&
+      !this.isVirtualScrollEnabled(),
+  );
+
+  exportConfig = computed(() => this.getExportConfig());
+
+  diagnosticsEnabled = computed(
+    () => this.config().diagnostics?.enabled === true,
+  );
+
+  filterableColumns = computed<ColumnConfig<T>[]>(() =>
+    this.getSearchableColumns(),
+  );
+
+  searchableColumns = computed(() => this.getSearchableColumns());
+
+  showPagination = computed(
+    () => !this.isVirtualScrollEnabled() && !this.isMobile(),
+  );
+
+  visibleColumns = computed(() => {
+    const cols = this.orderedColumns();
+    const mobile = this.isMobile();
+    return mobile
+      ? cols.filter((c) => c.mobileVisible && !this.isColumnHidden(c))
+      : cols.filter((c) => !this.isColumnHidden(c));
+  });
+
+  orderedColumns = computed(() => {
+    const columns = this.config().columns;
+    const order = this.columnOrder();
+    if (!order.length) {
+      return columns;
+    }
+
+    const mapByKey = new Map(columns.map((col) => [col.key, col]));
+    const ordered = order
+      .map((key) => mapByKey.get(key))
+      .filter((col): col is ColumnConfig<T> => !!col);
+
+    const missing = columns.filter((col) => !order.includes(col.key));
+    return [...ordered, ...missing];
+  });
+
+  statusSummary = computed<StatusSummary>(() => {
+    const data = this.filteredData();
+    const summary: StatusSummary = {
+      total: data.length,
+    } as StatusSummary;
+
+    const statuses = this.config().statusTypes ?? DEFAULT_STATUS_TYPES;
+    statuses.forEach((status) => {
+      summary[status] = data.filter((d) => d.status === status).length;
+    });
+
+    return summary;
+  });
+
+  // Computed - pagination & metrics
   maxRowIndex = computed(() => Math.max(0, this.displayedData().length - 1));
 
   totalPages = computed(() => {
@@ -319,40 +393,16 @@ export class SmartTableComponent<
 
   ariaRowCount = computed(() => this.totalItems());
 
-  ariaColCount = computed(() =>
-    this.visibleColumns().length +
+  ariaColCount = computed(
+    () =>
+      this.visibleColumns().length +
       (this.isSelectionEnabled() ? 1 : 0) +
       (this.canReorderRows() ? 1 : 0),
   );
 
-  canReorderRows = computed(
-    () => this.config().features.enableRowReorder === true && !this.isVirtualScrollEnabled(),
-  );
-
-  private readonly exportDefaults: Required<ExportConfig> = {
-    enableCsv: true,
-    enableExcel: true,
-    enablePrint: true,
-    fileName: 'table-export',
-  };
-
-  exportConfig = computed(() => this.getExportConfig());
-
-  diagnosticsEnabled = computed(() => this.config().diagnostics?.enabled === true);
-  lastQueryParams = signal<TableQueryParams<T> | null>(null);
-  lastQueryDuration = signal<number | null>(null);
-
   pageNumbers = computed(() =>
     Array.from({ length: this.totalPages() }, (_, index) => index + 1),
   );
-
-  filterPresets = computed<FilterPreset<T>[]>(() =>
-    this.config().filterPresets ?? [],
-  );
-
-  filterableColumns = computed<ColumnConfig<T>[]>(() => this.getSearchableColumns());
-
-  searchableColumns = computed(() => this.getSearchableColumns());
 
   diagnosticsPage = computed(() => {
     if (this.mobileInfiniteEnabled()) {
@@ -362,56 +412,51 @@ export class SmartTableComponent<
     return this.pagination().currentPage;
   });
 
-  showPagination = computed(() => !this.isVirtualScrollEnabled() && !this.isMobile());
+  // Constants
+  private readonly exportDefaults: Required<ExportConfig> = {
+    enableCsv: true,
+    enableExcel: true,
+    enablePrint: true,
+    fileName: 'table-export',
+  };
 
-  shouldShowPageButton(pageNumber: number): boolean {
-    const currentPage = this.pagination().currentPage;
-    return (
-      pageNumber === currentPage || Math.abs(pageNumber - currentPage) <= 2
-    );
-  }
+  readonly filterOperatorOptions: Array<{
+    value: FilterCondition<T>['operator'];
+    label: string;
+  }> = [
+    { value: 'contains', label: 'מכיל' },
+    { value: 'eq', label: 'שווה' },
+    { value: 'neq', label: 'לא שווה' },
+    { value: 'startsWith', label: 'מתחיל ב-' },
+    { value: 'endsWith', label: 'מסתיים ב-' },
+    { value: 'gt', label: 'גדול מ-' },
+    { value: 'gte', label: 'גדול או שווה' },
+    { value: 'lt', label: 'קטן מ-' },
+    { value: 'lte', label: 'קטן או שווה' },
+    { value: 'between', label: 'בין' },
+    { value: 'in', label: 'ברשימה' },
+    { value: 'notIn', label: 'לא ברשימה' },
+    { value: 'isEmpty', label: 'ריק' },
+    { value: 'isNotEmpty', label: 'לא ריק' },
+  ];
 
-  visibleColumns = computed(() => {
-    const cols = this.orderedColumns();
-    const mobile = this.isMobile();
-    return mobile
-      ? cols.filter((c) => c.mobileVisible && !this.isColumnHidden(c))
-      : cols.filter((c) => !this.isColumnHidden(c));
-  });
+  // Mobile detection
+  readonly isMobile = toSignal(
+    this.document.defaultView
+      ? fromEvent(this.document.defaultView, 'resize').pipe(
+          startWith(null),
+          map(() => this.document.defaultView!.innerWidth < 768),
+          distinctUntilChanged(),
+        )
+      : of(false),
+    {
+      initialValue: this.document.defaultView
+        ? this.document.defaultView.innerWidth < 768
+        : false,
+    },
+  );
 
-  orderedColumns = computed(() => {
-    const columns = this.config().columns;
-    const order = this.columnOrder();
-    if (!order.length) {
-      return columns;
-    }
-
-    const mapByKey = new Map(columns.map((col) => [col.key, col]));
-    const ordered = order
-      .map((key) => mapByKey.get(key))
-      .filter((col): col is ColumnConfig<T> => !!col);
-
-    const missing = columns.filter((col) => !order.includes(col.key));
-    return [...ordered, ...missing];
-  });
-
-  columnOrder = signal<ColumnConfig<T>['key'][]>([]);
-
-  hiddenColumns = signal<Set<ColumnConfig<T>['key']>>(new Set());
-
-  statusSummary = computed<StatusSummary>(() => {
-    const data = this.filteredData();
-    const summary: StatusSummary = {
-      total: data.length,
-    } as StatusSummary;
-
-    const statuses = this.config().statusTypes ?? DEFAULT_STATUS_TYPES;
-    statuses.forEach((status) => {
-      summary[status] = data.filter((d) => d.status === status).length;
-    });
-
-    return summary;
-  });
+  // Lifecycle
 
   ngOnInit() {
     this.initializeEffects();
@@ -480,7 +525,9 @@ export class SmartTableComponent<
         if (!this.hasRestoredState) {
           this.searchMode.set(searchConfig?.mode ?? 'any');
           if (searchConfig?.columns && searchConfig.columns.length > 0) {
-            this.searchColumns.set(searchConfig.columns as ColumnConfig<T>['key'][]);
+            this.searchColumns.set(
+              searchConfig.columns as ColumnConfig<T>['key'][],
+            );
           } else {
             const defaultCols = this.getDefaultSearchColumns();
             this.searchColumns.set(defaultCols);
@@ -492,30 +539,13 @@ export class SmartTableComponent<
 
     effect(
       () => {
-        const presetId = this.activePresetIdInput();
-        if (presetId !== undefined) {
-          this.activePresetId.set(presetId);
-        }
-      },
-      { injector: this.injector },
-    );
-
-    effect(
-      () => {
-        const presetId = this.activePresetId();
-        const presets = this.filterPresets();
-        const preset = presetId
-          ? presets.find((item) => item.id === presetId)
-          : null;
-        const presetFilters = preset?.filters ?? null;
-        const advanced = this.advancedFiltersInput() ?? this.advancedFilters();
-        const simple = this.filtersInput();
+        const advanced = this.advancedFilters();
         const restored = this.restoredFilters();
 
         const resolved = this.resolveFilters(
-          simple,
+          null,
           advanced,
-          presetFilters,
+          null,
           restored,
         );
         const key = JSON.stringify(resolved ?? {});
@@ -657,7 +687,9 @@ export class SmartTableComponent<
     return current.direction;
   }
 
-  getAriaSort(column: ColumnConfig<T>): 'ascending' | 'descending' | 'none' | null {
+  getAriaSort(
+    column: ColumnConfig<T>,
+  ): 'ascending' | 'descending' | 'none' | null {
     if (!column.sortable) return null;
     const direction = this.getSortDirection(column);
     if (direction === 'asc') return 'ascending';
@@ -886,7 +918,11 @@ export class SmartTableComponent<
   }
 
   onCellClick(column: ColumnConfig<T>, row: T) {
-    this.cellClick.emit({ row, column, value: this.getColumnValue(column, row) });
+    this.cellClick.emit({
+      row,
+      column,
+      value: this.getColumnValue(column, row),
+    });
   }
 
   isRowFocused(index: number): boolean {
@@ -978,7 +1014,9 @@ export class SmartTableComponent<
   areAllSelected(): boolean {
     const rows = this.displayedData();
     if (!rows.length) return false;
-    return rows.every((row) => this.selectedIds().has(this.getRowSelectionKey(row)));
+    return rows.every((row) =>
+      this.selectedIds().has(this.getRowSelectionKey(row)),
+    );
   }
 
   toggleAllSelection() {
@@ -1010,10 +1048,10 @@ export class SmartTableComponent<
         pageSize,
         sort: this.sortState() ?? undefined,
         filters: this.hasActiveFilters() ? this.filtersState() : undefined,
-          searchColumns: this.getSearchColumns(this.getSearchableColumns()).map(
-            (column) => column.key,
-          ),
-          searchMode: this.searchMode(),
+        searchColumns: this.getSearchColumns(this.getSearchableColumns()).map(
+          (column) => column.key,
+        ),
+        searchMode: this.searchMode(),
       });
       this.lastQueryDuration.set(0);
     }
@@ -1180,9 +1218,7 @@ export class SmartTableComponent<
     );
   }
 
-  private getSearchColumns(
-    searchable: ColumnConfig<T>[],
-  ): ColumnConfig<T>[] {
+  private getSearchColumns(searchable: ColumnConfig<T>[]): ColumnConfig<T>[] {
     const selected = this.searchColumns();
     if (!selected.length) return searchable;
     const selectedSet = new Set(selected);
@@ -1192,11 +1228,6 @@ export class SmartTableComponent<
 
   private getDefaultSearchColumns(): ColumnConfig<T>['key'][] {
     return this.getSearchableColumns().map((col) => col.key);
-  }
-
-  onPresetChange(value: string) {
-    const presetId = value?.trim() ? value : null;
-    this.activePresetId.set(presetId);
   }
 
   toggleFilterPanel() {
@@ -1211,7 +1242,8 @@ export class SmartTableComponent<
     const group = this.advancedFilters();
     if (!group) return [];
     return group.conditions.filter(
-      (condition): condition is FilterCondition<T> => !this.isFilterGroup(condition),
+      (condition): condition is FilterCondition<T> =>
+        !this.isFilterGroup(condition),
     );
   }
 
@@ -1249,7 +1281,10 @@ export class SmartTableComponent<
     this.updateAdvancedCondition(index, { field: field as keyof T & string });
   }
 
-  updateAdvancedConditionOperator(index: number, operator: FilterCondition<T>['operator']) {
+  updateAdvancedConditionOperator(
+    index: number,
+    operator: FilterCondition<T>['operator'],
+  ) {
     const patch: Partial<FilterCondition<T>> = { operator };
     if (operator === 'isEmpty' || operator === 'isNotEmpty') {
       patch.value = undefined;
@@ -1278,23 +1313,6 @@ export class SmartTableComponent<
     return operator === 'between';
   }
 
-  readonly filterOperatorOptions: Array<{ value: FilterCondition<T>['operator']; label: string }> = [
-    { value: 'contains', label: 'מכיל' },
-    { value: 'eq', label: 'שווה' },
-    { value: 'neq', label: 'לא שווה' },
-    { value: 'startsWith', label: 'מתחיל ב-' },
-    { value: 'endsWith', label: 'מסתיים ב-' },
-    { value: 'gt', label: 'גדול מ-' },
-    { value: 'gte', label: 'גדול או שווה' },
-    { value: 'lt', label: 'קטן מ-' },
-    { value: 'lte', label: 'קטן או שווה' },
-    { value: 'between', label: 'בין' },
-    { value: 'in', label: 'ברשימה' },
-    { value: 'notIn', label: 'לא ברשימה' },
-    { value: 'isEmpty', label: 'ריק' },
-    { value: 'isNotEmpty', label: 'לא ריק' },
-  ];
-
   private getOrCreateAdvancedGroup(): FilterGroup<T> {
     const current = this.advancedFilters();
     if (current && current.conditions.every((c) => !this.isFilterGroup(c))) {
@@ -1308,12 +1326,24 @@ export class SmartTableComponent<
     } as FilterGroup<T>;
   }
 
-  private updateAdvancedCondition(index: number, patch: Partial<FilterCondition<T>>) {
+  private updateAdvancedCondition(
+    index: number,
+    patch: Partial<FilterCondition<T>>,
+  ) {
     const group = this.getOrCreateAdvancedGroup();
     const next = group.conditions.map((condition, idx) =>
-      idx === index ? { ...(condition as FilterCondition<T>), ...patch } : condition,
+      idx === index
+        ? { ...(condition as FilterCondition<T>), ...patch }
+        : condition,
     ) as Array<FilterCondition<T>>;
     this.advancedFilters.set({ ...group, conditions: next });
+  }
+
+  shouldShowPageButton(pageNumber: number): boolean {
+    const currentPage = this.pagination().currentPage;
+    return (
+      pageNumber === currentPage || Math.abs(pageNumber - currentPage) <= 2
+    );
   }
 
   private resolveFilters(
@@ -1375,7 +1405,9 @@ export class SmartTableComponent<
     return {
       logic: 'and',
       conditions: Object.entries(filters)
-        .filter(([, value]) => value !== null && value !== undefined && value !== '')
+        .filter(
+          ([, value]) => value !== null && value !== undefined && value !== '',
+        )
         .map(([key, value]) => ({
           field: key as keyof T & string,
           operator: 'eq',
@@ -1402,7 +1434,8 @@ export class SmartTableComponent<
     return data.filter((row) => {
       return Object.entries(filters as Record<string, unknown>).every(
         ([key, value]) => {
-          if (value === null || value === undefined || value === '') return true;
+          if (value === null || value === undefined || value === '')
+            return true;
           const rowValue = (row as Record<string, unknown>)[key];
           if (Array.isArray(rowValue)) {
             return rowValue.includes(value);
@@ -1422,15 +1455,10 @@ export class SmartTableComponent<
         ? this.evaluateFilterGroup(condition, row)
         : this.evaluateCondition(condition as FilterCondition<T>, row),
     );
-    return group.logic === 'and'
-      ? checks.every(Boolean)
-      : checks.some(Boolean);
+    return group.logic === 'and' ? checks.every(Boolean) : checks.some(Boolean);
   }
 
-  private evaluateCondition(
-    condition: FilterCondition<T>,
-    row: T,
-  ): boolean {
+  private evaluateCondition(condition: FilterCondition<T>, row: T): boolean {
     const rowValue = (row as Record<string, unknown>)[condition.field];
     const { operator, value, valueTo, caseSensitive } = condition;
 
@@ -1454,7 +1482,9 @@ export class SmartTableComponent<
 
     if (operator === 'in' || operator === 'notIn') {
       const list = Array.isArray(value) ? value : [value];
-      const contains = list.some((item) => this.areEqual(rowValue, item, caseSensitive));
+      const contains = list.some((item) =>
+        this.areEqual(rowValue, item, caseSensitive),
+      );
       return operator === 'in' ? contains : !contains;
     }
 
@@ -1490,7 +1520,12 @@ export class SmartTableComponent<
       return current >= min && current <= max;
     }
 
-    if (operator === 'gt' || operator === 'gte' || operator === 'lt' || operator === 'lte') {
+    if (
+      operator === 'gt' ||
+      operator === 'gte' ||
+      operator === 'lt' ||
+      operator === 'lte'
+    ) {
       const current = this.toComparableNumber(rowValue);
       const target = this.toComparableNumber(value);
       if (current === null || target === null) return false;
@@ -1556,14 +1591,14 @@ export class SmartTableComponent<
     const column = this.config().columns.find((col) => col.key === sort.key);
     return [...data].sort((a, b) => {
       const av = column
-        ? (column.format
-            ? column.format(this.getColumnValue(column, a), a)
-            : this.getColumnValue(column, a))
+        ? column.format
+          ? column.format(this.getColumnValue(column, a), a)
+          : this.getColumnValue(column, a)
         : (a[key] as unknown);
       const bv = column
-        ? (column.format
-            ? column.format(this.getColumnValue(column, b), b)
-            : this.getColumnValue(column, b))
+        ? column.format
+          ? column.format(this.getColumnValue(column, b), b)
+          : this.getColumnValue(column, b)
         : (b[key] as unknown);
       if (av === bv) return 0;
       if (av === null || av === undefined) return -1 * direction;
@@ -1571,7 +1606,10 @@ export class SmartTableComponent<
       if (typeof av === 'number' && typeof bv === 'number') {
         return (av - bv) * direction;
       }
-      return String(av).localeCompare(String(bv), 'he', { numeric: true }) * direction;
+      return (
+        String(av).localeCompare(String(bv), 'he', { numeric: true }) *
+        direction
+      );
     });
   }
 
@@ -1624,10 +1662,6 @@ export class SmartTableComponent<
         }
       }
 
-      if (typeof state.presetId === 'string') {
-        this.activePresetId.set(state.presetId);
-      }
-
       if (state.filters && typeof state.filters === 'object') {
         this.restoredFilters.set(state.filters as TableFilters<T>);
       }
@@ -1656,7 +1690,6 @@ export class SmartTableComponent<
       hiddenColumns: Array.from(this.hiddenColumns()),
       sort: this.sortState(),
       filters: this.filtersState(),
-      presetId: this.activePresetId(),
       searchColumns: this.searchColumns(),
       searchMode: this.searchMode(),
     };
@@ -1680,7 +1713,6 @@ export class SmartTableComponent<
     hiddenColumns?: Array<ColumnConfig<T>['key']>;
     sort?: SortState<T> | null;
     filters?: TableFilters<T> | null;
-    presetId?: string | null;
     searchColumns?: Array<ColumnConfig<T>['key']>;
     searchMode?: 'any' | 'all';
   } | null {

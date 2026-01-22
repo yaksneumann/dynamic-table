@@ -136,26 +136,4 @@ export const employeeTableConfig: TableConfig<EmployeeData> = {
   },
 
   statusTypes: ['active', 'remote', 'onLeave', 'inactive'],
-
-  filterPresets: [
-    {
-      id: 'remote-high-salary',
-      label: 'Remote + ₪20K+',
-      filters: {
-        logic: 'and',
-        conditions: [
-          { field: 'status', operator: 'eq', value: 'remote' },
-          { field: 'salary', operator: 'gte', value: 20000 },
-        ],
-      },
-    },
-    {
-      id: 'active-only',
-      label: 'Active בלבד',
-      filters: {
-        logic: 'and',
-        conditions: [{ field: 'status', operator: 'eq', value: 'active' }],
-      },
-    },
-  ],
 };

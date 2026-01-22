@@ -138,10 +138,10 @@ export const facilityTableConfig: TableConfig<FacilityData> = {
 
   styling: {
     statusColors: {
-      'מוכן': '#4CAF50',
-      'בתהליך': '#2196F3',
-      'הושלם': '#9C27B0',
-      'דחוף': '#F44336',
+      מוכן: '#4CAF50',
+      בתהליך: '#2196F3',
+      הושלם: '#9C27B0',
+      דחוף: '#F44336',
     },
   },
 
@@ -150,26 +150,4 @@ export const facilityTableConfig: TableConfig<FacilityData> = {
   },
 
   statusTypes: ['מוכן', 'בתהליך', 'הושלם', 'דחוף'],
-
-  filterPresets: [
-    {
-      id: 'urgent-high',
-      label: 'דחוף + סכום מעל 100K',
-      filters: {
-        logic: 'and',
-        conditions: [
-          { field: 'status', operator: 'eq', value: 'דחוף' },
-          { field: 'totalAmount', operator: 'gte', value: 100000 },
-        ],
-      },
-    },
-    {
-      id: 'ready',
-      label: 'מוכן בלבד',
-      filters: {
-        logic: 'and',
-        conditions: [{ field: 'status', operator: 'eq', value: 'מוכן' }],
-      },
-    },
-  ],
 };
