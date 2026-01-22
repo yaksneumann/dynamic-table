@@ -17,14 +17,47 @@ English | [עברית](README.he.md)
 
 ## ✨ תכונות
 
-- 🔍 חיפוש טקסט מלא בכל הנתונים
-- 📱 מעבר אוטומטי לתצוגת כרטיסים במובייל (< 768px)
-- 📄 Pagination עם אפשרויות מידה מותאמות
-- 🎨 עיצוב תנאי לתאים (ע"פ לוגיקה עסקית)
-- 🎯 תגיות ספירה אוטומטיות לסטטוסים
-- ✏️ תמיכה בעריכה inline
-- ⚡ Angular Signals למצב ריאקטיבי
-- 🌐 תמיכה מלאה ב-RTL(עברית)
+### 🔍 חיפוש מתקדם
+- חיפוש טקסט מלא בכל הנתונים
+- בחירת עמודות ספציפיות לחיפוש
+- מצב חיפוש: "כל העמודות" או "אחת מהעמודות"
+- חיפוש בשדות מקוננים
+
+### 🎨 סינון וחיפוש
+- פילטרים מתקדמים עם 14 אופרטורים שונים
+- תמיכה בלוגיקה מורכבת (AND/OR)
+- פילטרים מקוננים לשאילתות מורכבות
+- סינון לפי טווח (between), מכיל, מתחיל ב-, ועוד
+
+### 📊 ניהול נתונים
+- **Client-side mode** - כל הנתונים מטופלים בדפדפן
+- **Server-side mode** - נתונים נטענים מהשרת לפי דרישה
+- תמיכה ב-Observable, Promise, ו-Array
+- Virtual scrolling לטבלאות ענק (אלפי שורות)
+
+### ✏️ עריכה
+- **Inline editing** - עריכה ישירה בתא
+- **Expanded editing** - טופס מתחת לשורה
+- **Modal editing** - טופס בחלון קופץ
+- תמיכה ב-CRUD מלא
+
+### 📱 רספונסיבי מלא
+- מעבר אוטומטי לתצוגת כרטיסים במובייל (< 768px)
+- Infinite scroll במובייל
+- קונפיגורציה נפרדת לנראות במובייל לכל עמודה
+
+### 🎯 תכונות נוספות
+- בחירת שורות (single/multiple)
+- גרירה וסידור מחדש של שורות
+- גרירה וסידור מחדש של עמודות
+- ייצוא לCSV, Excel והדפסה
+- תגיות ספירה אוטומטיות לסטטוסים
+- עיצוב תנאי לתאים (ע"פ לוגיקה עסקית)
+- שמירת מצב (URL/LocalStorage)
+- פאנל דיאגנוסטיקה לביצועים
+- תבניות מותאמות (Templates) לכותרות, תאים ופעולות
+- ⚡ Angular 21 Signals למצב ריאקטיבי
+- 🌐 תמיכה מלאה ב-RTL (עברית)
 
 ## 🚀 התחלה מהירה
 
@@ -42,13 +75,19 @@ ng s -o
 
 ```typescript
 export const productTableConfig: TableConfig = {
+  // אופן ניהול הנתונים
+  dataMode: 'client', // או 'server' לטעינה מהשרת
+  editMode: 'modal',  // או 'inline' / 'expanded'
+  
   columns: [
     {
       key: 'name',
       header: 'שם מוצר',
       type: 'text',
-      mobileVisible: true,
-      sortable: true
+      mobileVisible: true, // יוצג במובייל
+      sortable: true,      // ניתן למיין
+      hideable: true,      // ניתן להסתיר
+      draggable: true      // ניתן לגרור
     },
     {
       key: 'price',
@@ -68,19 +107,75 @@ export const productTableConfig: TableConfig = {
       mobileVisible: true
     }
   ],
+  
   pagination: {
-    defaultPageSize: 10, //כמה טורים להציג 
-    pageSizeOptions: [5, 10, 20, 50]
+    defaultPageSize: 10,
+    pageSizeOptions: [5, 10, 20, 50],
+    showPageInfo: true
   },
+  
+  // Virtual scrolling לביצועים
+  virtualization: {
+    enabled: true,
+    itemSize: 52,              // גובה שורה
+    mobileItemSize: 160,       // גובה כרטיס במובייל
+    maxViewportHeight: 520     // גובה מקסימלי
+  },
+  
   features: {
-    enableSearch: true, // האם להציג חיפוש
-    enableEdit: true,   // האם לאפשר עריכה
-    enableDelete: true  // האם לאפשר מחיקה
+    enableSearch: true,               // חיפוש
+    enableEdit: true,                 // עריכה
+    enableDelete: true,               // מחיקה
+    enableSort: true,                 // מיון
+    enableFilters: true,              // פילטרים מתקדמים
+    enableSelection: true,            // בחירת שורות
+    enableRowReorder: true,           // סידור מחדש של שורות
+    enableMobileInfiniteScroll: true, // גלילה אינסופית במובייל
+    showTotalCount: true              // הצג ספירה כוללת
+  },
+  
+  // בחירת שורות
+  selection: {
+    mode: 'multiple', // או 'single'
+    trackBy: (row) => row.id
+  },
+  
+  // ייצוא נתונים
+  exports: {
+    enableCsv: true,
+    enableExcel: true,
+    enablePrint: true,
+    fileName: 'products-export'
+  },
+  
+  // שמירת מצב
+  statePersistence: 'storage', // או 'url' / 'none'
+  stateKey: 'products-table',
+  
+  // דיאגנוסטיקה
+  diagnostics: {
+    enabled: true
+  },
+  
+  // עיצוב
+  styling: {
+    statusColors: {
+      'active': '#4caf50',
+      'inactive': '#f44336'
+    }
+  },
+  
+  // הגדרות חיפוש
+  searchConfig: {
+    mode: 'any', // או 'all'
+    columns: ['name', 'description'] // עמודות מסוימות
   }
 };
 ```
 
 ### שלב 2: השתמש ברכיב
+
+#### שימוש בסיסי (Client-side)
 
 ```typescript
 @Component({
@@ -89,8 +184,11 @@ export const productTableConfig: TableConfig = {
   imports: [SmartTableComponent],
   template: `
     <app-smart-table 
-      [config]="facilityConfig" 
-      [data]="facilityData"
+      [config]="productConfig" 
+      [clientData]="productData"
+      (rowClick)="onRowClick($event)"
+      (actionClick)="onAction($event)"
+      (selectionChange)="onSelectionChange($event)"
     />
   `
 })
@@ -99,11 +197,65 @@ export class ProductsComponent {
     { id: '1', name: 'לפטופ', price: 4500, status: 'available' },
     { id: '2', name: 'עכבר', price: 89, status: 'available' }
   ];
-  facilityConfig = facilityTableConfig;
+  
+  productConfig = productTableConfig;
+  
+  onRowClick(row: Product) {
+    console.log('Row clicked:', row);
+  }
+  
+  onAction(event: { row: Product; action: 'edit' | 'delete' }) {
+    if (event.action === 'edit') {
+      // טפל בעריכה
+    } else if (event.action === 'delete') {
+      // טפל במחיקה
+    }
+  }
+  
+  onSelectionChange(selectedIds: string[]) {
+    console.log('Selected IDs:', selectedIds);
+  }
 }
 ```
 
-**זהו!** הטבלה מציגה את הנתונים שלך עם חיפוש, pagination ועיצוב רספונסיבי.
+#### שימוש מתקדם (Server-side)
+
+```typescript
+@Component({
+  selector: 'app-products',
+  standalone: true,
+  imports: [SmartTableComponent],
+  template: `
+    <app-smart-table 
+      [config]="productConfig" 
+      [serverDataSource]="dataSource"
+    />
+  `
+})
+export class ProductsComponent {
+  productConfig: TableConfig<Product> = {
+    ...productTableConfig,
+    dataMode: 'server' // חשוב!
+  };
+  
+  dataSource: TableDataSource<Product> = {
+    load: (params: TableQueryParams<Product>) => {
+      // params מכיל: page, pageSize, sort, filters, searchTerm
+      return this.http.get<TableDataSourceResult<Product>>('/api/products', {
+        params: {
+          page: params.page,
+          pageSize: params.pageSize,
+          search: params.searchTerm,
+          sort: params.sort?.key || '',
+          direction: params.sort?.direction || ''
+        }
+      });
+    }
+  };
+}
+```
+
+**זהו!** הטבלה מציגה את הנתונים שלך עם חיפוש, pagination, פילטרים מתקדמים ועיצוב רספונסיבי.
 
 ## 🔧 שימוש חוזר בכל מקום
 
@@ -111,11 +263,13 @@ export class ProductsComponent {
 
 ```typescript
 // טבלת עובדים
-<app-smart-table [config]="employeeConfig" [data]="employeeData" />
+<app-smart-table [config]="employeeConfig" [clientData]="employeeData" />
 
 // טבלת מתקנים
-<app-smart-table [config]="facilityConfig" [data]="facilityData" />
+<app-smart-table [config]="facilityConfig" [clientData]="facilityData" />
 
+// טבלת מוצרים עם שרת
+<app-smart-table [config]="productConfig" [serverDataSource]="productDataSource" />
 ```
 
 כל קונפיגורציה מגדירה עמודות, כללי עיצוב ותכונות שונות - אבל משתמשת ב**אותו רכיב בדיוק**.
@@ -392,6 +546,9 @@ export class UsersComponent implements OnInit {
   align?: 'left' | 'center' | 'right';  // יישור תוכן
   sortable?: boolean;             // האם ניתן למיין לפי עמודה זו
   mobileVisible?: boolean;        // האם להציג במובייל
+  hideable?: boolean;             // האם המשתמש יכול להסתיר/להציג
+  hidden?: boolean;               // האם מוסתר בהתחלה
+  draggable?: boolean;            // האם ניתן לגרור לסידור מחדש
   format?: (value: any, row?: any) => string;  // פונקציית עיצוב מותאמת
   styleConfig?: {                 // עיצוב תנאי
     condition: (value: any, row?: any) => boolean;  // תנאי להחלת העיצוב
@@ -407,11 +564,15 @@ export class UsersComponent implements OnInit {
 
 ```typescript
 features: {
-  enableSearch?: boolean;    // שורת חיפוש גלובלית
-  enableEdit?: boolean;      // כפתור עריכה בכל שורה
-  enableDelete?: boolean;    // כפתור מחיקה בכל שורה
-  enableSort?: boolean;      // מיון בלחיצה על כותרות
-  enableFilters?: boolean;   // (בפיתוח) פילטרים מתקדמים
+  enableSearch?: boolean;           // שורת חיפוש גלובלית
+  enableEdit?: boolean;             // כפתור עריכה בכל שורה
+  enableDelete?: boolean;           // כפתור מחיקה בכל שורה
+  enableSort?: boolean;             // מיון בלחיצה על כותרות
+  enableFilters?: boolean;          // פילטרים מתקדמים
+  enableSelection?: boolean;        // בחירת שורות עם checkboxes
+  enableRowReorder?: boolean;       // גרירה וסידור מחדש של שורות
+  showTotalCount?: boolean;         // הצג ספירה כוללת
+  enableMobileInfiniteScroll?: boolean; // גלילה אינסופית במובייל
 }
 ```
 
@@ -421,8 +582,46 @@ features: {
 pagination: {
   defaultPageSize: number;         // גודל עמוד ברירת מחדל
   pageSizeOptions: number[];       // אפשרויות גודל עמוד
-  showPageInfo?: boolean;          // האם להציג מידע על העמוד
+  showPageInfo?: boolean;          // האם להציג מידע על העמוד (כגון "1-10 מתוך 50")
 }
+```
+
+### Virtual Scrolling (לביצועים)
+
+```typescript
+virtualization?: {
+  enabled?: boolean;                // האם להפעיל virtual scrolling
+  itemSize: number;                 // גובה שורה בפיקסלים (desktop)
+  mobileItemSize?: number;          // גובה כרטיס בפיקסלים (mobile)
+  maxViewportHeight?: number;       // גובה מקסימלי של אזור הגלילה
+}
+```
+
+### הגדרות בחירה (Selection)
+
+```typescript
+selection?: {
+  mode?: 'single' | 'multiple';   // בחירה יחידה או מרובה
+  trackBy?: (row: T) => string;    // פונקציה לזיהוי ייחודי של שורה
+}
+```
+
+### הגדרות ייצוא (Export)
+
+```typescript
+exports?: {
+  enableCsv?: boolean;              // אפשר ייצוא CSV
+  enableExcel?: boolean;            // אפשר ייצוא Excel
+  enablePrint?: boolean;            // אפשר הדפסה
+  fileName?: string;                // שם קובץ ברירת מחדל
+}
+```
+
+### שמירת מצב (State Persistence)
+
+```typescript
+statePersistence?: 'none' | 'url' | 'storage';  // איפה לשמור את מצב הטבלה
+stateKey?: string;                  // מפתח ייחודי ל-localStorage
 ```
 
 ### הגדרות עיצוב
@@ -432,6 +631,37 @@ styling?: {
   statusColors?: Record<string, string>;  // צבעים לכל סטטוס
   customClasses?: string[];               // מחלקות CSS מותאמות
 }
+```
+
+### הגדרות חיפוש (Search Config)
+
+```typescript
+searchConfig?: {
+  mode?: 'any' | 'all';            // 'any' = התאמה באחד מהשדות, 'all' = התאמה בכל השדות
+  columns?: ColumnKey<T>[];        // עמודות ברירת מחדל לחיפוש
+}
+```
+
+### אופרטורי פילטר מתקדמים
+
+הטבלה תומכת ב-14 אופרטורים שונים:
+
+```typescript
+type FilterOperator =
+  | 'eq'          // שווה ל-
+  | 'neq'         // לא שווה ל-
+  | 'contains'    // מכיל
+  | 'startsWith'  // מתחיל ב-
+  | 'endsWith'    // נגמר ב-
+  | 'gt'          // גדול מ-
+  | 'gte'         // גדול או שווה ל-
+  | 'lt'          // קטן מ-
+  | 'lte'         // קטן או שווה ל-
+  | 'between'     // בין שני ערכים
+  | 'in'          // נמצא ברשימה
+  | 'notIn'       // לא נמצא ברשימה
+  | 'isEmpty'     // ריק
+  | 'isNotEmpty'; // לא ריק
 ```
 
 ## 💡 דוגמאות שימוש מתקדמות
@@ -471,6 +701,183 @@ styleConfig: {
     return date.toLocaleDateString('he-IL');
   }
 }
+```
+
+### פילטרים מתקדמים מותאמים אישית
+
+```typescript
+// שימוש ב-FilterGroup למבנה פילטרים מורכב
+const advancedFilter: FilterGroup<Product> = {
+  logic: 'and', // כל התנאים חייבים להתקיים
+  conditions: [
+    {
+      field: 'price',
+      operator: 'between',
+      value: 100,
+      valueTo: 1000
+    },
+    {
+      field: 'status',
+      operator: 'in',
+      value: ['active', 'pending']
+    },
+    {
+      field: 'name',
+      operator: 'contains',
+      value: 'laptop',
+      caseSensitive: false
+    }
+  ]
+};
+```
+
+### שימוש ב-Templates מותאמים אישית
+
+```typescript
+@Component({
+  template: `
+    <app-smart-table 
+      [config]="config"
+      [clientData]="data"
+      [headerTemplate]="customHeader"
+      [cellTemplate]="customCell"
+      [actionTemplate]="customActions"
+      [emptyTemplate]="emptyState"
+      [mobileCardTemplate]="mobileCard"
+    />
+    
+    <!-- Template מותאם לכותרת -->
+    <ng-template #customHeader let-column>
+      <div class="custom-header">
+        <i class="icon">📊</i>
+        {{ column.header }}
+      </div>
+    </ng-template>
+    
+    <!-- Template מותאם לתא -->
+    <ng-template #customCell let-row let-column="column" let-value="value">
+      <div class="custom-cell">
+        @if (column.key === 'price') {
+          <strong>₪{{ value | number }}</strong>
+        } @else {
+          {{ value }}
+        }
+      </div>
+    </ng-template>
+    
+    <!-- Template מותאם לפעולות -->
+    <ng-template #customActions let-row let-index="index">
+      <button (click)="viewDetails(row)">👁️</button>
+      <button (click)="duplicate(row)">📋</button>
+      <button (click)="archive(row)">📦</button>
+    </ng-template>
+    
+    <!-- Template למצב ריק -->
+    <ng-template #emptyState>
+      <div class="empty-illustration">
+        <img src="assets/empty.svg" alt="No data" />
+        <h3>אין נתונים</h3>
+        <p>התחל על ידי הוספת פריט חדש</p>
+        <button (click)="addNew()">הוסף חדש</button>
+      </div>
+    </ng-template>
+    
+    <!-- Template מותאם לכרטיס מובייל -->
+    <ng-template #mobileCard let-row let-index="index">
+      <div class="custom-mobile-card">
+        <div class="card-badge" [style.background]="getStatusColor(row.status)">
+          {{ row.status }}
+        </div>
+        <h3>{{ row.name }}</h3>
+        <p>{{ row.description }}</p>
+        <div class="card-footer">
+          <span class="price">₪{{ row.price }}</span>
+          <button (click)="viewRow(row)">צפה</button>
+        </div>
+      </div>
+    </ng-template>
+  `
+})
+```
+
+### טעינה מהשרת עם פילטרים
+
+```typescript
+readonly dataSource: TableDataSource<Product> = {
+  load: (params: TableQueryParams<Product>) => {
+    // params.filters מכיל את כל הפילטרים המותקנים
+    // params.sort מכיל את מצב המיון הנוכחי
+    // params.searchTerm מכיל את מחרוזת החיפוש
+    
+    return this.http.post<TableDataSourceResult<Product>>('/api/products/search', {
+      page: params.page,
+      pageSize: params.pageSize,
+      search: params.searchTerm,
+      searchColumns: params.searchColumns,
+      searchMode: params.searchMode,
+      sort: params.sort,
+      filters: params.filters
+    }).pipe(
+      map(response => ({
+        items: response.items,
+        total: response.total
+      })),
+      catchError(error => {
+        console.error('Failed to load data', error);
+        return of({ items: [], total: 0 });
+      })
+    );
+  }
+};
+```
+
+### שימוש עם Observables
+
+```typescript
+// הנתונים מגיעים מ-Store/Service
+products$ = this.store.select(selectProducts);
+
+// בתבנית
+<app-smart-table 
+  [config]="config" 
+  [clientData]="(products$ | async) || []"
+/>
+```
+
+### קונפיגורציות שונות לאותם נתונים
+
+```typescript
+// קונפיגורציה בסיסית
+readonly basicConfig: TableConfig<Employee> = {
+  ...employeeConfig,
+  features: {
+    enableSearch: true,
+    enableSort: true
+  }
+};
+
+// קונפיגורציה למנהל עם עריכה
+readonly adminConfig: TableConfig<Employee> = {
+  ...employeeConfig,
+  editMode: 'modal',
+  features: {
+    enableSearch: true,
+    enableSort: true,
+    enableEdit: true,
+    enableDelete: true,
+    enableFilters: true
+  }
+};
+
+// קונפיגורציה לתצוגה בלבד
+readonly readOnlyConfig: TableConfig<Employee> = {
+  ...employeeConfig,
+  features: {
+    enableSearch: true,
+    enableSort: true
+  },
+  columns: employeeConfig.columns.filter(col => col.type !== 'action')
+};
 ```
 
 ### עמודת פעולות מותאמת
@@ -517,6 +924,8 @@ app-smart-table ::ng-deep .table-container {
 
 ## 🔍 חיפוש וסינון
 
+### חיפוש בסיסי
+
 הרכיב מספק חיפוש אוטומטי בכל השדות:
 
 ```typescript
@@ -529,6 +938,60 @@ features: {
 - כל השדות (strings, numbers)
 - שדות מעוצבים (format functions)
 - אובייקטים מקוננים (נעשה stringify)
+
+### חיפוש מתקדם
+
+הגדר עמודות ספציפיות לחיפוש:
+
+```typescript
+searchConfig: {
+  mode: 'any',  // 'any' = מספיק התאמה באחד, 'all' = צריך התאמה בכולם
+  columns: ['name', 'description', 'category']  // רק בעמודות אלו
+}
+```
+
+המשתמש יכול גם לבחור עמודות דרך ה-UI!
+
+### פילטרים מתקדמים
+
+```typescript
+features: {
+  enableFilters: true  // מפעיל פאנל פילטרים מתקדם
+}
+```
+
+הפאנל מאפשר:
+- הוספה ומחיקה של תנאים
+- בחירה מ-14 אופרטורים שונים
+- לוגיקה AND/OR בין תנאים
+- פילטרים מקוננים למבנים מורכבים
+
+### דוגמה לפילטר מתוכנת
+
+```typescript
+// פילטר פשוט
+const simpleFilter = {
+  status: 'active',
+  category: 'electronics'
+};
+
+// פילטר מורכב
+const complexFilter: FilterGroup<Product> = {
+  logic: 'or',
+  conditions: [
+    {
+      field: 'price',
+      operator: 'lt',
+      value: 100
+    },
+    {
+      field: 'discount',
+      operator: 'gte',
+      value: 50
+    }
+  ]
+};
+```
 
 ## ⚡ שיפורי ביצועים
 
@@ -582,6 +1045,23 @@ pagination: {
 2. ודא שהשירות מחזיר Observable
 3. בדוק שה-features מופעלים בקונפיגורציה
 
+### Virtual Scrolling לא עובד
+
+1. ודא ש-`@angular/cdk/scrolling` מותקן
+2. בדוק ש-`itemSize` מתאים לגובה השורה בפועל
+3. ודא ש-`maxViewportHeight` מוגדר
+
+### הנתונים לא מתעדכנים
+
+עבור Server-side, ודא ש-`dataMode: 'server'` מוגדר:
+
+```typescript
+config: TableConfig<T> = {
+  ...baseConfig,
+  dataMode: 'server'  // חשוב!
+};
+```
+
 ## 📚 משאבים נוספים
 
 - **דוגמאות עבודה:** ראה `src/app/configs/` לדוגמאות מלאות
@@ -590,11 +1070,108 @@ pagination: {
 
 ## 🎯 דרישות מערכת
 
-- Angular 18 ומעלה
-- TypeScript 5.0 ומעלה
-- RxJS 7.0 ומעלה
+- **Angular 21** ומעלה
+- **TypeScript 5.0** ומעלה
+- **RxJS 7.0** ומעלה
+- **@angular/cdk** (לגרירה ו-Virtual Scrolling)
 
-## 📝 סיכום
+## 🎨 API של הרכיב
+
+### Inputs
+
+```typescript
+@Input() config: TableConfig<T>              // קונפיגורציה (חובה)
+@Input() clientData: T[] | null              // נתונים למצב client-side
+@Input() serverDataSource: TableDataSource<T> | null  // מקור נתונים למצב server-side
+
+// Templates מותאמים אישית
+@Input() headerTemplate: TemplateRef         // תבנית מותאמת לכותרות
+@Input() cellTemplate: TemplateRef           // תבנית מותאמת לתאים
+@Input() actionTemplate: TemplateRef         // תבנית מותאמת לפעולות
+@Input() emptyTemplate: TemplateRef          // תבנית למצב ריק
+@Input() mobileCardTemplate: TemplateRef     // תבנית לכרטיסים במובייל
+```
+
+### Outputs
+
+```typescript
+@Output() rowClick: EventEmitter<T>          // לחיצה על שורה
+@Output() cellClick: EventEmitter<{          // לחיצה על תא
+  row: T;
+  column: ColumnConfig<T>;
+  value: unknown;
+}>
+@Output() actionClick: EventEmitter<{        // לחיצה על פעולה
+  row: T;
+  action: 'edit' | 'delete';
+}>
+@Output() selectionChange: EventEmitter<string[]>  // שינוי בבחירה
+@Output() rowReorder: EventEmitter<{         // סידור מחדש של שורות
+  previousIndex: number;
+  currentIndex: number;
+  items: T[];
+}>
+```
+
+## 📊 ביצועים
+
+### Virtual Scrolling
+
+עבור טבלאות עם אלפי שורות, השתמש ב-virtual scrolling:
+
+```typescript
+virtualization: {
+  enabled: true,
+  itemSize: 52,              // גובה קבוע לכל שורה
+  mobileItemSize: 160,       // גובה כרטיס במובייל
+  maxViewportHeight: 520     // גובה אזור הגלילה
+}
+```
+
+**יתרונות:**
+- רק שורות גלויות ב-DOM
+- ביצועים מצוינים עם 10,000+ שורות
+- צריכת זיכרון נמוכה
+
+### Client-side vs Server-side
+
+**Client-side** (`dataMode: 'client'`):
+- ✅ מהיר למערכות קטנות (< 5,000 רשומות)
+- ✅ חיפוש ומיון מיידי
+- ✅ עובד offline
+- ❌ טוען הכל מראש
+
+**Server-side** (`dataMode: 'server'`):
+- ✅ מתאים למערכות גדולות
+- ✅ טוען רק מה שצריך
+- ✅ משתמש במשאבי שרת
+- ❌ דורש API מתאים
+
+## 🎨 התאמות CSS
+
+אפשר לעצב את הטבלה דרך CSS:
+
+```css
+/* התאמות גלובליות */
+app-smart-table {
+  --table-border-color: #e0e0e0;
+  --table-header-bg: #f5f5f5;
+  --table-row-hover: #f9f9f9;
+  --primary-color: #1976d2;
+}
+
+/* דרס סגנונות ספציפיים */
+app-smart-table ::ng-deep .table-container {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* עיצוב כרטיסים במובייל */
+app-smart-table ::ng-deep .mobile-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+```
 
 הרכיב הזה הוא **פתרון גנרי לחלוטין** לתצוגת נתונים טבלאית. הוא לא קשור לסוג נתונים מסוים ויכול לעבוד עם כל ישות - עובדים, מתקנים, מוצרים, הזמנות, או כל דבר אחר.
 
@@ -605,6 +1182,21 @@ pagination: {
 
 **רכיב אחד. נתונים שונים. זה כוח הטבלאות הדינמיות.**
 
+### תכונות מרכזיות שנוספו לאחרונה
+
+- ✨ **Templates מותאמים אישית** - התאם כותרות, תאים, פעולות וכרטיסי מובייל
+- 🔍 **פילטרים מתקדמים** - 14 אופרטורים עם לוגיקה AND/OR
+- 🖱️ **גרירה וסידור** - שורות ועמודות
+- 💾 **שמירת מצב** - URL או LocalStorage
+- 📊 **Virtual Scrolling** - לטבלאות ענק
+- 🌐 **Server-side mode** - עבור מאגרי מידע גדולים
+- 📤 **ייצוא נתונים** - CSV, Excel, Print
+- 🎯 **בחירת שורות** - single/multiple
+- 📱 **Infinite scroll** - במובייל
+- 🔧 **3 מצבי עריכה** - inline, expanded, modal
+- 📈 **Diagnostics** - פאנל ביצועים
+- 🎨 **ngTemplateOutlet מודרני** - שימוש ב-property binding במקום structural directive
+
 ---
 
-**Angular 18+** • **מבוסס Signals** • **Mobile-first** • **TypeScript** • **תמיכה RTL מלאה**
+**Angular 21+** • **מבוסס Signals** • **Mobile-first** • **TypeScript** • **תמיכה RTL מלאה**

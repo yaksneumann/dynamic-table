@@ -238,7 +238,8 @@
             [class.sortable]="column.sortable">
             @if (headerTemplate()) {
               <ng-container
-                *ngTemplateOutlet="headerTemplate(); context: { $implicit: column, column: column }"
+                [ngTemplateOutlet]="headerTemplate()"
+                [ngTemplateOutletContext]="{ $implicit: column, column: column }"
               ></ng-container>
             } @else {
               {{ column.header }}
@@ -292,7 +293,8 @@
                   @if (column.type === 'action') {
                     @if (actionTemplate()) {
                       <ng-container
-                        *ngTemplateOutlet="actionTemplate(); context: { $implicit: row, row: row, index: rowIndex }"
+                        [ngTemplateOutlet]="actionTemplate()"
+                        [ngTemplateOutletContext]="{ $implicit: row, row: row, index: rowIndex }"
                       ></ng-container>
                     } @else {
                       <div style="display: flex; gap: 8px; justify-content: center;">
@@ -325,7 +327,8 @@
                       />
                     } @else if (cellTemplate()) {
                     <ng-container
-                      *ngTemplateOutlet="cellTemplate(); context: { $implicit: row, row: row, column: column, value: getColumnValue(column, row), index: rowIndex }"
+                      [ngTemplateOutlet]="cellTemplate()"
+                      [ngTemplateOutletContext]="{ $implicit: row, row: row, column: column, value: getColumnValue(column, row), index: rowIndex }"
                     ></ng-container>
                   } @else if (column.type === 'badge') {
                     <span class="status-badge" [style]="getCellStyle(column, getColumnValue(column, row), row)"
@@ -378,7 +381,8 @@
               @if (column.type === 'action') {
                 @if (actionTemplate()) {
                   <ng-container
-                    *ngTemplateOutlet="actionTemplate(); context: { $implicit: row, row: row, index: $index }"
+                    [ngTemplateOutlet]="actionTemplate()"
+                    [ngTemplateOutletContext]="{ $implicit: row, row: row, index: $index }"
                   ></ng-container>
                 } @else {
                   <div style="display: flex; gap: 8px; justify-content: center;">
@@ -411,7 +415,8 @@
                 />
               } @else if (cellTemplate()) {
                 <ng-container
-                  *ngTemplateOutlet="cellTemplate(); context: { $implicit: row, row: row, column: column, value: getColumnValue(column, row), index: $index }"
+                  [ngTemplateOutlet]="cellTemplate()"
+                  [ngTemplateOutletContext]="{ $implicit: row, row: row, column: column, value: getColumnValue(column, row), index: $index }"
                 ></ng-container>
               } @else if (column.type === 'badge') {
                 <span class="status-badge" [style]="getCellStyle(column, getColumnValue(column, row), row)"
@@ -459,7 +464,7 @@
             <tr>
               <td [attr.colspan]="visibleColumns().length + (isSelectionEnabled() ? 1 : 0)" class="empty-state">
                 @if (emptyTemplate()) {
-                  <ng-container *ngTemplateOutlet="emptyTemplate()"></ng-container>
+                  <ng-container [ngTemplateOutlet]="emptyTemplate()"></ng-container>
                 } @else {
                   אין נתונים להצגה
                 }
@@ -496,7 +501,8 @@
             role="option">
             @if (mobileCardTemplate()) {
               <ng-container
-                *ngTemplateOutlet="mobileCardTemplate(); context: { $implicit: row, row: row, index: rowIndex }"
+                [ngTemplateOutlet]="mobileCardTemplate()"
+                [ngTemplateOutletContext]="{ $implicit: row, row: row, index: rowIndex }"
               ></ng-container>
             } @else {
               <div class="card-header">
@@ -533,7 +539,8 @@
                     />
                   } @else if (cellTemplate()) {
                     <ng-container
-                      *ngTemplateOutlet="cellTemplate(); context: { $implicit: row, row: row, column: column, value: getColumnValue(column, row), index: rowIndex }"
+                      [ngTemplateOutlet]="cellTemplate()"
+                      [ngTemplateOutletContext]="{ $implicit: row, row: row, column: column, value: getColumnValue(column, row), index: rowIndex }"
                     ></ng-container>
                   } @else if (column.type === 'badge') {
                     <span class="value status-badge" [style]="getCellStyle(column, getColumnValue(column, row), row)"
@@ -577,7 +584,8 @@
               <div class="card-footer">
                 @if (actionTemplate()) {
                   <ng-container
-                    *ngTemplateOutlet="actionTemplate(); context: { $implicit: row, row: row, index: rowIndex }"
+                    [ngTemplateOutlet]="actionTemplate()"
+                    [ngTemplateOutletContext]="{ $implicit: row, row: row, index: rowIndex }"
                   ></ng-container>
                 } @else {
                   @if (!isModalEditMode() && isRowEditing(row)) {
@@ -622,7 +630,8 @@
         role="option">
         @if (mobileCardTemplate()) {
           <ng-container
-            *ngTemplateOutlet="mobileCardTemplate(); context: { $implicit: row, row: row, index: $index }"
+            [ngTemplateOutlet]="mobileCardTemplate()"
+            [ngTemplateOutletContext]="{ $implicit: row, row: row, index: $index }"
           ></ng-container>
         } @else {
           <div class="card-header">
@@ -659,7 +668,8 @@
                 />
               } @else if (cellTemplate()) {
                 <ng-container
-                  *ngTemplateOutlet="cellTemplate(); context: { $implicit: row, row: row, column: column, value: getColumnValue(column, row), index: $index }"
+                  [ngTemplateOutlet]="cellTemplate()"
+                  [ngTemplateOutletContext]="{ $implicit: row, row: row, column: column, value: getColumnValue(column, row), index: $index }"
                 ></ng-container>
               } @else if (column.type === 'badge') {
                 <span class="value status-badge" [style]="getCellStyle(column, getColumnValue(column, row), row)"
@@ -703,7 +713,8 @@
           <div class="card-footer">
             @if (actionTemplate()) {
               <ng-container
-                *ngTemplateOutlet="actionTemplate(); context: { $implicit: row, row: row, index: $index }"
+                [ngTemplateOutlet]="actionTemplate()"
+                [ngTemplateOutletContext]="{ $implicit: row, row: row, index: $index }"
               ></ng-container>
             } @else {
               @if (!isModalEditMode() && isRowEditing(row)) {
@@ -735,7 +746,7 @@
       </div>
       } @empty {
         @if (emptyTemplate()) {
-          <ng-container *ngTemplateOutlet="emptyTemplate()"></ng-container>
+          <ng-container [ngTemplateOutlet]="emptyTemplate()"></ng-container>
         } @else {
           <div class="empty-state">אין נתונים להצגה</div>
         }
