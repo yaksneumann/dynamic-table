@@ -320,11 +320,18 @@
                       </div>
                     }
                     } @else if (isInlineEditMode() && isRowEditing(row) && column.key !== 'id') {
-                      <input
-                        class="inline-edit-input"
-                        [ngModel]="getEditingValue(column, row)"
-                        (ngModelChange)="updateEditingValue(column, $event)"
-                      />
+                      @if (column.type === 'date') {
+                        <app-date-picker
+                          [value]="getEditingValue(column, row)?.toString() || ''"
+                          (dateChange)="updateEditingValue(column, $event)"
+                        ></app-date-picker>
+                      } @else {
+                        <input
+                          class="inline-edit-input"
+                          [ngModel]="getEditingValue(column, row)"
+                          (ngModelChange)="updateEditingValue(column, $event)"
+                        />
+                      }
                     } @else if (cellTemplate()) {
                     <ng-container
                       [ngTemplateOutlet]="cellTemplate()"
@@ -408,11 +415,18 @@
                   </div>
                 }
               } @else if (isInlineEditMode() && isRowEditing(row) && column.key !== 'id') {
-                <input
-                  class="inline-edit-input"
-                  [ngModel]="getEditingValue(column, row)"
-                  (ngModelChange)="updateEditingValue(column, $event)"
-                />
+                @if (column.type === 'date') {
+                  <app-date-picker
+                    [value]="getEditingValue(column, row)?.toString() || ''"
+                    (dateChange)="updateEditingValue(column, $event)"
+                  ></app-date-picker>
+                } @else {
+                  <input
+                    class="inline-edit-input"
+                    [ngModel]="getEditingValue(column, row)"
+                    (ngModelChange)="updateEditingValue(column, $event)"
+                  />
+                }
               } @else if (cellTemplate()) {
                 <ng-container
                   [ngTemplateOutlet]="cellTemplate()"
@@ -532,11 +546,18 @@
                 <div class="card-row" (click)="onCellClick(column, row)">
                   <span class="label">{{ column.header }}:</span>
                   @if (isInlineEditMode() && isRowEditing(row)) {
-                    <input
-                      class="inline-edit-input"
-                      [ngModel]="getEditingValue(column, row)"
-                      (ngModelChange)="updateEditingValue(column, $event)"
-                    />
+                    @if (column.type === 'date') {
+                      <app-date-picker
+                        [value]="getEditingValue(column, row)?.toString() || ''"
+                        (dateChange)="updateEditingValue(column, $event)"
+                      ></app-date-picker>
+                    } @else {
+                      <input
+                        class="inline-edit-input"
+                        [ngModel]="getEditingValue(column, row)"
+                        (ngModelChange)="updateEditingValue(column, $event)"
+                      />
+                    }
                   } @else if (cellTemplate()) {
                     <ng-container
                       [ngTemplateOutlet]="cellTemplate()"
@@ -661,11 +682,18 @@
             <div class="card-row" (click)="onCellClick(column, row)">
               <span class="label">{{ column.header }}:</span>
               @if (isInlineEditMode() && isRowEditing(row)) {
-                <input
-                  class="inline-edit-input"
-                  [ngModel]="getEditingValue(column, row)"
-                  (ngModelChange)="updateEditingValue(column, $event)"
-                />
+                @if (column.type === 'date') {
+                  <app-date-picker
+                    [value]="getEditingValue(column, row)?.toString() || ''"
+                    (dateChange)="updateEditingValue(column, $event)"
+                  ></app-date-picker>
+                } @else {
+                  <input
+                    class="inline-edit-input"
+                    [ngModel]="getEditingValue(column, row)"
+                    (ngModelChange)="updateEditingValue(column, $event)"
+                  />
+                }
               } @else if (cellTemplate()) {
                 <ng-container
                   [ngTemplateOutlet]="cellTemplate()"

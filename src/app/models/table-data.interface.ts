@@ -52,6 +52,7 @@ export interface EmployeeData {
   position: string;
   salary: number;
   startDate: string;
+  birthDate?: string;
   status: 'active' | 'onLeave' | 'remote' | 'inactive';
   skills: string[];
   location: {

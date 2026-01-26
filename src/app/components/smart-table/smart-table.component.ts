@@ -53,11 +53,12 @@ import {
   DragDropModule,
   moveItemInArray,
 } from '@angular/cdk/drag-drop';
+import { DatePickerComponent } from '../date-picker/date-picker.component';
 
 @Component({
   selector: 'app-smart-table',
   standalone: true,
-  imports: [CommonModule, FormsModule, ScrollingModule, DragDropModule],
+  imports: [CommonModule, FormsModule, ScrollingModule, DragDropModule, DatePickerComponent],
   templateUrl: './smart-table.html',
   styleUrl: './smart-table.css',
 })

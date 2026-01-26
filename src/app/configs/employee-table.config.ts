@@ -93,6 +93,15 @@ export const employeeTableConfig: TableConfig<EmployeeData> = {
       mobileVisible: false,
     },
     {
+      key: 'birthDate',
+      header: 'Birth Date',
+      type: 'date',
+      width: '120px',
+      align: 'center',
+      sortable: true,
+      mobileVisible: false,
+    },
+    {
       key: 'actions',
       header: 'Actions',
       type: 'action',
