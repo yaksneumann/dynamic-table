@@ -1,6 +1,6 @@
 .table-container {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  padding: 20px;
+  padding: 12px;
   background-color: #f5f5f5;
   min-height: 100vh;
 }
@@ -19,43 +19,54 @@
 .table-controls {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
+  gap: 6px;
+  margin-bottom: 16px;
   direction: rtl;
   width: 100%;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
 }
 
 .search-row {
   display: flex;
-  flex: 1 1 520px;
-  min-width: 320px;
+  flex: 1 1 auto;
+  min-width: 200px;
+  max-width: 400px;
 }
-
-.search-actions {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  flex-wrap: nowrap;
-}
-
 
 .column-controls {
   position: relative;
-  margin-bottom: 12px;
 }
 
-
-.toolbar-row {
-  display: flex;
+.control-btn {
+  display: inline-flex;
   align-items: center;
-  gap: 12px;
-  flex-wrap: nowrap;
-  margin-bottom: 0;
+  justify-content: center;
+  padding: 6px;
+  border: 1px solid #e0e0e0;
+  background: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  min-width: 36px;
+  height: 36px;
+  transition: all 0.2s;
 }
 
-.toolbar-row .column-controls {
-  margin-bottom: 0;
+.control-btn:hover {
+  background: #f5f5f5;
+  border-color: #bdbdbd;
+}
+
+.control-btn .material-icons {
+  font-size: 20px;
+}
+
+.control-btn.excel-btn .material-icons {
+  color: #217346;
+}
+
+.control-btn.excel-btn:hover .material-icons {
+  color: #185c37;
 }
 
 .search-panel {
@@ -186,17 +197,26 @@
   font-size: 13px;
 }
 
-.column-btn {
+.column-btn,
+.filter-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  padding: 8px 12px;
+  padding: 6px 10px;
   border: 1px solid #e0e0e0;
   background: #fff;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 12px;
   white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.column-btn:hover,
+.filter-btn:hover {
+  background: #f5f5f5;
+  border-color: #bdbdbd;
 }
 
 .column-panel {
@@ -258,31 +278,26 @@
 
 .export-actions {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: nowrap;
-  margin-bottom: 0;
-}
-
-.toolbar-row .export-actions {
-  margin-bottom: 0;
 }
 
 .export-actions .export-btn {
-  padding: 8px 12px;
+  padding: 6px 10px;
   border: 1px solid #e0e0e0;
   background: #fff;
   color: #333;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 12px;
   transition: background-color 0.2s, border-color 0.2s;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
 }
 
 .export-icon {
-  font-size: 16px;
+  font-size: 18px;
   line-height: 1;
   display: inline-flex;
   align-items: center;
@@ -297,6 +312,38 @@
   font-size: 14px;
   color: #666;
   margin-bottom: 16px;
+}
+
+@media (max-width: 768px) {
+  .table-controls {
+    gap: 4px;
+    margin-bottom: 12px;
+  }
+  
+  .search-row {
+    flex: 1 1 100%;
+    max-width: 100%;
+    margin-bottom: 8px;
+  }
+  
+  .control-btn {
+    padding: 5px;
+    min-width: 32px;
+    height: 32px;
+  }
+  
+  .control-btn .material-icons {
+    font-size: 18px;
+  }
+  
+  .export-actions .export-btn {
+    padding: 5px 8px;
+    font-size: 11px;
+  }
+  
+  .export-icon {
+    font-size: 16px;
+  }
 }
 
 .diagnostics-bar {
@@ -423,6 +470,7 @@
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
+  width: 100%;
 }
 
 .table-viewport {
@@ -445,11 +493,12 @@
 }
 
 .data-table th {
-  padding: 16px 12px;
+  padding: 10px 8px;
   font-weight: 600;
   font-size: 14px;
   color: #495057;
   white-space: nowrap;
+  text-align: right;
 }
 
 .data-table th.sortable {
@@ -458,12 +507,12 @@
 }
 
 .selection-col {
-  width: 40px;
+  width: 32px;
   text-align: center;
 }
 
 .reorder-col {
-  width: 36px;
+  width: 24px;
   text-align: center;
 }
 
@@ -492,9 +541,10 @@
 }
 
 .data-table td {
-  padding: 14px 12px;
+  padding: 10px 8px;
   font-size: 14px;
   color: #212529;
+  text-align: right;
 }
 
 .status-badge {

@@ -8,76 +8,67 @@
       <input type="text" class="search-input" placeholder="חיפוש..." [value]="searchTerm()"
         (input)="onSearchChange($event)" />
     </div>
-    <div class="search-actions">
-      <button type="button" class="column-btn" (click)="toggleSearchPanel()" aria-label="בחירת עמודות לחיפוש">
-        <span class="material-icons" aria-hidden="true">manage_search</span>
-        עמודות חיפוש
+    
+    <button type="button" class="control-btn" (click)="toggleSearchPanel()" aria-label="בחירת עמודות לחיפוש" title="עמודות חיפוש">
+      <span class="material-icons" aria-hidden="true">manage_search</span>
+    </button>
+    
+    @if (config().features.enableFilters) {
+      <button type="button" class="control-btn" (click)="toggleFilterPanel()" aria-label="פילטרים מתקדמים" title="פילטרים">
+        <span class="material-icons" aria-hidden="true">filter_alt</span>
       </button>
-      @if (config().features.enableFilters) {
-        <button type="button" class="filter-btn" (click)="toggleFilterPanel()" aria-label="פילטרים מתקדמים">
-          <span class="material-icons" aria-hidden="true">filter_alt</span>
-          פילטרים מתקדמים
-        </button>
-      }
-    </div>
-    <div class="toolbar-row">
-      <div class="column-controls">
-        <button type="button" class="column-btn" (click)="toggleColumnPanel()" aria-label="בחירת עמודות">
-          <span class="material-icons" aria-hidden="true">view_column</span>
-          עמודות
-        </button>
+    }
+    
+    <div class="column-controls">
+      <button type="button" class="control-btn" (click)="toggleColumnPanel()" aria-label="בחירת עמודות" title="עמודות">
+        <span class="material-icons" aria-hidden="true">view_column</span>
+      </button>
 
-        @if (isColumnPanelOpen()) {
-          <div class="column-panel" role="dialog" aria-label="בחירת עמודות">
-            <div class="column-panel-header">
-              <span>בחירת עמודות</span>
-              <button type="button" class="column-close" (click)="toggleColumnPanel()">✕</button>
-            </div>
-            <div class="column-panel-body" cdkDropList (cdkDropListDropped)="onColumnDrop($event)">
-              @for (column of orderedColumns(); track column.key) {
-                @if (column.type !== 'action' && column.key !== 'actions') {
-                  <div class="column-item" cdkDrag>
-                    <span class="material-icons drag-handle" cdkDragHandle aria-hidden="true">drag_indicator</span>
-                    <label class="column-label">
-                      <input
-                        type="checkbox"
-                        [checked]="!isColumnHidden(column)"
-                        [disabled]="!canToggleColumn(column)"
-                        (change)="toggleColumnVisibility(column)"
-                      />
-                      {{ column.header }}
-                    </label>
-                  </div>
-                }
-              }
-            </div>
+      @if (isColumnPanelOpen()) {
+        <div class="column-panel" role="dialog" aria-label="בחירת עמודות">
+          <div class="column-panel-header">
+            <span>בחירת עמודות</span>
+            <button type="button" class="column-close" (click)="toggleColumnPanel()">✕</button>
           </div>
-        }
-      </div>
-
-      @if (exportConfig()) {
-        <div class="export-actions">
-          @if (exportConfig().enableCsv) {
-            <button type="button" class="export-btn" (click)="exportCsv()" aria-label="ייצוא CSV">
-              <span class="material-icons export-icon" aria-hidden="true">description</span>
-              CSV
-            </button>
-          }
-          @if (exportConfig().enableExcel) {
-            <button type="button" class="export-btn" (click)="exportExcel()" aria-label="ייצוא Excel">
-              <span class="material-icons export-icon" aria-hidden="true">table_chart</span>
-              Excel
-            </button>
-          }
-          @if (exportConfig().enablePrint) {
-            <button type="button" class="export-btn" (click)="printTable()" aria-label="הדפסה">
-              <span class="material-icons export-icon" aria-hidden="true">print</span>
-              הדפסה
-            </button>
-          }
+          <div class="column-panel-body" cdkDropList (cdkDropListDropped)="onColumnDrop($event)">
+            @for (column of orderedColumns(); track column.key) {
+              @if (column.type !== 'action' && column.key !== 'actions') {
+                <div class="column-item" cdkDrag>
+                  <span class="material-icons drag-handle" cdkDragHandle aria-hidden="true">drag_indicator</span>
+                  <label class="column-label">
+                    <input
+                      type="checkbox"
+                      [checked]="!isColumnHidden(column)"
+                      [disabled]="!canToggleColumn(column)"
+                      (change)="toggleColumnVisibility(column)"
+                    />
+                    {{ column.header }}
+                  </label>
+                </div>
+              }
+            }
+          </div>
         </div>
       }
     </div>
+
+    @if (exportConfig()) {
+      @if (exportConfig().enableCsv) {
+        <button type="button" class="control-btn" (click)="exportCsv()" aria-label="ייצוא CSV" title="CSV">
+          <span class="material-icons" aria-hidden="true">description</span>
+        </button>
+      }
+      @if (exportConfig().enableExcel) {
+        <button type="button" class="control-btn excel-btn" (click)="exportExcel()" aria-label="ייצוא Excel" title="Excel">
+          <span class="material-icons" aria-hidden="true">grid_on</span>
+        </button>
+      }
+      @if (exportConfig().enablePrint) {
+        <button type="button" class="control-btn" (click)="printTable()" aria-label="הדפסה" title="הדפסה">
+          <span class="material-icons" aria-hidden="true">print</span>
+        </button>
+      }
+    }
   </div>
   }
 
