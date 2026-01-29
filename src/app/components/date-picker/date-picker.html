@@ -1,21 +1,16 @@
-<div class="date-picker-inline">
-
-    <select class="date-select" [value]="selectedYear()" (change)="onYearChange($any($event.target).value)">
-    @for (year of yearOptions(); track year) {
-      <option [value]="year">{{ year }}</option>
-    }
-  </select>
-  
-  <select class="date-select" [value]="selectedMonth()" (change)="onMonthChange($any($event.target).value)">
-    @for (month of months(); track month.value) {
-      <option [value]="month.value">{{ month.label }}</option>
-    }
-  </select>
-    
-  <select class="date-select" [value]="selectedDay()" (change)="onDayChange($any($event.target).value)">
-    @for (day of dayOptions(); track day) {
-      <option [value]="day">{{ day }}</option>
-    }
-  </select>
-  
+<div class="modern-date-picker custom-date-picker-theme">
+  <mat-form-field appearance="outline" class="date-picker-field">
+    <mat-label>בחר תאריך</mat-label>
+    <input 
+      matInput 
+      [matDatepicker]="picker"
+      [value]="selectedDate()"
+      (dateChange)="onDateChange($event.value)"
+      readonly
+      class="date-input">
+    <mat-datepicker-toggle matIconSuffix [for]="picker">
+      <mat-icon matDatepickerToggleIcon>calendar_today</mat-icon>
+    </mat-datepicker-toggle>
+    <mat-datepicker #picker panelClass="custom-calendar-panel"></mat-datepicker>
+  </mat-form-field>
 </div>

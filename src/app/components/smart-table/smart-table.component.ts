@@ -58,7 +58,13 @@ import { DatePickerComponent } from '../date-picker/date-picker.component';
 @Component({
   selector: 'app-smart-table',
   standalone: true,
-  imports: [CommonModule, FormsModule, ScrollingModule, DragDropModule, DatePickerComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ScrollingModule,
+    DragDropModule,
+    DatePickerComponent,
+  ],
   templateUrl: './smart-table.html',
   styleUrl: './smart-table.css',
 })
@@ -160,11 +166,12 @@ export class SmartTableComponent<
   // Public state - diagnostics
   lastQueryParams = signal<TableQueryParams<T> | null>(null);
   lastQueryDuration = signal<number | null>(null);
+  isDiagnosticsPanelOpen = signal(false);
 
   // Computed - internal
   private resolvedClientData = computed<T[]>(() => this.clientData() ?? []);
-  private resolvedServerDataSource = computed<TableDataSource<T> | null>(
-    () => this.serverDataSource(),
+  private resolvedServerDataSource = computed<TableDataSource<T> | null>(() =>
+    this.serverDataSource(),
   );
 
   // Computed - data processing
@@ -287,11 +294,17 @@ export class SmartTableComponent<
     () => this.config().diagnostics?.enabled === true,
   );
 
+  toggleDiagnosticsPanel() {
+    this.isDiagnosticsPanelOpen.update((isOpen) => !isOpen);
+  }
+
   filterableColumns = computed<ColumnConfig<T>[]>(() =>
     this.getSearchableColumns(),
   );
 
   searchableColumns = computed(() => this.getSearchableColumns());
+
+  datePickerColors = computed(() => this.config().styling?.datePickerColors);
 
   showPagination = computed(
     () => !this.isVirtualScrollEnabled() && !this.isMobile(),
@@ -543,12 +556,7 @@ export class SmartTableComponent<
         const advanced = this.advancedFilters();
         const restored = this.restoredFilters();
 
-        const resolved = this.resolveFilters(
-          null,
-          advanced,
-          null,
-          restored,
-        );
+        const resolved = this.resolveFilters(null, advanced, null, restored);
         const key = JSON.stringify(resolved ?? {});
         if (this.lastFiltersKey() === key) return;
 
@@ -892,6 +900,48 @@ export class SmartTableComponent<
     }
 
     return value?.toString() || '';
+  }
+
+  /**
+   * Get Material Icon name for a column in edit mode.
+   * Returns column.icon if specified, otherwise infers from column.key or column.type.
+   */
+  getFieldIcon(column: ColumnConfig<T>): string {
+    // Use explicitly configured icon if available
+    if (column.icon) {
+      return column.icon;
+    }
+
+    const key = column.key.toLowerCase();
+
+    // Type-based icons
+    if (
+      column.type === 'currency' ||
+      key.includes('amount') ||
+      key.includes('salary') ||
+      key.includes('סכום')
+    ) {
+      return 'attach_money';
+    }
+
+    // Key-based pattern matching (English and Hebrew)
+    if (key.includes('phone') || key.includes('טלפון')) return 'phone';
+    if (key.includes('email') || key.includes('מייל')) return 'email';
+    if (key.includes('address') || key.includes('כתובת')) return 'location_on';
+    if (key.includes('name') || key.includes('שם')) return 'person';
+    if (key.includes('facility') || key.includes('מתקן')) return 'business';
+    if (key.includes('hub') || key.includes('מוקד')) return 'support_agent';
+    if (key.includes('delivery') || key.includes('מסירה'))
+      return 'local_shipping';
+    if (key.includes('contact') || key.includes('קשר')) return 'contacts';
+    if (key.includes('bag') || key.includes('שק')) return 'shopping_bag';
+    if (key.includes('department') || key.includes('מחלקה'))
+      return 'corporate_fare';
+    if (key.includes('position') || key.includes('תפקיד')) return 'work';
+    if (key === 'status' || key === 'סטטוס') return 'label';
+
+    // Default icon
+    return 'edit';
   }
 
   getStatusColor(status: unknown): string | undefined {

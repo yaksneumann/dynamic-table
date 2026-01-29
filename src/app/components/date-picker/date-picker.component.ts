@@ -5,68 +5,84 @@ import {
   input,
   output,
   effect,
+  ViewEncapsulation,
+  inject,
+  PLATFORM_ID,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { isPlatformBrowser } from '@angular/common';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatIconModule } from '@angular/material/icon';
+import { DatePickerColors } from '../../models/table.config.interface';
 
+/**
+ * Modern date picker component with Material Design.
+ * Features:
+ * - Compact calendar popup
+ * - Customizable colors matching table theme
+ * - Responsive design
+ * - Latest Angular signals API
+ * - RTL support for Hebrew
+ */
 @Component({
   selector: 'app-date-picker',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    MatFormFieldModule,
+    MatInputModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatIconModule,
+  ],
   templateUrl: './date-picker.html',
   styleUrl: './date-picker.css',
+  encapsulation: ViewEncapsulation.None,
 })
 export class DatePickerComponent {
+  private platformId = inject(PLATFORM_ID);
+
+  /** Input value as ISO date string (YYYY-MM-DD) */
   value = input<string>('');
+
+  /** Custom color configuration */
+  colors = input<DatePickerColors | undefined>(undefined);
+
+  /** Event emitted when date changes */
   dateChange = output<string>();
 
-  selectedDay = signal<number>(1);
-  selectedMonth = signal<number>(1);
-  selectedYear = signal<number>(new Date().getFullYear());
+  /** Internal date object for Material datepicker */
+  selectedDate = signal<Date | null>(null);
 
-  months = computed(() => [
-    { value: 1, label: 'ינואר' },
-    { value: 2, label: 'פברואר' },
-    { value: 3, label: 'מרץ' },
-    { value: 4, label: 'אפריל' },
-    { value: 5, label: 'מאי' },
-    { value: 6, label: 'יוני' },
-    { value: 7, label: 'יולי' },
-    { value: 8, label: 'אוגוסט' },
-    { value: 9, label: 'ספטמבר' },
-    { value: 10, label: 'אוקטובר' },
-    { value: 11, label: 'נובמבר' },
-    { value: 12, label: 'דצמבר' },
-  ]);
+  /** Computed CSS custom properties for theming */
+  customStyles = computed(() => {
+    const colorConfig = this.colors();
+    if (!colorConfig) return {};
 
-  yearOptions = computed(() => {
-    const currentYear = new Date().getFullYear();
-    const years: number[] = [];
-    for (let i = currentYear - 100; i <= currentYear + 10; i++) {
-      years.push(i);
-    }
-    return years;
+    return {
+      '--dp-primary-color': colorConfig.primary || '#e53935',
+      '--dp-secondary-color': colorConfig.secondary || '#ff5252',
+      '--dp-header-bg': colorConfig.headerBackground || '#e53935',
+      '--dp-header-text': colorConfig.headerText || '#ffffff',
+      '--dp-today-color': colorConfig.todayColor || '#ff5252',
+    };
   });
 
-  dayOptions = computed(() => {
-    const month = this.selectedMonth();
-    const year = this.selectedYear();
-    const daysInMonth = new Date(year, month, 0).getDate();
-    const days: number[] = [];
-    for (let i = 1; i <= daysInMonth; i++) {
-      days.push(i);
-    }
-    return days;
-  });
-
+  /** Formatted date string for display */
   private formattedDate = computed(() => {
-    const day = this.selectedDay().toString().padStart(2, '0');
-    const month = this.selectedMonth().toString().padStart(2, '0');
-    const year = this.selectedYear();
+    const date = this.selectedDate();
+    if (!date) return '';
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
     return `${year}-${month}-${day}`;
   });
 
   constructor() {
+    // Watch for external value changes
     effect(() => {
       const val = this.value();
       if (val) {
@@ -74,51 +90,48 @@ export class DatePickerComponent {
       }
     });
 
+    // Emit changes when date is updated
     effect(() => {
       const formatted = this.formattedDate();
-      this.dateChange.emit(formatted);
+      if (formatted) {
+        this.dateChange.emit(formatted);
+      }
+    });
+
+    // Apply custom color theme to document root for Material overlays
+    effect(() => {
+      if (isPlatformBrowser(this.platformId)) {
+        const styles = this.customStyles();
+        const root = document.documentElement;
+
+        // Apply each CSS variable
+        Object.entries(styles).forEach(([key, value]) => {
+          if (value) {
+            root.style.setProperty(key, value as string);
+          }
+        });
+      }
     });
   }
 
+  /**
+   * Parse ISO date string to Date object
+   */
   private parseDate(dateString: string): void {
     try {
       const date = new Date(dateString);
       if (!isNaN(date.getTime())) {
-        this.selectedDay.set(date.getDate());
-        this.selectedMonth.set(date.getMonth() + 1);
-        this.selectedYear.set(date.getFullYear());
+        this.selectedDate.set(date);
       }
     } catch (e) {
       console.error('Error parsing date:', e);
     }
   }
 
-  onDayChange(dayValue: string): void {
-    const day = parseInt(dayValue, 10);
-    if (day >= 1) {
-      this.selectedDay.set(day);
-    }
-  }
-
-  onMonthChange(monthValue: string): void {
-    const month = parseInt(monthValue, 10);
-    if (month >= 1 && month <= 12) {
-      this.selectedMonth.set(month);
-      const daysInMonth = new Date(this.selectedYear(), month, 0).getDate();
-      if (this.selectedDay() > daysInMonth) {
-        this.selectedDay.set(daysInMonth);
-      }
-    }
-  }
-
-  onYearChange(yearValue: string): void {
-    const year = parseInt(yearValue, 10);
-    if (year > 0) {
-      this.selectedYear.set(year);
-      const daysInMonth = new Date(year, this.selectedMonth(), 0).getDate();
-      if (this.selectedDay() > daysInMonth) {
-        this.selectedDay.set(daysInMonth);
-      }
-    }
+  /**
+   * Handle date selection from calendar
+   */
+  onDateChange(date: Date | null): void {
+    this.selectedDate.set(date);
   }
 }

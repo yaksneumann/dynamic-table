@@ -69,6 +69,12 @@
         </button>
       }
     }
+
+    @if (diagnosticsEnabled()) {
+      <button type="button" class="control-btn" [class.active]="isDiagnosticsPanelOpen()" (click)="toggleDiagnosticsPanel()" aria-label="Diagnostics" title="Diagnostics">
+        <span class="material-icons" aria-hidden="true">bug_report</span>
+      </button>
+    }
   </div>
   }
 
@@ -177,20 +183,26 @@
     </div>
   }
 
-  @if (diagnosticsEnabled() && isMobile()) {
-    <div class="diagnostics-bar diagnostics-bar--sticky" aria-live="polite">
-      <span class="diagnostics-badge">Diagnostics</span>
-      <span class="diagnostics-item">
-        {{ diagnosticsVisibleLabel() }}: {{ diagnosticsVisibleText() }}
-      </span>
-      <span class="diagnostics-divider">|</span>
-      <span class="diagnostics-item">
-        Page: {{ diagnosticsPage() }}
-      </span>
-      <span class="diagnostics-divider">|</span>
-      <span class="diagnostics-item">
-        Timing: {{ lastQueryDuration() !== null ? (lastQueryDuration() | number : '1.0-0') + 'ms' : 'N/A' }}
-      </span>
+  @if (diagnosticsEnabled() && isDiagnosticsPanelOpen() && isMobile()) {
+    <div class="diagnostics-panel diagnostics-panel--mobile" role="dialog" aria-label="Diagnostics">
+      <div class="diagnostics-panel-header">
+        <span class="diagnostics-badge">Diagnostics</span>
+        <button type="button" class="column-close" (click)="toggleDiagnosticsPanel()">✕</button>
+      </div>
+      <div class="diagnostics-panel-body">
+        <div class="diagnostics-row">
+          <span class="diagnostics-label">{{ diagnosticsVisibleLabel() }}:</span>
+          <span class="diagnostics-value">{{ diagnosticsVisibleText() }}</span>
+        </div>
+        <div class="diagnostics-row">
+          <span class="diagnostics-label">Page:</span>
+          <span class="diagnostics-value">{{ diagnosticsPage() }}</span>
+        </div>
+        <div class="diagnostics-row">
+          <span class="diagnostics-label">Timing:</span>
+          <span class="diagnostics-value">{{ lastQueryDuration() !== null ? (lastQueryDuration() | number : '1.0-0') + 'ms' : 'N/A' }}</span>
+        </div>
+      </div>
     </div>
   }
 
@@ -204,50 +216,6 @@
 
   @if (!isMobile()) {
   <div class="table-wrapper" [attr.aria-busy]="loading()">
-      <table class="data-table" role="grid" [attr.aria-rowcount]="ariaRowCount()" [attr.aria-colcount]="ariaColCount()">
-      <thead>
-        <tr>
-          @if (canReorderRows()) {
-            <th class="reorder-col" aria-hidden="true"></th>
-          }
-          @if (isSelectionEnabled()) {
-            <th class="selection-col">
-              @if (selectionMode() === 'multiple') {
-                <input
-                  type="checkbox"
-                  [checked]="areAllSelected()"
-                  aria-label="בחר הכל"
-                  (change)="toggleAllSelection()"
-                />
-              }
-            </th>
-          }
-          @for (column of visibleColumns(); track column.key) {
-          <th [style.width]="column.width" [style.text-align]="column.align"
-            [attr.aria-sort]="getAriaSort(column)"
-            (click)="column.sortable && toggleSort(column)"
-            [class.sortable]="column.sortable">
-            @if (headerTemplate()) {
-              <ng-container
-                [ngTemplateOutlet]="headerTemplate()"
-                [ngTemplateOutletContext]="{ $implicit: column, column: column }"
-              ></ng-container>
-            } @else {
-              {{ column.header }}
-              @if (column.sortable) {
-              <span class="sort-icon">
-                @if (getSortDirection(column) === 'asc') { ▲ }
-                @else if (getSortDirection(column) === 'desc') { ▼ }
-                @else { ↕ }
-              </span>
-              }
-            }
-          </th>
-          }
-        </tr>
-      </thead>
-    </table>
-
     @if (isVirtualScrollEnabled()) {
       @if (displayedData().length === 0) {
         <div class="empty-state">אין נתונים להצגה</div>
@@ -259,6 +227,47 @@
           [style.max-height.px]="virtualizationSettings().maxViewportHeight"
         >
           <table class="data-table" role="grid" [attr.aria-rowcount]="ariaRowCount()" [attr.aria-colcount]="ariaColCount()">
+            <thead>
+              <tr>
+                @if (canReorderRows()) {
+                  <th class="reorder-col" aria-hidden="true"></th>
+                }
+                @if (isSelectionEnabled()) {
+                  <th class="selection-col">
+                    @if (selectionMode() === 'multiple') {
+                      <input
+                        type="checkbox"
+                        [checked]="areAllSelected()"
+                        aria-label="בחר הכל"
+                        (change)="toggleAllSelection()"
+                      />
+                    }
+                  </th>
+                }
+                @for (column of visibleColumns(); track column.key) {
+                <th [style.width]="column.width" [style.text-align]="column.align"
+                  [attr.aria-sort]="getAriaSort(column)"
+                  (click)="column.sortable && toggleSort(column)"
+                  [class.sortable]="column.sortable">
+                  @if (headerTemplate()) {
+                    <ng-container
+                      [ngTemplateOutlet]="headerTemplate()"
+                      [ngTemplateOutletContext]="{ $implicit: column, column: column }"
+                    ></ng-container>
+                  } @else {
+                    {{ column.header }}
+                    @if (column.sortable) {
+                    <span class="sort-icon">
+                      @if (getSortDirection(column) === 'asc') { ▲ }
+                      @else if (getSortDirection(column) === 'desc') { ▼ }
+                      @else { ↕ }
+                    </span>
+                    }
+                  }
+                </th>
+                }
+              </tr>
+            </thead>
             <tbody>
               <tr *cdkVirtualFor="let row of displayedData(); trackBy: trackById; let rowIndex = index"
                 (click)="onRowClick(row)"
@@ -288,7 +297,7 @@
                         [ngTemplateOutletContext]="{ $implicit: row, row: row, index: rowIndex }"
                       ></ng-container>
                     } @else {
-                      <div style="display: flex; gap: 8px; justify-content: center;">
+                      <div class="action-buttons">
                         @if (!isModalEditMode() && isRowEditing(row)) {
                           <button class="edit-btn" (click)="saveRowEdit(); $event.stopPropagation()" title="שמור">
                             ✔
@@ -314,6 +323,7 @@
                       @if (column.type === 'date') {
                         <app-date-picker
                           [value]="getEditingValue(column, row)?.toString() || ''"
+                          [colors]="datePickerColors()"
                           (dateChange)="updateEditingValue(column, $event)"
                         ></app-date-picker>
                       } @else {
@@ -347,6 +357,47 @@
       }
     } @else {
       <table class="data-table" role="grid" [attr.aria-rowcount]="ariaRowCount()" [attr.aria-colcount]="ariaColCount()">
+        <thead>
+          <tr>
+            @if (canReorderRows()) {
+              <th class="reorder-col" aria-hidden="true"></th>
+            }
+            @if (isSelectionEnabled()) {
+              <th class="selection-col">
+                @if (selectionMode() === 'multiple') {
+                  <input
+                    type="checkbox"
+                    [checked]="areAllSelected()"
+                    aria-label="בחר הכל"
+                    (change)="toggleAllSelection()"
+                  />
+                }
+              </th>
+            }
+            @for (column of visibleColumns(); track column.key) {
+            <th [style.width]="column.width" [style.text-align]="column.align"
+              [attr.aria-sort]="getAriaSort(column)"
+              (click)="column.sortable && toggleSort(column)"
+              [class.sortable]="column.sortable">
+              @if (headerTemplate()) {
+                <ng-container
+                  [ngTemplateOutlet]="headerTemplate()"
+                  [ngTemplateOutletContext]="{ $implicit: column, column: column }"
+                ></ng-container>
+              } @else {
+                {{ column.header }}
+                @if (column.sortable) {
+                <span class="sort-icon">
+                  @if (getSortDirection(column) === 'asc') { ▲ }
+                  @else if (getSortDirection(column) === 'desc') { ▼ }
+                  @else { ↕ }
+                </span>
+                }
+              }
+            </th>
+            }
+          </tr>
+        </thead>
         <tbody cdkDropList [cdkDropListData]="displayedData()" [cdkDropListDisabled]="!canReorderRows()" (cdkDropListDropped)="onRowDrop($event)">
           @for (row of displayedData(); track row.id) {
           <tr (click)="onRowClick(row)"
@@ -383,7 +434,7 @@
                     [ngTemplateOutletContext]="{ $implicit: row, row: row, index: $index }"
                   ></ng-container>
                 } @else {
-                  <div style="display: flex; gap: 8px; justify-content: center;">
+                  <div class="action-buttons">
                     @if (!isModalEditMode() && isRowEditing(row)) {
                       <button class="edit-btn" (click)="saveRowEdit(); $event.stopPropagation()" title="שמור">
                         ✔
@@ -409,14 +460,18 @@
                 @if (column.type === 'date') {
                   <app-date-picker
                     [value]="getEditingValue(column, row)?.toString() || ''"
+                    [colors]="datePickerColors()"
                     (dateChange)="updateEditingValue(column, $event)"
                   ></app-date-picker>
                 } @else {
-                  <input
-                    class="inline-edit-input"
-                    [ngModel]="getEditingValue(column, row)"
-                    (ngModelChange)="updateEditingValue(column, $event)"
-                  />
+                  <div class="input-with-icon inline-input-wrapper">
+                    <span class="material-icons input-icon" aria-hidden="true">{{ getFieldIcon(column) }}</span>
+                    <input
+                      class="inline-edit-input"
+                      [ngModel]="getEditingValue(column, row)"
+                      (ngModelChange)="updateEditingValue(column, $event)"
+                    />
+                  </div>
                 }
               } @else if (cellTemplate()) {
                 <ng-container
@@ -446,10 +501,21 @@
                         <div class="detail-field">
                           <label>{{ column.header }}:</label>
                           @if (column.key !== 'id') {
-                            <input
-                              [ngModel]="getEditingValue(column, row)"
-                              (ngModelChange)="updateEditingValue(column, $event)"
-                            />
+                            @if (column.type === 'date') {
+                              <app-date-picker
+                                [value]="getEditingValue(column, row)?.toString() || ''"
+                                [colors]="datePickerColors()"
+                                (dateChange)="updateEditingValue(column, $event)"
+                              ></app-date-picker>
+                            } @else {
+                              <div class="input-with-icon">
+                                <span class="material-icons input-icon" aria-hidden="true">{{ getFieldIcon(column) }}</span>
+                                <input
+                                  [ngModel]="getEditingValue(column, row)"
+                                  (ngModelChange)="updateEditingValue(column, $event)"
+                                />
+                              </div>
+                            }
                           } @else {
                             <span>{{ getCellValue(column, row) }}</span>
                           }
@@ -540,14 +606,18 @@
                     @if (column.type === 'date') {
                       <app-date-picker
                         [value]="getEditingValue(column, row)?.toString() || ''"
+                        [colors]="datePickerColors()"
                         (dateChange)="updateEditingValue(column, $event)"
                       ></app-date-picker>
                     } @else {
-                      <input
-                        class="inline-edit-input"
-                        [ngModel]="getEditingValue(column, row)"
-                        (ngModelChange)="updateEditingValue(column, $event)"
-                      />
+                      <div class="input-with-icon inline-input-wrapper">
+                        <span class="material-icons input-icon" aria-hidden="true">{{ getFieldIcon(column) }}</span>
+                        <input
+                          class="inline-edit-input"
+                          [ngModel]="getEditingValue(column, row)"
+                          (ngModelChange)="updateEditingValue(column, $event)"
+                        />
+                      </div>
                     }
                   } @else if (cellTemplate()) {
                     <ng-container
@@ -576,10 +646,21 @@
                         <div class="detail-field">
                           <label>{{ column.header }}:</label>
                           @if (column.key !== 'id') {
-                            <input
-                              [ngModel]="getEditingValue(column, row)"
-                              (ngModelChange)="updateEditingValue(column, $event)"
-                            />
+                            @if (column.type === 'date') {
+                              <app-date-picker
+                                [value]="getEditingValue(column, row)?.toString() || ''"
+                                [colors]="datePickerColors()"
+                                (dateChange)="updateEditingValue(column, $event)"
+                              ></app-date-picker>
+                            } @else {
+                              <div class="input-with-icon">
+                                <span class="material-icons input-icon" aria-hidden="true">{{ getFieldIcon(column) }}</span>
+                                <input
+                                  [ngModel]="getEditingValue(column, row)"
+                                  (ngModelChange)="updateEditingValue(column, $event)"
+                                />
+                              </div>
+                            }
                           } @else {
                             <span>{{ getCellValue(column, row) }}</span>
                           }
@@ -676,14 +757,18 @@
                 @if (column.type === 'date') {
                   <app-date-picker
                     [value]="getEditingValue(column, row)?.toString() || ''"
+                    [colors]="datePickerColors()"
                     (dateChange)="updateEditingValue(column, $event)"
                   ></app-date-picker>
                 } @else {
-                  <input
-                    class="inline-edit-input"
-                    [ngModel]="getEditingValue(column, row)"
-                    (ngModelChange)="updateEditingValue(column, $event)"
-                  />
+                  <div class="input-with-icon inline-input-wrapper">
+                    <span class="material-icons input-icon" aria-hidden="true">{{ getFieldIcon(column) }}</span>
+                    <input
+                      class="inline-edit-input"
+                      [ngModel]="getEditingValue(column, row)"
+                      (ngModelChange)="updateEditingValue(column, $event)"
+                    />
+                  </div>
                 }
               } @else if (cellTemplate()) {
                 <ng-container
@@ -712,10 +797,21 @@
                     <div class="detail-field">
                       <label>{{ column.header }}:</label>
                       @if (column.key !== 'id') {
-                        <input
-                          [ngModel]="getEditingValue(column, row)"
-                          (ngModelChange)="updateEditingValue(column, $event)"
-                        />
+                        @if (column.type === 'date') {
+                          <app-date-picker
+                            [value]="getEditingValue(column, row)?.toString() || ''"
+                            [colors]="datePickerColors()"
+                            (dateChange)="updateEditingValue(column, $event)"
+                          ></app-date-picker>
+                        } @else {
+                          <div class="input-with-icon">
+                            <span class="material-icons input-icon" aria-hidden="true">{{ getFieldIcon(column) }}</span>
+                            <input
+                              [ngModel]="getEditingValue(column, row)"
+                              (ngModelChange)="updateEditingValue(column, $event)"
+                            />
+                          </div>
+                        }
                       } @else {
                         <span>{{ getCellValue(column, row) }}</span>
                       }
@@ -822,24 +918,30 @@
   </div>
   }
 
-  @if (diagnosticsEnabled() && !isMobile()) {
-    <div class="diagnostics-bar" aria-live="polite">
-      <span class="diagnostics-badge">Diagnostics</span>
-      <span class="diagnostics-item">
-        Query: {{ lastQueryParams() ? (lastQueryParams() | json) : 'N/A' }}
-      </span>
-      <span class="diagnostics-divider">|</span>
-      <span class="diagnostics-item">
-        {{ diagnosticsVisibleLabel() }}: {{ diagnosticsVisibleText() }}
-      </span>
-      <span class="diagnostics-divider">|</span>
-      <span class="diagnostics-item">
-        Page: {{ diagnosticsPage() }}
-      </span>
-      <span class="diagnostics-divider">|</span>
-      <span class="diagnostics-item">
-        Timing: {{ lastQueryDuration() !== null ? (lastQueryDuration() | number : '1.0-0') + 'ms' : 'N/A' }}
-      </span>
+  @if (diagnosticsEnabled() && isDiagnosticsPanelOpen() && !isMobile()) {
+    <div class="diagnostics-panel" role="dialog" aria-label="Diagnostics">
+      <div class="diagnostics-panel-header">
+        <span class="diagnostics-badge">Diagnostics</span>
+        <button type="button" class="column-close" (click)="toggleDiagnosticsPanel()">✕</button>
+      </div>
+      <div class="diagnostics-panel-body">
+        <div class="diagnostics-row">
+          <span class="diagnostics-label">Query:</span>
+          <span class="diagnostics-value diagnostics-value--scrollable">{{ lastQueryParams() ? (lastQueryParams() | json) : 'N/A' }}</span>
+        </div>
+        <div class="diagnostics-row">
+          <span class="diagnostics-label">{{ diagnosticsVisibleLabel() }}:</span>
+          <span class="diagnostics-value">{{ diagnosticsVisibleText() }}</span>
+        </div>
+        <div class="diagnostics-row">
+          <span class="diagnostics-label">Page:</span>
+          <span class="diagnostics-value">{{ diagnosticsPage() }}</span>
+        </div>
+        <div class="diagnostics-row">
+          <span class="diagnostics-label">Timing:</span>
+          <span class="diagnostics-value">{{ lastQueryDuration() !== null ? (lastQueryDuration() | number : '1.0-0') + 'ms' : 'N/A' }}</span>
+        </div>
+      </div>
     </div>
   }
 
@@ -858,7 +960,18 @@
           <div class="detail-field">
             <label>{{ column.header }}:</label>
             @if (detailModal().mode === 'edit' && column.key !== 'id') {
-            <input [(ngModel)]="$any(detailModal().data)[column.key]" />
+              @if (column.type === 'date') {
+                <app-date-picker
+                  [value]="$any(detailModal().data)[column.key]?.toString() || ''"
+                  [colors]="datePickerColors()"
+                  (dateChange)="$any(detailModal().data)[column.key] = $event"
+                ></app-date-picker>
+              } @else {
+                <div class="input-with-icon">
+                  <span class="material-icons input-icon" aria-hidden="true">{{ getFieldIcon(column) }}</span>
+                  <input [(ngModel)]="$any(detailModal().data)[column.key]" />
+                </div>
+              }
             } @else {
             @if (column.type === 'badge') {
             <span class="status-badge" [style.background-color]="getStatusColor($any(detailModal().data)[column.key])">

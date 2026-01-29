@@ -1,40 +1,225 @@
-.date-picker-inline {
-  display: flex;
-  gap: 4px;
+/* Modern Date Picker Styles with Customizable Colors */
+
+.modern-date-picker {
+  display: inline-block;
   direction: rtl;
 }
 
-.date-select {
-  padding: 4px 6px;
-  border: 2px solid #e0e0e0;
-  border-radius: 6px;
-  background: linear-gradient(to bottom, #ffffff, #f8f9fa);
-  color: #2c3e50;
+.date-picker-field {
+  width: 140px !important;
+  font-size: 12px;
+}
+
+/* Compact form field styling */
+.date-picker-field ::ng-deep .mat-mdc-text-field-wrapper {
+  padding: 0 !important;
+}
+
+.date-picker-field ::ng-deep .mat-mdc-form-field-flex {
+  height: 28px !important;
+  align-items: center;
+}
+
+.date-picker-field ::ng-deep .mat-mdc-form-field-infix {
+  padding: 2px 0 !important;
+  min-height: 24px !important;
+  border: 0 !important;
+}
+
+.date-picker-field ::ng-deep .mat-mdc-floating-label {
+  font-size: 10px !important;
+  top: 18px !important;
+}
+
+.date-picker-field ::ng-deep .mdc-notched-outline {
+  border-width: 1.5px !important;
+}
+
+.date-picker-field ::ng-deep .mdc-notched-outline__leading,
+.date-picker-field ::ng-deep .mdc-notched-outline__notch,
+.date-picker-field ::ng-deep .mdc-notched-outline__trailing {
+  border-color: #e0e0e0 !important;
+  transition: border-color 0.2s ease;
+}
+
+.date-picker-field:hover ::ng-deep .mdc-notched-outline__leading,
+.date-picker-field:hover ::ng-deep .mdc-notched-outline__notch,
+.date-picker-field:hover ::ng-deep .mdc-notched-outline__trailing {
+  border-color: var(--dp-primary-color, #e53935) !important;
+}
+
+.date-picker-field ::ng-deep .mat-mdc-form-field-focus-overlay {
+  background-color: transparent !important;
+}
+
+/* Input styling */
+.date-input {
+  font-size: 12px !important;
+  font-weight: 500;
+  color: #2c3e50 !important;
+  cursor: pointer;
+  caret-color: transparent;
+}
+
+/* Icon button styling */
+.date-picker-field ::ng-deep .mat-datepicker-toggle {
+  color: var(--dp-primary-color, #e53935) !important;
+}
+
+.date-picker-field ::ng-deep .mat-icon {
+  font-size: 16px !important;
+  width: 16px !important;
+  height: 16px !important;
+  line-height: 16px !important;
+}
+
+.date-picker-field ::ng-deep .mat-mdc-icon-button {
+  width: 28px !important;
+  height: 28px !important;
+  padding: 4px !important;
+}
+
+/* Calendar popup customization */
+.custom-calendar-panel .mat-datepicker-content,
+::ng-deep .custom-calendar-panel .mat-datepicker-content,
+::ng-deep .mat-datepicker-content {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  border-radius: 8px !important;
+}
+
+.custom-calendar-panel .mat-calendar,
+::ng-deep .custom-calendar-panel .mat-calendar,
+::ng-deep .mat-calendar {
+  width: 280px !important;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Calendar header - CRITICAL for color customization */
+.custom-calendar-panel .mat-calendar-header,
+::ng-deep .custom-calendar-panel .mat-calendar-header,
+::ng-deep .mat-calendar-header {
+  background: var(--dp-header-bg, #1976d2) !important;
+  color: var(--dp-header-text, #ffffff) !important;
+  padding: 12px 8px !important;
+  border-radius: 8px 8px 0 0 !important;
+}
+
+::ng-deep .custom-calendar-panel .mat-calendar-controls,
+::ng-deep .mat-calendar-controls {
+  margin: 0 !important;
+}
+
+::ng-deep .custom-calendar-panel .mat-calendar-period-button,
+::ng-deep .custom-calendar-panel .mat-calendar-previous-button,
+::ng-deep .custom-calendar-panel .mat-calendar-next-button,
+::ng-deep .mat-calendar-period-button,
+::ng-deep .mat-calendar-previous-button,
+::ng-deep .mat-calendar-next-button {
+  color: var(--dp-header-text, #ffffff) !important;
+}
+
+::ng-deep .custom-calendar-panel .mat-calendar-arrow,
+::ng-deep .mat-calendar-arrow {
+  fill: var(--dp-header-text, #ffffff) !important;
+}
+
+/* Calendar body */
+::ng-deep .mat-calendar-body {
+  font-size: 12px;
+}
+
+::ng-deep .mat-calendar-body-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #757575;
+}
+
+/* Day cells */
+::ng-deep .mat-calendar-body-cell {
+  border-radius: 50% !important;
+}
+
+::ng-deep .mat-calendar-body-cell-content {
+  width: 32px !important;
+  height: 32px !important;
+  line-height: 32px !important;
+  border-radius: 50% !important;
   font-size: 12px;
   font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  direction: rtl;
-  outline: none;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  min-width: 50px;
-  max-width: 90px;
+  transition: all 0.2s ease;
 }
 
-.date-select:hover {
-  border-color: #2196F3;
-  background: linear-gradient(to bottom, #ffffff, #e3f2fd);
-  box-shadow: 0 2px 6px rgba(33, 150, 243, 0.15);
-  transform: translateY(-1px);
+/* Hover state */
+::ng-deep .custom-calendar-panel .mat-calendar-body-cell:not(.mat-calendar-body-disabled):hover .mat-calendar-body-cell-content:not(.mat-calendar-body-selected):not(.mat-calendar-body-comparison-identical),
+::ng-deep .mat-calendar-body-cell:not(.mat-calendar-body-disabled):hover .mat-calendar-body-cell-content:not(.mat-calendar-body-selected):not(.mat-calendar-body-comparison-identical) {
+  background-color: rgba(25, 118, 210, 0.1) !important;
+  color: var(--dp-primary-color, #1976d2) !important;
 }
 
-.date-select:focus {
-  border-color: #2196F3;
-  background: linear-gradient(to bottom, #ffffff, #e3f2fd);
-  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1), 0 2px 6px rgba(33, 150, 243, 0.2);
+/* Selected date - CRITICAL for color customization */
+::ng-deep .custom-calendar-panel .mat-calendar-body-selected,
+::ng-deep .mat-calendar-body-selected {
+  background-color: var(--dp-primary-color, #1976d2) !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
 }
 
-.date-select:active {
-  transform: translateY(0);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+::ng-deep .custom-calendar-panel .mat-calendar-body-cell:not(.mat-calendar-body-disabled).mat-calendar-body-selected .mat-calendar-body-cell-content,
+::ng-deep .mat-calendar-body-cell:not(.mat-calendar-body-disabled).mat-calendar-body-selected .mat-calendar-body-cell-content {
+  background-color: var(--dp-primary-color, #1976d2) !important;
+  color: #ffffff !important;
+}
+
+/* Today's date - CRITICAL for color customization */
+::ng-deep .custom-calendar-panel .mat-calendar-body-today:not(.mat-calendar-body-selected),
+::ng-deep .mat-calendar-body-today:not(.mat-calendar-body-selected) {
+  border: 1.5px solid var(--dp-today-color, #4caf50) !important;
+  border-radius: 50% !important;
+}
+
+::ng-deep .custom-calendar-panel .mat-calendar-body-today:not(.mat-calendar-body-selected) .mat-calendar-body-cell-content,
+::ng-deep .mat-calendar-body-today:not(.mat-calendar-body-selected) .mat-calendar-body-cell-content {
+  color: var(--dp-primary-color, #1976d2) !important;
+  font-weight: 600;
+}
+
+/* Active/focus state */
+::ng-deep .custom-calendar-panel .mat-calendar-body-active .mat-calendar-body-cell-content:not(.mat-calendar-body-selected),
+::ng-deep .mat-calendar-body-active .mat-calendar-body-cell-content:not(.mat-calendar-body-selected) {
+  background-color: rgba(25, 118, 210, 0.2) !important;
+}
+
+/* Disabled dates */
+::ng-deep .mat-calendar-body-disabled {
+  opacity: 0.4 !important;
+}
+
+/* Month/year view */
+::ng-deep .mat-calendar-body-cell-content.mat-focus-indicator {
+  position: relative;
+}
+
+::ng-deep .mat-calendar-period-button:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Smooth animations */
+::ng-deep .mat-calendar-body-cell-content,
+::ng-deep .mat-calendar-body-today,
+::ng-deep .mat-calendar-body-selected {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* RTL support */
+[dir='rtl'] .date-picker-field {
+  text-align: right;
+}
+
+/* Compact mode for table cells */
+.date-picker-field.compact {
+  width: 120px !important;
+}
+
+.date-picker-field.compact ::ng-deep .mat-mdc-form-field-flex {
+  height: 28px !important;
 }

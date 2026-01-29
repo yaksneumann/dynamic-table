@@ -1,2 +1,73 @@
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+/* Global Material Design Theme */
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+/* Custom CSS Variables for Date Picker Theming */
+:root {
+  --dp-primary-color: #1976d2;
+  --dp-secondary-color: #42a5f5;
+  --dp-header-bg: #1976d2;
+  --dp-header-text: #ffffff;
+  --dp-today-color: #4caf50;
+}
+
+/* Base styles */
+html, body { 
+  height: 100%; 
+}
+
+body { 
+  margin: 0; 
+  font-family: Roboto, "Helvetica Neue", sans-serif; 
+}
+
+/* Material Design enhancements */
+* {
+  box-sizing: border-box;
+}
+
+/* Smooth animations */
+.mat-mdc-form-field,
+.mat-datepicker-content {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* CRITICAL: Override Material Theme Colors for Date Picker */
+/* This overrides the prebuilt theme above */
+
+/* Calendar Header Background - BLUE */
+.mat-calendar-header {
+  background-color: var(--dp-header-bg, #1976d2) !important;
+}
+
+/* Calendar Header Text - WHITE */
+.mat-calendar-header .mat-calendar-period-button,
+.mat-calendar-header .mat-calendar-previous-button,
+.mat-calendar-header .mat-calendar-next-button {
+  color: var(--dp-header-text, #ffffff) !important;
+}
+
+.mat-calendar-arrow {
+  fill: var(--dp-header-text, #ffffff) !important;
+}
+
+/* Selected Date - BLUE */
+.mat-calendar-body-selected {
+  background-color: var(--dp-primary-color, #1976d2) !important;
+  color: #ffffff !important;
+}
+
+.mat-calendar-body-cell:not(.mat-calendar-body-disabled).mat-calendar-body-selected {
+  background-color: var(--dp-primary-color, #1976d2) !important;
+  color: #ffffff !important;
+}
+
+/* Today's Date - GREEN BORDER */
+.mat-calendar-body-today:not(.mat-calendar-body-selected) {
+  border-color: var(--dp-today-color, #4caf50) !important;
+  color: var(--dp-primary-color, #1976d2) !important;
+}
+
+/* Hover State - LIGHT BLUE */
+.mat-calendar-body-cell:hover > .mat-calendar-body-cell-content:not(.mat-calendar-body-selected) {
+  background-color: rgba(25, 118, 210, 0.15) !important;
+}

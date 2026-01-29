@@ -83,6 +83,8 @@ export interface ColumnConfig<T = Record<string, unknown>> {
   format?: BivariantCallback<(value: unknown, row?: T) => string>;
   /** Conditional styling configuration for cells in this column */
   styleConfig?: ColumnStyleConfig<T>;
+  /** Optional Material Icon name to display in edit mode inputs */
+  icon?: string;
 }
 
 /**
@@ -319,6 +321,24 @@ export interface StylingConfig {
   statusColors?: Record<string, string>;
   /** Array of custom CSS class names to apply to the table */
   customClasses?: string[];
+  /** Date picker color customization */
+  datePickerColors?: DatePickerColors;
+}
+
+/**
+ * Color customization options for date picker component.
+ */
+export interface DatePickerColors {
+  /** Primary color for selected dates and accents (default: '#e53935' - matches table red theme) */
+  primary?: string;
+  /** Secondary color for hover states */
+  secondary?: string;
+  /** Calendar header background color */
+  headerBackground?: string;
+  /** Calendar header text color */
+  headerText?: string;
+  /** Today's date highlight color */
+  todayColor?: string;
 }
 
 /**

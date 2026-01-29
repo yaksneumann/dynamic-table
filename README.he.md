@@ -1,6 +1,6 @@
 # 📊 רכיב טבלה דינמי (Smart Table Component)
 
-English | [עברית](README.he.md)
+[English](README.md) | עברית
 
 **רכיב טבלה גנרי לחלוטין שעובד עם כל סוג של נתונים.** הגדר פעם אחת, השתמש בכל מקום - מרשימת עובדים ועד דוחות כספיים.
 
@@ -28,6 +28,13 @@ English | [עברית](README.he.md)
 - תמיכה בלוגיקה מורכבת (AND/OR)
 - פילטרים מקוננים לשאילתות מורכבות
 - סינון לפי טווח (between), מכיל, מתחיל ב-, ועוד
+
+### 📅 בורר תאריכים מודרני
+- **Material Design** - עיצוב מודרני ונקי
+- **התאמה אישית של צבעים** - התאם לעיצוב שלך
+- תצוגת לוח שנה נוחה
+- תמיכה מלאה ב-RTL
+- גובה מינימלי לשילוב בשורות הטבלה
 
 ### 📊 ניהול נתונים
 - **Client-side mode** - כל הנתונים מטופלים בדפדפן
@@ -1173,30 +1180,445 @@ app-smart-table ::ng-deep .mobile-card {
 }
 ```
 
+## 🚀 שילוב בפרויקט שלך - מדריך מפורט
+
+### דרישות מקדימות
+
+```bash
+Angular 20+ 
+TypeScript 5.8+
+Node.js 18+
+```
+
+### שלב 1: התקנת החבילות הנדרשות
+
+```bash
+# Angular Material - לבורר תאריכים מודרני
+npm install @angular/material @angular/cdk
+
+# אם צריך - Drag & Drop ו-Virtual Scrolling
+npm install @angular/cdk
+```
+
+### שלב 2: העתקת הקבצים
+
+העתק את הקבצים הבאים לפרויקט שלך:
+
+```
+src/app/
+├── components/
+│   ├── smart-table/              # הרכיב הראשי
+│   │   ├── smart-table.component.ts
+│   │   ├── smart-table.html
+│   │   └── smart-table.css
+│   └── date-picker/              # בורר תאריכים
+│       ├── date-picker.component.ts
+│       ├── date-picker.html
+│       └── date-picker.css
+├── models/                       # הגדרות טיפוסים
+│   ├── table.config.interface.ts
+│   ├── table-data.interface.ts
+│   └── status-types.ts
+└── services/
+    └── table.service.ts          # שירות לניהול נתונים
+```
+
+### שלב 3: הגדרת app.config.ts
+
+**חשוב!** הוסף את ה-providers הנדרשים עבור Angular Material:
+
+```typescript
+import { ApplicationConfig, provideZonelessChangeDetection } from '@angular/core';
+import { provideRouter } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { provideNativeDateAdapter } from '@angular/material/core';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideZonelessChangeDetection(),
+    provideRouter(routes),
+    provideHttpClient(),
+    provideAnimationsAsync(),      // נדרש ל-Material animations
+    provideNativeDateAdapter()      // נדרש לבורר תאריכים
+  ]
+};
+```
+
+### שלב 4: הוסף Material Theme ל-styles.css
+
+```css
+/* בקובץ src/styles.css */
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+/* משתני צבע לבורר תאריכים */
+:root {
+  --dp-primary-color: #1976d2;
+  --dp-secondary-color: #42a5f5;
+  --dp-header-bg: #1976d2;
+  --dp-header-text: #ffffff;
+  --dp-today-color: #4caf50;
+}
+
+/* דריסות Material לבורר תאריכים */
+.mat-calendar-header {
+  background-color: var(--dp-header-bg, #1976d2) !important;
+}
+
+.mat-calendar-header .mat-calendar-period-button,
+.mat-calendar-header .mat-calendar-previous-button,
+.mat-calendar-header .mat-calendar-next-button {
+  color: var(--dp-header-text, #ffffff) !important;
+}
+
+.mat-calendar-body-selected {
+  background-color: var(--dp-primary-color, #1976d2) !important;
+  color: #ffffff !important;
+}
+
+.mat-calendar-body-today:not(.mat-calendar-body-selected) {
+  border-color: var(--dp-today-color, #4caf50) !important;
+}
+
+html, body { 
+  height: 100%; 
+  margin: 0; 
+  font-family: Roboto, "Helvetica Neue", sans-serif; 
+}
+```
+
+### שלב 5: צור קונפיגורציה לטבלה שלך
+
+```typescript
+// my-table.config.ts
+import { TableConfig } from './models/table.config.interface';
+
+export interface MyProduct {
+  id: string;
+  name: string;
+  price: number;
+  status: 'available' | 'sold' | 'pending';
+  createdDate: string;
+}
+
+export const myProductConfig: TableConfig<MyProduct> = {
+  dataMode: 'client',
+  editMode: 'inline',
+  
+  columns: [
+    {
+      key: 'id',
+      header: 'מזהה',
+      type: 'text',
+      sortable: true,
+      mobileVisible: true
+    },
+    {
+      key: 'name',
+      header: 'שם מוצר',
+      type: 'text',
+      sortable: true,
+      mobileVisible: true
+    },
+    {
+      key: 'price',
+      header: 'מחיר',
+      type: 'currency',
+      format: (value) => `₪${value.toLocaleString('he-IL')}`,
+      styleConfig: {
+        condition: (value) => value > 1000,
+        backgroundColor: '#e8f5e9',
+        textColor: '#2e7d32'
+      }
+    },
+    {
+      key: 'status',
+      header: 'סטטוס',
+      type: 'badge',
+      mobileVisible: true
+    },
+    {
+      key: 'createdDate',
+      header: 'תאריך יצירה',
+      type: 'date',
+      sortable: true
+    },
+    {
+      key: 'actions',
+      header: 'פעולות',
+      type: 'action',
+      mobileVisible: true
+    }
+  ],
+
+  pagination: {
+    defaultPageSize: 10,
+    pageSizeOptions: [5, 10, 20, 50],
+    showPageInfo: true
+  },
+
+  features: {
+    enableSearch: true,
+    enableEdit: true,
+    enableDelete: true,
+    enableSort: true,
+    enableFilters: true
+  },
+
+  // התאמת צבעים לבורר תאריכים
+  styling: {
+    statusColors: {
+      available: '#4CAF50',
+      sold: '#f44336',
+      pending: '#FFC107'
+    },
+    datePickerColors: {
+      primary: '#1976d2',
+      secondary: '#42a5f5',
+      headerBackground: '#1976d2',
+      headerText: '#ffffff',
+      todayColor: '#4caf50'
+    }
+  },
+
+  statusTypes: ['available', 'sold', 'pending']
+};
+```
+
+### שלב 6: השתמש ברכיב
+
+```typescript
+// my-component.ts
+import { Component, signal } from '@angular/core';
+import { SmartTableComponent } from './components/smart-table/smart-table.component';
+import { myProductConfig, MyProduct } from './my-table.config';
+
+@Component({
+  selector: 'app-products',
+  standalone: true,
+  imports: [SmartTableComponent],
+  template: `
+    <h1>ניהול מוצרים</h1>
+    <app-smart-table 
+      [config]="config" 
+      [clientData]="products()"
+      (actionClick)="handleAction($event)"
+    />
+  `
+})
+export class ProductsComponent {
+  config = myProductConfig;
+  
+  products = signal<MyProduct[]>([
+    { 
+      id: '1', 
+      name: 'מחשב נייד', 
+      price: 3500, 
+      status: 'available',
+      createdDate: '2026-01-15'
+    },
+    { 
+      id: '2', 
+      name: 'עכבר', 
+      price: 80, 
+      status: 'sold',
+      createdDate: '2026-01-20'
+    }
+  ]);
+
+  handleAction(event: { row: MyProduct; action: 'edit' | 'delete' }) {
+    if (event.action === 'edit') {
+      console.log('עריכת מוצר:', event.row);
+    } else if (event.action === 'delete') {
+      console.log('מחיקת מוצר:', event.row);
+    }
+  }
+}
+```
+
+### שלב 7: התאמת בורר התאריכים (אופציונלי)
+
+אם רוצה להתאים את צבעי בורר התאריכים לפי משתמש, פשוט שנה את הקונפיגורציה:
+
+```typescript
+// צבעים כחולים (ברירת מחדל)
+datePickerColors: {
+  primary: '#1976d2',
+  secondary: '#42a5f5',
+  headerBackground: '#1976d2',
+  headerText: '#ffffff',
+  todayColor: '#4caf50'
+}
+
+// או צבעים אדומים
+datePickerColors: {
+  primary: '#e53935',
+  secondary: '#ff5252',
+  headerBackground: '#e53935',
+  headerText: '#ffffff',
+  todayColor: '#ff5252'
+}
+
+// או צבעים ירוקים
+datePickerColors: {
+  primary: '#4caf50',
+  secondary: '#66bb6a',
+  headerBackground: '#4caf50',
+  headerText: '#ffffff',
+  todayColor: '#ff9800'
+}
+```
+
+### שימוש ב-Server-side Mode
+
+אם יש לך מסד נתונים גדול ואתה רוצה לטעון נתונים מהשרת:
+
+```typescript
+import { Observable } from 'rxjs';
+import { TableQueryParams, TableDataSourceResult } from './models/table.config.interface';
+
+// בקונפיגורציה
+dataMode: 'server',
+
+// ברכיב
+serverDataSource = signal<TableDataSource<MyProduct>>({
+  load: (params: TableQueryParams<MyProduct>): Observable<TableDataSourceResult<MyProduct>> => {
+    // שלח בקשה לשרת עם params
+    return this.http.post<TableDataSourceResult<MyProduct>>('/api/products', params);
+  }
+});
+
+// בטמפלייט
+<app-smart-table 
+  [config]="config" 
+  [serverDataSource]="serverDataSource()"
+/>
+```
+
+## 💡 טיפים חשובים
+
+### 1. בורר תאריכים מודרני
+- משתמש ב-Angular Material
+- לא צריך `FormsModule` - הרכיב standalone
+- מתאים אוטומטית לגובה השורה
+- צבעים מותאמים אישית לכל טבלה
+
+### 2. ללא Reactive Forms
+הרכיב משתמש ב-`ngModel` פשוט לעריכה. זה מספיק כי:
+- עריכה פשוטה של שדות בודדים
+- אין צורך בולידציה מורכבת
+- מבנה קל יותר
+- **אם צריך ולידציה** - אפשר להוסיף `ReactiveFormsModule` בעצמך
+
+### 3. Signals בלבד
+- הפרויקט משתמש ב-Angular Signals בלבד
+- אין RxJS מיותר (רק במקומות שבאמת צריך)
+- מצב ריאקטיבי מודרני
+- ביצועים מעולים
+
+### 4. Standalone Components
+- כל הרכיבים standalone (אין NgModule)
+- ייבוא ישיר ברכיבים
+- מבנה נקי יותר
+
+## 🎓 דוגמאות שימוש נוספות
+
+### טבלה עם Templates מותאמים
+
+```typescript
+@Component({
+  template: `
+    <app-smart-table 
+      [config]="config" 
+      [clientData]="data()"
+      [cellTemplate]="customCell"
+      [actionTemplate]="customActions"
+    />
+    
+    <ng-template #customCell let-row let-column="column" let-value="value">
+      @if (column.key === 'image') {
+        <img [src]="value" alt="Product" style="width: 50px; height: 50px;">
+      } @else {
+        {{ value }}
+      }
+    </ng-template>
+    
+    <ng-template #customActions let-row>
+      <button (click)="viewDetails(row)">📄 פרטים</button>
+      <button (click)="duplicate(row)">📋 שכפל</button>
+    </ng-template>
+  `
+})
+```
+
+### טבלה עם Virtual Scrolling
+
+```typescript
+export const largeDataConfig: TableConfig = {
+  // ... columns ...
+  
+  virtualization: {
+    enabled: true,
+    itemSize: 52,              // גובה שורה בפיקסלים
+    mobileItemSize: 160,       // גובה כרטיס במובייל
+    maxViewportHeight: 600     // גובה מקסימלי לטבלה
+  },
+  
+  features: {
+    enableMobileInfiniteScroll: true  // במקום pagination במובייל
+  }
+};
+```
+
+## 🔧 פתרון בעיות נפוצות
+
+### הלוח שנה לא נפתח
+```typescript
+// ודא שהוספת את ה-providers ב-app.config.ts:
+provideAnimationsAsync(),
+provideNativeDateAdapter()
+```
+
+### צבעי הלוח לא משתנים
+```typescript
+// ודא שהוספת את ה-Material theme ב-styles.css:
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+// והוספת את הדריסות CSS
+.mat-calendar-header {
+  background-color: var(--dp-header-bg) !important;
+}
+```
+
+### שגיאת קומפילציה
+```typescript
+// ודא שה-TypeScript עדכני:
+npm install typescript@latest
+
+// ודא שה-Angular עדכני:
+npm install @angular/core@latest @angular/common@latest
+```
+
+## 📚 סיכום טכנולוגיות
+
 הרכיב הזה הוא **פתרון גנרי לחלוטין** לתצוגת נתונים טבלאית. הוא לא קשור לסוג נתונים מסוים ויכול לעבוד עם כל ישות - עובדים, מתקנים, מוצרים, הזמנות, או כל דבר אחר.
 
+**טכנולוגיות:**
+- ✅ Angular 20+ עם Signals
+- ✅ Angular Material Design
+- ✅ Standalone Components (ללא NgModules)
+- ✅ TypeScript Generics לבטיחות טיפוסים
+- ✅ CDK Virtual Scrolling & Drag Drop
+- ✅ Signal-based State Management
+- ✅ Modern Control Flow (@if, @for)
+
 **רוצה להציג משהו אחר?** פשוט:
-1. צור interface לנתונים שלך
+1. צור interface לנתונים שלך עם `id: string`
 2. כתוב config שמגדיר את העמודות
 3. העבר config + data ל-`<app-smart-table>`
 
 **רכיב אחד. נתונים שונים. זה כוח הטבלאות הדינמיות.**
 
-### תכונות מרכזיות שנוספו לאחרונה
-
-- ✨ **Templates מותאמים אישית** - התאם כותרות, תאים, פעולות וכרטיסי מובייל
-- 🔍 **פילטרים מתקדמים** - 14 אופרטורים עם לוגיקה AND/OR
-- 🖱️ **גרירה וסידור** - שורות ועמודות
-- 💾 **שמירת מצב** - URL או LocalStorage
-- 📊 **Virtual Scrolling** - לטבלאות ענק
-- 🌐 **Server-side mode** - עבור מאגרי מידע גדולים
-- 📤 **ייצוא נתונים** - CSV, Excel, Print
-- 🎯 **בחירת שורות** - single/multiple
-- 📱 **Infinite scroll** - במובייל
-- 🔧 **3 מצבי עריכה** - inline, expanded, modal
-- 📈 **Diagnostics** - פאנל ביצועים
-- 🎨 **ngTemplateOutlet מודרני** - שימוש ב-property binding במקום structural directive
-
 ---
 
-**Angular 21+** • **מבוסס Signals** • **Mobile-first** • **TypeScript** • **תמיכה RTL מלאה**
+**Angular 20+** • **מבוסס Signals** • **Material Design** • **Mobile-first** • **TypeScript** • **תמיכה RTL מלאה**

@@ -17,13 +17,16 @@ Unlike fixed tables tied to specific data models, this component adapts to **you
 
 ## ✨ Features
 
-- 🔍 Full-text search across all data
-- 📱 Auto-switches to cards on mobile (< 768px)
+- 🔍 Full-text search with column selection
+- 🎨 Advanced filters with 14 operators (contains, between, etc.)
 - 📄 Pagination with customizable page sizes
-- 🎨 Conditional cell styling (server-controlled)
-- 🎯 Auto-counting status badges
-- ✏️ Inline editing support
-- ⚡ Angular 21 Signals for reactive updates
+- ✏️ Three edit modes: inline, expanded, modal
+- 📅 **Modern Material Design date picker** with customizable colors
+- 📱 Auto-switches to cards on mobile (< 768px)
+- 🎯 Conditional cell styling (server-controlled)
+- 🚀 Virtual scrolling for large datasets
+- 📊 Client-side and server-side data modes
+- ⚡ Angular 20+ Signals for reactive updates
 - 🌐 RTL support (Hebrew/Arabic ready)
 
 ## 🚀 Quick Start
@@ -128,11 +131,33 @@ Each config defines different columns, styling rules, and features - but uses th
   type: 'text' | 'number' | 'badge' | 'currency' | 'date',
   mobileVisible: true,        // Show on mobile?
   sortable: true,             // Enable sorting?
+  hideable: true,             // Can user hide/show?
+  draggable: true,            // Can reorder by drag?
   format: (value, row) => string,  // Custom formatter
   styleConfig: {              // Conditional styling
     condition: (value, row) => boolean,
     backgroundColor: '#color',
     textColor: '#color'
+  }
+}
+```
+
+### Date Picker Customization
+
+The table includes a modern Material Design date picker with customizable colors:
+
+```typescript
+styling: {
+  statusColors: {
+    active: '#4CAF50',
+    inactive: '#9E9E9E'
+  },
+  datePickerColors: {
+    primary: '#1976d2',           // Selected date color
+    secondary: '#42a5f5',         // Hover color
+    headerBackground: '#1976d2',  // Calendar header
+    headerText: '#ffffff',        // Header text
+    todayColor: '#4caf50'         // Today's date highlight
   }
 }
 ```
@@ -318,6 +343,14 @@ ng test        # Run tests
 
 **This is NOT a facilities-specific or employees-specific table.** It's a generic, configurable table component that works with any data type.
 
+**Technologies:**
+- Angular 20+ with Signals
+- Angular Material Design (date picker, overlays)
+- Standalone components (no NgModules)
+- TypeScript generics for type safety
+- CDK Virtual Scrolling & Drag Drop
+- Signal-based state management
+
 **Want to display something else?** Just:
 1. Define your data interface with `id: string` and optional `status` field
 2. Create a config file defining your columns and features
@@ -327,8 +360,8 @@ Same component. Different data. That's the power of dynamic tables.
 
 ## 🚀 Integration into Your Project
 
-Want to use this table in your own Angular project? See [README.he.md](README.he.md) for detailed integration instructions.
+Want to use this table in your own Angular project? See [README.he.md](README.he.md) for detailed integration instructions including Material Design setup.
 
 ---
 
-**Angular 18+** • **Signal-based** • **Mobile-first** • **TypeScript** • **RTL Support**
+**Angular 20+** • **Signal-based** • **Material Design** • **Mobile-first** • **TypeScript** • **RTL Support**
