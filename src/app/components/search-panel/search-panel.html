@@ -1,0 +1,44 @@
+@if (isOpen()) {
+  <div class="search-panel" role="dialog" aria-label="בחירת עמודות לחיפוש">
+    <div class="search-panel-header">
+      <span>עמודות לחיפוש</span>
+      <button 
+        type="button" 
+        class="column-close" 
+        (click)="onClose()"
+        aria-label="סגור"
+      >
+        ✕
+      </button>
+    </div>
+    
+    <div class="search-panel-body">
+      <div class="search-mode">
+        <label for="search-mode">מצב חיפוש:</label>
+        <select 
+          id="search-mode" 
+          [value]="searchMode()" 
+          (change)="onSearchModeChange($any($event.target).value)"
+          aria-label="בחר מצב חיפוש"
+        >
+          <option value="any">התאמה באחת העמודות</option>
+          <option value="all">התאמה בכל העמודות</option>
+        </select>
+      </div>
+      
+      <div class="search-columns">
+        @for (column of searchableColumns(); track column.key) {
+          <label class="search-column-item">
+            <input
+              type="checkbox"
+              [checked]="isColumnSelected(column)"
+              (change)="onColumnToggle(column)"
+              [attr.aria-label]="'חיפוש ב' + column.header"
+            />
+            {{ column.header }}
+          </label>
+        }
+      </div>
+    </div>
+  </div>
+}

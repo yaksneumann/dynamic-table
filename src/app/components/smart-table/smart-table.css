@@ -69,134 +69,7 @@
   color: #185c37;
 }
 
-.search-panel {
-  position: relative;
-  margin-bottom: 12px;
-  background: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
-  padding: 12px;
-}
-
-.search-panel-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
-  font-weight: 600;
-}
-
-.search-panel-body {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.filter-panel {
-  position: relative;
-  margin-bottom: 12px;
-  background: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
-  padding: 12px;
-}
-
-.filter-panel-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
-  font-weight: 600;
-}
-
-.filter-panel-body {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.filter-logic {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.filter-logic select {
-  padding: 8px 10px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-}
-
-.filter-rows {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.filter-row {
-  display: grid;
-  grid-template-columns: minmax(140px, 1fr) minmax(140px, 1fr) minmax(160px, 1.2fr) auto;
-  gap: 8px;
-  align-items: center;
-}
-
-.filter-row select,
-.filter-row input {
-  padding: 8px 10px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 13px;
-}
-
-.filter-values {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 8px;
-}
-
-.filter-remove-btn {
-  border: none;
-  background: #ffebee;
-  color: #c62828;
-  border-radius: 6px;
-  width: 32px;
-  height: 32px;
-  cursor: pointer;
-}
-
-.filter-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-}
-
-.search-mode {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.search-mode select {
-  padding: 8px 10px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-}
-
-.search-columns {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 8px 12px;
-}
-
-.search-column-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-}
-
+/* Column Controls */
 .column-btn,
 .filter-btn {
   display: inline-flex;
@@ -483,31 +356,21 @@
   box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
 }
 
-.filter-btn,
 .export-btn {
   padding: 10px 16px;
   border: 1px solid #ddd;
-  background: white;
+  background-color: #4caf50;
+  color: white;
+  border-color: #4caf50;
   border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
   transition: all 0.2s;
 }
 
-.filter-btn:hover,
-.export-btn:hover {
-  background-color: #f5f5f5;
-  border-color: #999;
-}
-
-.export-btn {
-  background-color: #4caf50;
-  color: white;
-  border-color: #4caf50;
-}
-
 .export-btn:hover {
   background-color: #45a049;
+  border-color: #45a049;
 }
 
 /* Desktop Table */
@@ -764,76 +627,6 @@
 
 .card-action-btn:hover {
   background-color: #1976d2;
-}
-
-/* Pagination */
-.pagination {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: white;
-  padding: 16px 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  flex-wrap: wrap;
-  gap: 16px;
-}
-
-.pagination-info {
-  font-size: 14px;
-  color: #666;
-}
-
-.pagination-controls {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.page-btn {
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  background: white;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: all 0.2s;
-  min-width: 40px;
-}
-
-.page-btn:hover:not(:disabled) {
-  background-color: #f5f5f5;
-  border-color: #999;
-}
-
-.page-btn:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-.page-btn.active {
-  background-color: #2196f3;
-  color: white;
-  border-color: #2196f3;
-}
-
-.page-size-selector {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-}
-
-.page-size-selector label {
-  color: #666;
-}
-
-.page-size-selector select {
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-  cursor: pointer;
 }
 
 .inline-input-wrapper {
@@ -1154,19 +947,6 @@
     width: 100%;
   }
 
-  .pagination {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .pagination-controls {
-    justify-content: center;
-  }
-
-  .page-size-selector {
-    justify-content: center;
-  }
-
   .modal-content {
     margin: 0;
     width: 100%;
@@ -1211,12 +991,6 @@
 
   .badge-count {
     font-size: 16px;
-  }
-
-  .pagination-controls .page-btn {
-    padding: 6px 10px;
-    font-size: 12px;
-    min-width: 32px;
   }
 
   .modal-header h2 {

@@ -54,6 +54,9 @@ import {
   moveItemInArray,
 } from '@angular/cdk/drag-drop';
 import { DatePickerComponent } from '../date-picker/date-picker.component';
+import { PaginationComponent } from '../pagination/pagination.component';
+import { SearchPanelComponent } from '../search-panel/search-panel.component';
+import { FilterPanelComponent } from '../filter-panel/filter-panel.component';
 
 @Component({
   selector: 'app-smart-table',
@@ -64,6 +67,9 @@ import { DatePickerComponent } from '../date-picker/date-picker.component';
     ScrollingModule,
     DragDropModule,
     DatePickerComponent,
+    PaginationComponent,
+    SearchPanelComponent,
+    FilterPanelComponent,
   ],
   templateUrl: './smart-table.html',
   styleUrl: './smart-table.css',

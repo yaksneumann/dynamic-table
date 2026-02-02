@@ -78,103 +78,32 @@
   </div>
   }
 
-  @if (config().features.enableSearch && isSearchPanelOpen()) {
-    <div class="search-panel" role="dialog" aria-label="בחירת עמודות לחיפוש">
-      <div class="search-panel-header">
-        <span>עמודות לחיפוש</span>
-        <button type="button" class="column-close" (click)="toggleSearchPanel()">✕</button>
-      </div>
-      <div class="search-panel-body">
-        <div class="search-mode">
-          <label for="search-mode">מצב חיפוש:</label>
-          <select id="search-mode" [value]="searchMode()" (change)="setSearchMode($any($event.target).value)">
-            <option value="any">התאמה באחת העמודות</option>
-            <option value="all">התאמה בכל העמודות</option>
-          </select>
-        </div>
-        <div class="search-columns">
-          @for (column of searchableColumns(); track column.key) {
-            <label class="search-column-item">
-              <input
-                type="checkbox"
-                [checked]="isSearchColumnSelected(column)"
-                (change)="toggleSearchColumn(column)"
-              />
-              {{ column.header }}
-            </label>
-          }
-        </div>
-      </div>
-    </div>
-  }
+  <app-search-panel
+    [isOpen]="isSearchPanelOpen()"
+    [searchableColumns]="searchableColumns()"
+    [selectedColumns]="searchColumns()"
+    [searchMode]="searchMode()"
+    (close)="toggleSearchPanel()"
+    (searchModeChange)="setSearchMode($event)"
+    (columnToggle)="toggleSearchColumn($event)"
+  ></app-search-panel>
 
-  @if (config().features.enableFilters && isFilterPanelOpen()) {
-    <div class="filter-panel" role="dialog" aria-label="פילטרים מתקדמים">
-      <div class="filter-panel-header">
-        <span>פילטרים מתקדמים</span>
-        <button type="button" class="column-close" (click)="toggleFilterPanel()">✕</button>
-      </div>
-      <div class="filter-panel-body">
-        <div class="filter-logic">
-          <label for="filter-logic">לוגיקה:</label>
-          <select id="filter-logic" [value]="getAdvancedFilterLogic()" (change)="setAdvancedFilterLogic($any($event.target).value)">
-            <option value="and">וגם (AND)</option>
-            <option value="or">או (OR)</option>
-          </select>
-        </div>
-
-        <div class="filter-rows">
-          @for (condition of getAdvancedFilterConditions(); track $index) {
-            <div class="filter-row">
-              <select
-                [value]="condition.field"
-                (change)="updateAdvancedConditionField($index, $any($event.target).value)"
-              >
-                @for (column of filterableColumns(); track column.key) {
-                  <option [value]="column.key">{{ column.header }}</option>
-                }
-              </select>
-
-              <select
-                [value]="condition.operator"
-                (change)="updateAdvancedConditionOperator($index, $any($event.target).value)"
-              >
-                @for (op of filterOperatorOptions; track op.value) {
-                  <option [value]="op.value">{{ op.label }}</option>
-                }
-              </select>
-
-              @if (needsValue(condition.operator)) {
-                <div class="filter-values">
-                  <input
-                    type="text"
-                    [value]="condition.value ?? ''"
-                    (input)="updateAdvancedConditionValue($index, $any($event.target).value)"
-                    placeholder="ערך"
-                  />
-                  @if (needsValueTo(condition.operator)) {
-                    <input
-                      type="text"
-                      [value]="condition.valueTo ?? ''"
-                      (input)="updateAdvancedConditionValueTo($index, $any($event.target).value)"
-                      placeholder="ועד"
-                    />
-                  }
-                </div>
-              }
-
-              <button type="button" class="filter-remove-btn" (click)="removeAdvancedCondition($index)" aria-label="הסר תנאי">✕</button>
-            </div>
-          }
-        </div>
-
-        <div class="filter-actions">
-          <button type="button" class="filter-btn" (click)="addAdvancedCondition()">הוסף תנאי</button>
-          <button type="button" class="filter-btn" (click)="clearAdvancedFilters()">נקה פילטרים</button>
-        </div>
-      </div>
-    </div>
-  }
+  <app-filter-panel
+    [isOpen]="isFilterPanelOpen()"
+    [filterableColumns]="filterableColumns()"
+    [conditions]="getAdvancedFilterConditions()"
+    [logic]="getAdvancedFilterLogic()"
+    [operatorOptions]="filterOperatorOptions"
+    (close)="toggleFilterPanel()"
+    (logicChange)="setAdvancedFilterLogic($event)"
+    (addCondition)="addAdvancedCondition()"
+    (removeCondition)="removeAdvancedCondition($event)"
+    (updateConditionField)="updateAdvancedConditionField($event.index, $event.field)"
+    (updateConditionOperator)="updateAdvancedConditionOperator($event.index, $event.operator)"
+    (updateConditionValue)="updateAdvancedConditionValue($event.index, $event.value)"
+    (updateConditionValueTo)="updateAdvancedConditionValueTo($event.index, $event.value)"
+    (clearFilters)="clearAdvancedFilters()"
+  ></app-filter-panel>
 
 
   @if (config().features.showTotalCount) {
@@ -874,48 +803,12 @@
   }
 
   @if (showPagination()) {
-  <div class="pagination">
-    <div class="pagination-info">
-      מציג {{ currentPageRange().start }} - {{ currentPageRange().end }} מתוך {{ totalItems() }}
-    </div>
-
-    <div class="pagination-controls">
-      <button class="page-btn" (click)="goToPage(1)" [disabled]="pagination().currentPage === 1">
-        ראשון
-      </button>
-      <button class="page-btn" (click)="goToPage(pagination().currentPage - 1)"
-        [disabled]="pagination().currentPage === 1">
-        הקודם
-      </button>
-
-      @for (page of pageNumbers(); track page) {
-      @if (shouldShowPageButton(page)) {
-      <button class="page-btn"
-        [class.active]="page === pagination().currentPage" (click)="goToPage(page)">
-        {{ page }}
-      </button>
-      }
-      }
-
-        <button class="page-btn" (click)="goToPage(pagination().currentPage + 1)"
-          [disabled]="pagination().currentPage === totalPages()">
-          הבא
-        </button>
-        <button class="page-btn" (click)="goToPage(totalPages())"
-          [disabled]="pagination().currentPage === totalPages()">
-          אחרון
-        </button>
-    </div>
-
-    <div class="page-size-selector">
-      <label>שורות בעמוד:</label>
-      <select [value]="pagination().pageSize" (change)="changePageSize(+$any($event.target).value)">
-        @for (size of pagination().pageSizeOptions; track size) {
-        <option [value]="size" [selected]="size === pagination().pageSize">{{ size }}</option>
-        }
-      </select>
-    </div>
-  </div>
+    <app-pagination
+      [pagination]="pagination()"
+      [totalItems]="totalItems()"
+      (pageChange)="goToPage($event)"
+      (pageSizeChange)="changePageSize($event)"
+    ></app-pagination>
   }
 
   @if (diagnosticsEnabled() && isDiagnosticsPanelOpen() && !isMobile()) {

@@ -1,0 +1,105 @@
+@if (isOpen()) {
+  <div class="filter-panel" role="dialog" aria-label="פילטרים מתקדמים">
+    <div class="filter-panel-header">
+      <span>פילטרים מתקדמים</span>
+      <button 
+        type="button" 
+        class="column-close" 
+        (click)="onClose()"
+        aria-label="סגור"
+      >
+        ✕
+      </button>
+    </div>
+    
+    <div class="filter-panel-body">
+      <div class="filter-logic">
+        <label for="filter-logic">לוגיקה:</label>
+        <select 
+          id="filter-logic" 
+          [value]="logic()" 
+          (change)="onLogicChange($any($event.target).value)"
+          aria-label="בחר לוגיקת פילטר"
+        >
+          <option value="and">וגם (AND)</option>
+          <option value="or">או (OR)</option>
+        </select>
+      </div>
+
+      <div class="filter-rows">
+        @for (condition of conditions(); track $index) {
+          <div class="filter-row">
+            <select
+              [value]="condition.field"
+              (change)="onUpdateField($index, $any($event.target).value)"
+              aria-label="בחר שדה"
+            >
+              @for (column of filterableColumns(); track column.key) {
+                <option [value]="column.key">{{ column.header }}</option>
+              }
+            </select>
+
+            <select
+              [value]="condition.operator"
+              (change)="onUpdateOperator($index, $any($event.target).value)"
+              aria-label="בחר אופרטור"
+            >
+              @for (op of operatorOptions(); track op.value) {
+                <option [value]="op.value">{{ op.label }}</option>
+              }
+            </select>
+
+            @if (needsValue(condition.operator)) {
+              <div class="filter-values">
+                <input
+                  type="text"
+                  [value]="condition.value ?? ''"
+                  (input)="onUpdateValue($index, $any($event.target).value)"
+                  placeholder="ערך"
+                  aria-label="ערך"
+                />
+                @if (needsValueTo(condition.operator)) {
+                  <input
+                    type="text"
+                    [value]="condition.valueTo ?? ''"
+                    (input)="onUpdateValueTo($index, $any($event.target).value)"
+                    placeholder="ועד"
+                    aria-label="ערך סיום"
+                  />
+                }
+              </div>
+            }
+
+            <button 
+              type="button" 
+              class="filter-remove-btn" 
+              (click)="onRemoveCondition($index)" 
+              aria-label="הסר תנאי"
+            >
+              ✕
+            </button>
+          </div>
+        }
+      </div>
+
+      <div class="filter-actions">
+        <button 
+          type="button" 
+          class="filter-btn" 
+          (click)="onAddCondition()"
+          aria-label="הוסף תנאי"
+        >
+          הוסף תנאי
+        </button>
+        <button 
+          type="button" 
+          class="filter-btn" 
+          (click)="onClearFilters()"
+          aria-label="נקה פילטרים"
+        >
+          נקה פילטרים
+        </button>
+      </div>
+    </div>
+  </div>
+}

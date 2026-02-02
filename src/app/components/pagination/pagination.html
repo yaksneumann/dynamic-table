@@ -1,0 +1,71 @@
+<div class="pagination">
+  <div class="pagination-info">
+    מציג {{ currentPageRange().start }} - {{ currentPageRange().end }} מתוך {{ totalItems() }}
+  </div>
+
+  <div class="pagination-controls">
+    <button 
+      class="page-btn" 
+      (click)="goToPage(1)" 
+      [disabled]="isFirstPage()"
+      aria-label="עמוד ראשון"
+    >
+      ראשון
+    </button>
+    
+    <button 
+      class="page-btn" 
+      (click)="goToPage(pagination().currentPage - 1)"
+      [disabled]="isFirstPage()"
+      aria-label="עמוד קודם"
+    >
+      הקודם
+    </button>
+
+    @for (page of pageNumbers(); track page) {
+      @if (shouldShowPageButton(page)) {
+        <button 
+          class="page-btn"
+          [class.active]="isActivePage(page)" 
+          (click)="goToPage(page)"
+          [attr.aria-label]="'עמוד ' + page"
+          [attr.aria-current]="isActivePage(page) ? 'page' : null"
+        >
+          {{ page }}
+        </button>
+      }
+    }
+
+    <button 
+      class="page-btn" 
+      (click)="goToPage(pagination().currentPage + 1)"
+      [disabled]="isLastPage()"
+      aria-label="עמוד הבא"
+    >
+      הבא
+    </button>
+    
+    <button 
+      class="page-btn" 
+      (click)="goToPage(totalPages())"
+      [disabled]="isLastPage()"
+      aria-label="עמוד אחרון"
+    >
+      אחרון
+    </button>
+  </div>
+
+  <div class="page-size-selector">
+    <label for="page-size-select">שורות בעמוד:</label>
+    <select 
+      id="page-size-select"
+      [value]="pagination().pageSize" 
+      (change)="changePageSize(+$any($event.target).value)"
+      aria-label="בחר מספר שורות בעמוד"
+    >
+      @for (size of pagination().pageSizeOptions; track size) {
+        <option [value]="size" [selected]="size === pagination().pageSize">{{ size }}</option>
+      }
+    </select>
+  </div>
+</div>
